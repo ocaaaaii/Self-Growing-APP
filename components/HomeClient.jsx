@@ -3,16 +3,25 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { greetingFor, ENCOURAGEMENTS } from "@/lib/constants";
+import { greetingFor, ENCOURAGEMENTS, GRATITUDE_QUOTES } from "@/lib/constants";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
 import PointsCard from "./PointsCard";
 import HabitCard from "./HabitCard";
 import CelebrateModal from "./CelebrateModal";
 import AddHabitModal from "./AddHabitModal";
+import GratitudeCard from "./GratitudeCard";
+import Modal from "./Modal";
 import Fab from "./Fab";
 
-export default function HomeClient({ initialPoints, username, habits: initialHabits, todayLogs }) {
+export default function HomeClient({
+  initialPoints,
+  username,
+  habits: initialHabits,
+  todayLogs,
+  todayGratitude,
+  gratitudeHistory,
+}) {
   const router = useRouter();
   const supabase = createClient();
   const frameRef = useRef(null);
@@ -32,6 +41,14 @@ export default function HomeClient({ initialPoints, username, habits: initialHab
   const [celebrate, setCelebrate] = useState(null); // {title,message,badge,mood}
   const [showAdd, setShowAdd] = useState(false);
   const [savingHabit, setSavingHabit] = useState(false);
+
+  // gratitude
+  const [gratitude, setGratitude] = useState(todayGratitude);
+  const [savingGratitude, setSavingGratitude] = useState(false);
+  const [showGratHistory, setShowGratHistory] = useState(false);
+  const [quote] = useState(
+    () => GRATITUDE_QUOTES[Math.floor(Math.random() * GRATITUDE_QUOTES.length)]
+  );
 
   const doneCount = doneSet.size;
   const totalCount = habits.length;
@@ -149,6 +166,46 @@ export default function HomeClient({ initialPoints, username, habits: initialHab
     }
   }
 
+  async function handleSaveGratitude(items) {
+    setSavingGratitude(true);
+    try {
+      const { data, error } = await supabase.rpc("save_gratitude", {
+        p_item_1: items[0].trim(),
+        p_item_2: items[1].trim(),
+        p_item_3: items[2].trim(),
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+
+      setGratitude({
+        item_1: items[0].trim(),
+        item_2: items[1].trim(),
+        item_3: items[2].trim(),
+      });
+      if (!row?.already_done) {
+        setPoints(row?.new_total ?? points + 20);
+        setTodayDelta((d) => d + 20);
+      }
+      setMood("loving");
+      setTimeout(
+        () =>
+          setCelebrate({
+            title: "感恩已記下 🌿",
+            message:
+              "mochi 也覺得今天很值得被記得。願你的心也輕輕的。",
+            badge: row?.already_done ? "🌿 今天已記過" : "+20 pt",
+            mood: "loving",
+          }),
+        200
+      );
+      setTimeout(() => setMood("happy"), 4000);
+    } catch (err) {
+      alert("沒能記下來，再試一次：" + (err?.message || ""));
+    } finally {
+      setSavingGratitude(false);
+    }
+  }
+
   return (
     <div ref={frameRef} className="relative">
       <div className="animate-fadeIn px-[22px] pb-[100px] pt-2">
@@ -216,6 +273,28 @@ export default function HomeClient({ initialPoints, username, habits: initialHab
           </div>
         )}
 
+        {/* daily gratitude */}
+        <div className="mb-3 mt-[22px] flex items-baseline justify-between">
+          <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
+            <Bow size={18} /> 感恩三件事
+            <span className="font-hand text-lg text-cocoa-soft">gratitude</span>
+          </h2>
+          {gratitudeHistory.length > 0 && (
+            <button
+              onClick={() => setShowGratHistory(true)}
+              className="text-xs text-milktea"
+            >
+              回顧 →
+            </button>
+          )}
+        </div>
+        <GratitudeCard
+          quote={quote}
+          todayEntry={gratitude}
+          onSave={handleSaveGratitude}
+          saving={savingGratitude}
+        />
+
         {/* mascot card */}
         <div
           className="relative mt-3.5 flex items-center gap-3.5 overflow-hidden rounded-xl2 p-4 shadow-soft"
@@ -267,6 +346,46 @@ export default function HomeClient({ initialPoints, username, habits: initialHab
         badge={celebrate?.badge}
         mood={celebrate?.mood}
       />
+
+      {/* gratitude history */}
+      <Modal open={showGratHistory} onClose={() => setShowGratHistory(false)}>
+        <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
+        <button
+          onClick={() => setShowGratHistory(false)}
+          className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
+        >
+          ✕
+        </button>
+        <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
+          <span className="text-lg">🌿</span> 感恩回顧
+        </h2>
+        <p className="mb-[18px] text-xs text-milktea">
+          過去那些值得被看見的小事
+        </p>
+        <div className="flex flex-col gap-2.5">
+          {gratitudeHistory.map((g) => (
+            <div
+              key={g.id}
+              className="rounded-[14px] border-l-[3px] border-sage bg-cream-card px-3.5 py-3"
+            >
+              <div className="mb-1.5 font-hand text-base text-cocoa-soft">
+                {new Date(g.entry_date).toLocaleDateString("zh-TW", {
+                  month: "long",
+                  day: "numeric",
+                })}
+              </div>
+              {[g.item_1, g.item_2, g.item_3].map((item, i) => (
+                <div
+                  key={i}
+                  className="relative pl-3.5 text-[13px] leading-relaxed text-cocoa-deep before:absolute before:left-1 before:font-bold before:text-sage before:content-['·']"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -1,0 +1,270 @@
+"use client";
+
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { REWARD_CATEGORIES } from "@/lib/constants";
+import Mochi from "./Mochi";
+import Bow from "./Bow";
+import PointsCard from "./PointsCard";
+import RewardCard from "./RewardCard";
+import AddRewardModal from "./AddRewardModal";
+import RewardConfirmModal from "./RewardConfirmModal";
+import CelebrateModal from "./CelebrateModal";
+import Modal from "./Modal";
+import Fab from "./Fab";
+
+const FILTERS = ["全部", ...REWARD_CATEGORIES];
+
+export default function RewardsClient({ initialPoints, rewards: initialRewards, history }) {
+  const router = useRouter();
+  const supabase = createClient();
+  const frameRef = useRef(null);
+
+  const [points, setPoints] = useState(initialPoints);
+  const [rewards, setRewards] = useState(initialRewards);
+  const [filter, setFilter] = useState("全部");
+  const [showAdd, setShowAdd] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [confirm, setConfirm] = useState(null); // {reward, affordable}
+  const [busy, setBusy] = useState(false);
+  const [celebrate, setCelebrate] = useState(null);
+  const [showHistory, setShowHistory] = useState(false);
+
+  const shown =
+    filter === "全部" ? rewards : rewards.filter((r) => r.category === filter);
+
+  function confetti() {
+    if (!frameRef.current) return;
+    const f = frameRef.current;
+    ["🎀", "✨", "🌟", "💕", "🎊", "⭐"].forEach((e, i) => {
+      setTimeout(() => {
+        const c = document.createElement("div");
+        c.className = "sparkle-burst";
+        c.textContent = e;
+        c.style.left = 40 + Math.random() * 280 + "px";
+        c.style.top = "38%";
+        f.appendChild(c);
+        setTimeout(() => c.remove(), 800);
+      }, i * 80);
+    });
+  }
+
+  async function handleAddReward(form) {
+    setSaving(true);
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("rewards")
+        .insert({ ...form, user_id: user.id })
+        .select()
+        .single();
+      if (error) throw error;
+      setRewards((rs) => [...rs, data]);
+      setShowAdd(false);
+    } catch (err) {
+      alert("沒能加進去，再試一次：" + (err?.message || ""));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleConfirmRedeem() {
+    if (!confirm?.reward) return;
+    setBusy(true);
+    try {
+      const { data, error } = await supabase.rpc("redeem_reward", {
+        p_reward_id: confirm.reward.id,
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row?.ok) {
+        // not enough points (shouldn't happen — guarded in UI)
+        setConfirm(null);
+        return;
+      }
+      setPoints(row.new_total);
+      setRewards((rs) =>
+        rs.map((r) =>
+          r.id === confirm.reward.id
+            ? { ...r, redeemed_count: r.redeemed_count + 1 }
+            : r
+        )
+      );
+      const redeemed = confirm.reward;
+      setConfirm(null);
+      confetti();
+      setTimeout(
+        () =>
+          setCelebrate({
+            title: "兌換成功！",
+            message: `好好享受「${redeemed.title}」— 你值得 💕`,
+            badge: "🎀 enjoy it",
+            mood: "loving",
+          }),
+        250
+      );
+    } catch (err) {
+      alert("兌換時出了點狀況，再試一次：" + (err?.message || ""));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div ref={frameRef} className="relative">
+      <div className="animate-fadeIn px-[22px] pb-[100px] pt-2">
+        {/* header */}
+        <div className="mb-[18px] mt-1.5">
+          <div className="font-hand text-lg text-milktea">my rewards</div>
+          <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
+            你<span className="underline-cute">值得</span>被寵愛 🎀
+          </h1>
+          <p className="mt-1 text-[13px] text-milktea">
+            用累積的點數，溫柔地寵愛自己
+          </p>
+        </div>
+
+        <PointsCard points={points} compact />
+
+        {/* filter + history */}
+        <div className="no-scrollbar mb-4 mt-4 flex items-center gap-2 overflow-x-auto pb-1">
+          {FILTERS.map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`flex-shrink-0 rounded-2xl border px-3.5 py-[7px] text-xs font-medium transition ${
+                filter === f
+                  ? "border-cocoa bg-cocoa text-cream-card"
+                  : "border-line bg-cream-card text-cocoa"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+          <button
+            onClick={() => setShowHistory(true)}
+            className="ml-auto flex-shrink-0 rounded-2xl border border-line bg-cream-card px-3 py-[7px] text-xs font-medium text-milktea"
+          >
+            兌換紀錄
+          </button>
+        </div>
+
+        {/* grid */}
+        {rewards.length === 0 ? (
+          <div className="flex flex-col items-center rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center shadow-soft">
+            <Mochi mood="happy" size={84} />
+            <p className="mt-3 text-sm font-medium text-cocoa-deep">
+              還沒有任何獎勵
+            </p>
+            <p className="mt-1 text-xs text-milktea">
+              想想看 — 努力之後，你想用什麼寵愛自己？
+            </p>
+            <button
+              onClick={() => setShowAdd(true)}
+              className="mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold text-cream-card shadow-soft"
+              style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+            >
+              建立第一個獎勵 🎀
+            </button>
+          </div>
+        ) : shown.length === 0 ? (
+          <div className="rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center text-sm text-milktea shadow-soft">
+            這個分類還沒有獎勵～
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {shown.map((r) => (
+              <RewardCard
+                key={r.id}
+                reward={r}
+                points={points}
+                onClick={(reward, affordable) =>
+                  setConfirm({ reward, affordable })
+                }
+              />
+            ))}
+          </div>
+        )}
+
+        <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-milktea">
+          <Bow size={14} /> 我有努力，所以我值得
+        </div>
+      </div>
+
+      <Fab onClick={() => setShowAdd(true)} />
+
+      <AddRewardModal
+        open={showAdd}
+        onClose={() => setShowAdd(false)}
+        onSave={handleAddReward}
+        saving={saving}
+      />
+      <RewardConfirmModal
+        open={!!confirm}
+        onClose={() => setConfirm(null)}
+        reward={confirm?.reward}
+        affordable={confirm?.affordable}
+        busy={busy}
+        onConfirm={handleConfirmRedeem}
+      />
+      <CelebrateModal
+        open={!!celebrate}
+        onClose={() => {
+          setCelebrate(null);
+          router.refresh();
+        }}
+        title={celebrate?.title}
+        message={celebrate?.message}
+        badge={celebrate?.badge}
+        mood={celebrate?.mood}
+      />
+
+      {/* history modal */}
+      <Modal open={showHistory} onClose={() => setShowHistory(false)}>
+        <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
+        <button
+          onClick={() => setShowHistory(false)}
+          className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
+        >
+          ✕
+        </button>
+        <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
+          <Bow size={20} /> 兌換紀錄
+        </h2>
+        <p className="mb-[18px] text-xs text-milktea">
+          那些你給自己的、值得的禮物
+        </p>
+        {history.length === 0 ? (
+          <p className="py-6 text-center text-sm text-milktea">
+            還沒有兌換紀錄～完成習慣累積點數，然後好好寵愛自己 🎀
+          </p>
+        ) : (
+          <div className="flex flex-col gap-2.5">
+            {history.map((h) => (
+              <div
+                key={h.id}
+                className="flex items-center gap-3 rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-3"
+              >
+                <span className="text-2xl">{h.rewards?.emoji || "🎁"}</span>
+                <div className="flex-1">
+                  <div className="text-[13px] font-semibold text-cocoa-deep">
+                    {h.rewards?.title || "獎勵"}
+                  </div>
+                  <div className="text-[11px] text-milktea">
+                    {new Date(h.redeemed_at).toLocaleDateString("zh-TW")}
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-cocoa">
+                  - {h.points_spent} pt
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
+    </div>
+  );
+}

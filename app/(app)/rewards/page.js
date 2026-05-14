@@ -1,11 +1,33 @@
-import ComingSoon from "@/components/ComingSoon";
+import { createClient } from "@/lib/supabase/server";
+import RewardsClient from "@/components/RewardsClient";
 
-export default function RewardsPage() {
+export default async function RewardsPage() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [profileRes, rewardsRes, historyRes] = await Promise.all([
+    supabase.from("profiles").select("total_points").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("rewards")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("is_archived", false)
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("reward_history")
+      .select("id, points_spent, redeemed_at, rewards(title, emoji)")
+      .eq("user_id", user.id)
+      .order("redeemed_at", { ascending: false })
+      .limit(20),
+  ]);
+
   return (
-    <ComingSoon
-      title="獎勵兌換 🎀"
-      subtitle="用點數寵愛自己的功能正在路上"
-      note="第二階段就會加上：建立自己的獎勵清單，用累積的點數兌換 —— 你有努力，所以你值得。"
+    <RewardsClient
+      initialPoints={profileRes.data?.total_points ?? 0}
+      rewards={rewardsRes.data || []}
+      history={historyRes.data || []}
     />
   );
 }

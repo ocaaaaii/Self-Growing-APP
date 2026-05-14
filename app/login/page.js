@@ -11,6 +11,7 @@ export default function LoginPage() {
   const supabase = createClient();
 
   const [mode, setMode] = useState("login"); // "login" | "signup"
+  const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,7 +26,14 @@ export default function LoginPage() {
 
     try {
       if (mode === "signup") {
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            // 暱稱會傳進 auth metadata，trigger 會用它建立 profile
+            data: { username: nickname.trim() || email.split("@")[0] },
+          },
+        });
         if (error) throw error;
         // If email confirmation is OFF, a session exists right away.
         if (data.session) {
@@ -102,6 +110,22 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+          {mode === "signup" && (
+            <div>
+              <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+                暱稱
+              </label>
+              <input
+                type="text"
+                required
+                maxLength={20}
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                placeholder="想讓 mochi 怎麼稱呼你？"
+                className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
+              />
+            </div>
+          )}
           <div>
             <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
               EMAIL

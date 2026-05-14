@@ -9,11 +9,12 @@ import Bow from "./Bow";
 import HabitCard from "./HabitCard";
 import CelebrateModal from "./CelebrateModal";
 import AddHabitModal from "./AddHabitModal";
+import ProfileModal from "./ProfileModal";
 import Fab from "./Fab";
 
 const FILTERS = ["全部", ...CATEGORIES];
 
-export default function HabitsClient({ habits: initialHabits, todayLogs }) {
+export default function HabitsClient({ habits: initialHabits, todayLogs, nickname }) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -26,6 +27,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs }) {
   const [celebrate, setCelebrate] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [savingHabit, setSavingHabit] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   const shown =
     filter === "全部" ? habits : habits.filter((h) => h.category === filter);
@@ -121,14 +123,21 @@ export default function HabitsClient({ habits: initialHabits, todayLogs }) {
               所有的<span className="underline-cute">小小堅持</span> ✨
             </h1>
           </div>
-          <form action="/auth/signout" method="post">
-            <button
-              type="submit"
-              className="rounded-xl border border-line bg-cream-card px-2.5 py-1.5 text-[11px] font-medium text-milktea"
-            >
-              登出
-            </button>
-          </form>
+          <button
+            onClick={() => setShowProfile(true)}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-cream-card text-cocoa"
+            aria-label="我的小空間"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.8" />
+              <path
+                d="M5 20c0-3.3 3.1-5 7-5s7 1.7 7 5"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
         </div>
 
         {/* category filter */}
@@ -200,6 +209,11 @@ export default function HabitsClient({ habits: initialHabits, todayLogs }) {
         message={celebrate?.message}
         badge={celebrate?.badge}
         mood={celebrate?.mood}
+      />
+      <ProfileModal
+        open={showProfile}
+        onClose={() => setShowProfile(false)}
+        currentNickname={nickname}
       />
     </div>
   );

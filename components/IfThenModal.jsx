@@ -1,0 +1,117 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Modal from "./Modal";
+import Bow from "./Bow";
+import { IFTHEN_CATEGORIES } from "@/lib/constants";
+
+// Add OR edit an If→Then rule. Pass `rule` to edit, omit to add.
+export default function IfThenModal({ open, onClose, onSave, onDelete, rule, saving }) {
+  const editing = !!rule;
+  const [ifText, setIfText] = useState("");
+  const [thenText, setThenText] = useState("");
+  const [category, setCategory] = useState(IFTHEN_CATEGORIES[0]);
+
+  useEffect(() => {
+    if (open) {
+      setIfText(rule?.trigger_condition || "");
+      setThenText(rule?.action_response || "");
+      setCategory(rule?.category || IFTHEN_CATEGORIES[0]);
+    }
+  }, [open, rule]);
+
+  function handleSave() {
+    onSave({
+      trigger_condition: ifText.trim() || "某個觸發",
+      action_response: thenText.trim() || "一個好行動",
+      category,
+    });
+  }
+
+  return (
+    <Modal open={open} onClose={onClose}>
+      <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
+      <button
+        onClick={onClose}
+        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
+      >
+        ✕
+      </button>
+
+      <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
+        <Bow size={20} /> {editing ? "編輯規則" : "新增 If → Then 規則"}
+      </h2>
+      <p className="mb-[18px] text-xs text-milktea">讓好習慣變成自動反應 💫</p>
+
+      <div className="mb-3.5">
+        <label className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-cocoa">
+          <span className="rounded-lg bg-[#E8D5C8] px-2 py-0.5 text-[10px] font-bold text-[#B86B6B]">
+            IF
+          </span>
+          當...發生
+        </label>
+        <textarea
+          value={ifText}
+          onChange={(e) => setIfText(e.target.value)}
+          placeholder="例如：聽到鬧鐘"
+          className="min-h-[56px] w-full resize-none rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
+        />
+      </div>
+
+      <div className="mb-3.5">
+        <label className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-cocoa">
+          <span className="rounded-lg bg-sage px-2 py-0.5 text-[10px] font-bold text-[#5e7044]">
+            THEN
+          </span>
+          我就...
+        </label>
+        <textarea
+          value={thenText}
+          onChange={(e) => setThenText(e.target.value)}
+          placeholder="例如：立刻雙腳落地 → 開燈 → 去刷牙"
+          className="min-h-[56px] w-full resize-none rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
+        />
+      </div>
+
+      <div className="mb-3.5">
+        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+          分類
+        </label>
+        <div className="flex flex-wrap gap-1.5">
+          {IFTHEN_CATEGORIES.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setCategory(c)}
+              className={`rounded-xl border px-3 py-[7px] text-xs font-medium transition ${
+                category === c
+                  ? "border-cocoa bg-cocoa text-cream-card"
+                  : "border-line bg-cream-card text-cocoa"
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        className="mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px disabled:opacity-60"
+        style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+      >
+        {saving ? "儲存中…" : editing ? "儲存修改 💫" : "建立規則 💫"}
+      </button>
+
+      {editing && (
+        <button
+          onClick={() => onDelete(rule)}
+          className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-[#9c5b52]"
+        >
+          刪除這個規則
+        </button>
+      )}
+    </Modal>
+  );
+}

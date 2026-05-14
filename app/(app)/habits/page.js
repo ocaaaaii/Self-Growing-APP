@@ -10,7 +10,7 @@ export default async function HabitsPage() {
 
   const today = todayStr();
 
-  const [habitsRes, todayLogsRes] = await Promise.all([
+  const [habitsRes, todayLogsRes, profileRes] = await Promise.all([
     supabase
       .from("habits")
       .select("*")
@@ -22,12 +22,14 @@ export default async function HabitsPage() {
       .select("habit_id")
       .eq("user_id", user.id)
       .eq("completed_on", today),
+    supabase.from("profiles").select("username").eq("id", user.id).maybeSingle(),
   ]);
 
   return (
     <HabitsClient
       habits={habitsRes.data || []}
       todayLogs={todayLogsRes.data || []}
+      nickname={profileRes.data?.username || user.email.split("@")[0]}
     />
   );
 }

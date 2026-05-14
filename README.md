@@ -3,8 +3,8 @@
 一個用溫柔的獎勵機制，幫助你慢慢把自己養成喜歡的樣子的成長 App。
 小棕熊 **Mochi** 會一路陪著你。
 
-這是 **第一階段**：會員登入 + 習慣養成 + 點數累積。
-（獎勵兌換、If→Then 規則、感恩三件事、成長月曆會在後續階段加上。）
+**目前進度：第一 + 第二階段都完成了** —— 會員登入、習慣養成、點數累積、
+獎勵兌換、If→Then 行為規則、每日感恩三件事、成長月曆統計。
 
 技術：Next.js 14（App Router）+ Supabase（登入 + 資料庫）+ TailwindCSS。
 
@@ -31,7 +31,13 @@
 3. 打開本專案的 `supabase/schema.sql`，把**整個檔案的內容**複製貼上
 4. 點右下角「Run」執行 — 看到成功訊息就完成了
 
-這會建立三張表（profiles、habits、habit_logs）、安全規則（每個人只能看到自己的資料），還有打卡加點數的邏輯。
+這會建立全部七張表（profiles、habits、habit_logs、rewards、reward_history、
+ifthen_rules、gratitude_entries）、安全規則（每個人只能看到自己的資料），
+還有打卡加點數、兌換獎勵、記錄感恩的邏輯。
+
+> **如果你之前只跑過第一階段的 schema**：不用重跑整個 `schema.sql`，
+> 只要把 `supabase/migration_phase2.sql` 的內容貼進 SQL Editor 執行一次，
+> 就會補上第二階段的四張表與功能（已有的資料不會被動到）。
 
 ### 拿到你的 API 金鑰
 
@@ -108,39 +114,47 @@
 growing-app/
 ├── app/
 │   ├── layout.js              根 layout（字型、metadata）
-│   ├── page.js                進入點 → 自動導向登入或首頁
+│   ├── page.js                進入點 → 導向 /welcome 或 /home
 │   ├── globals.css            設計系統（奶油咖啡色、Mochi 表情、動畫）
-│   ├── login/page.js          登入 / 註冊畫面
+│   ├── welcome/page.js        登入前導覽頁（介紹 App 怎麼用）
+│   ├── login/page.js          登入 / 註冊畫面（註冊可設定暱稱）
 │   ├── auth/
 │   │   ├── callback/route.js  處理 email 確認信的連結
 │   │   └── signout/route.js   登出
 │   └── (app)/                 登入後的 App（共用手機外框 + 底部導覽）
 │       ├── layout.js
-│       ├── home/page.js       首頁：問候 + 點數 + 今日小事
-│       ├── habits/page.js     習慣頁：清單 + 分類 + 新增
-│       └── ifthen/ rewards/ growth/   第二階段功能（目前是 coming soon）
+│       ├── home/page.js       首頁：問候 + 點數 + 今日小事 + 感恩三件事
+│       ├── habits/page.js     習慣頁：清單 + 分類 + 新增 + 我的小空間
+│       ├── ifthen/page.js     If→Then 規則：新增 / 編輯 / 啟用切換
+│       ├── rewards/page.js    獎勵兌換：清單 + 兌換 + 紀錄
+│       └── growth/page.js     成長月曆與統計
 ├── components/                可愛的 UI 元件（Mochi、卡片、彈窗…）
 ├── lib/
 │   ├── constants.js           分類、難度、鼓勵語等設定
 │   └── supabase/              Supabase 連線（瀏覽器 / 伺服器 / middleware）
-├── supabase/schema.sql        資料庫結構（在 Supabase SQL Editor 執行）
-├── middleware.js              路由保護：沒登入就導到 /login
+├── supabase/
+│   ├── schema.sql             完整資料庫結構（全新安裝用）
+│   └── migration_phase2.sql   第二階段 migration（已跑過第一階段的人用）
+├── middleware.js              路由保護：沒登入就導到 /welcome
 └── public/mochi.png           Mochi 本人 🐻
 ```
 
 ---
 
-## 第一階段做了什麼
+## 功能總覽
 
-- ✅ Email + 密碼 會員登入 / 註冊（每個人有自己的成長空間）
+**第一階段**
+- ✅ Email + 密碼 會員登入 / 註冊，註冊時可設定暱稱
+- ✅ 登入前的導覽頁，介紹 App 怎麼用
+- ✅ 之後可在「我的小空間」隨時改暱稱（mochi 問候你會用新暱稱）
 - ✅ 建立習慣（名稱、圖示、分類、難度、頻率）
-- ✅ 打卡完成 → 真的累積點數（存在雲端，換裝置也在）
-- ✅ 連續天數 streak 自動計算
-- ✅ 取消打卡會把點數和 streak 扣回來
-- ✅ 完成中等以上難度的習慣，Mochi 會跳出來慶祝
-- ✅ 奶油咖啡色手帳風、Mochi 五種表情、底部導覽
+- ✅ 打卡完成 → 真的累積點數（存雲端，換裝置也在）
+- ✅ 連續天數 streak 自動計算，取消打卡會扣回
 
-## 接下來（第二階段起）
+**第二階段**
+- ✅ 獎勵兌換：建立自己的獎勵清單，用點數兌換（點數不夠會溫柔提醒），含兌換紀錄
+- ✅ If→Then 行為規則：新增 / 編輯 / 刪除 / 啟用切換，依分類整理
+- ✅ 每日感恩三件事：首頁卡片，每天記一次 +20 點，可回顧過去 14 天
+- ✅ 成長月曆：依每天完成的習慣數上色的圓點月曆 + 活躍率 / 總點數 / 最長 streak / 成長天數
 
-獎勵兌換系統、If→Then 行為規則、每日感恩三件事、成長月曆與統計。
-設計都已經在 `prototype-v1.html` 視覺原型裡了，會一個一個接上來。
+設計來源是 `prototype-v1.html` 視覺原型。

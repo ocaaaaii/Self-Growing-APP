@@ -11,6 +11,6 @@ export default async function RootPage() {
   if (user) {
     redirect("/home");
   } else {
-    redirect("/login");
+    redirect("/welcome");
   }
 }

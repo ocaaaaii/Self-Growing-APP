@@ -2,14 +2,12 @@
 
 import { usePathname, useRouter } from "next/navigation";
 
-// Phase 1 ships 首頁 + 習慣. 規則 / 獎勵 / 成長 are shown but
-// marked "之後" (coming soon) so the layout already feels complete.
 const ITEMS = [
   { key: "home", label: "首頁", href: "/home", ready: true },
   { key: "habits", label: "習慣", href: "/habits", ready: true },
-  { key: "ifthen", label: "規則", href: "/ifthen", ready: false },
-  { key: "rewards", label: "獎勵", href: "/rewards", ready: false },
-  { key: "growth", label: "成長", href: "/growth", ready: false },
+  { key: "ifthen", label: "規則", href: "/ifthen", ready: true },
+  { key: "rewards", label: "獎勵", href: "/rewards", ready: true },
+  { key: "growth", label: "成長", href: "/growth", ready: true },
 ];
 
 function Icon({ name, active }) {
