@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { greetingFor, ENCOURAGEMENTS, GRATITUDE_QUOTES } from "@/lib/constants";
@@ -12,7 +12,6 @@ import CelebrateModal from "./CelebrateModal";
 import AddHabitModal from "./AddHabitModal";
 import GratitudeCard from "./GratitudeCard";
 import Modal from "./Modal";
-import Fab from "./Fab";
 
 export default function HomeClient({
   initialPoints,
@@ -40,6 +39,7 @@ export default function HomeClient({
 
   const [celebrate, setCelebrate] = useState(null); // {title,message,badge,mood}
   const [showAdd, setShowAdd] = useState(false);
+  const [editingHabit, setEditingHabit] = useState(null);
   const [savingHabit, setSavingHabit] = useState(false);
 
   // gratitude
@@ -52,6 +52,52 @@ export default function HomeClient({
 
   const doneCount = doneSet.size;
   const totalCount = habits.length;
+
+  // the shared FAB (in the app shell) fires this event → open in ADD mode
+  useEffect(() => {
+    const open = () => {
+      setEditingHabit(null);
+      setShowAdd(true);
+    };
+    window.addEventListener("app-fab", open);
+    return () => window.removeEventListener("app-fab", open);
+  }, []);
+
+  function openEditHabit(habit) {
+    setEditingHabit(habit);
+    setShowAdd(true);
+  }
+
+  // AI encouragement from Mochi (via /api/encourage). Falls back silently
+  // to the built-in message if no API key is configured.
+  const [aiMessage, setAiMessage] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/encourage", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        username,
+        points: initialPoints,
+        doneToday: doneSet.size,
+        totalToday: initialHabits.length,
+        longestStreak: initialHabits.reduce(
+          (m, h) => Math.max(m, h.streak || 0),
+          0
+        ),
+      }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled && d?.message) setAiMessage(d.message);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // floating "+N pt" popup near a clicked card
   function flyPoints(el, n) {
@@ -139,28 +185,65 @@ export default function HomeClient({
     }
   }
 
-  async function handleAddHabit(form) {
+  async function handleSaveHabit(form) {
     setSavingHabit(true);
     try {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      const { data, error } = await supabase
-        .from("habits")
-        .insert({ ...form, user_id: user.id })
-        .select()
-        .single();
-      if (error) throw error;
-      setHabits((hs) => [...hs, data]);
+
+      if (editingHabit) {
+        const { data, error } = await supabase
+          .from("habits")
+          .update(form)
+          .eq("id", editingHabit.id)
+          .select()
+          .single();
+        if (error) throw error;
+        setHabits((hs) => hs.map((h) => (h.id === editingHabit.id ? data : h)));
+      } else {
+        const { data, error } = await supabase
+          .from("habits")
+          .insert({ ...form, user_id: user.id })
+          .select()
+          .single();
+        if (error) throw error;
+        setHabits((hs) => [...hs, data]);
+        setCelebrate({
+          title: "加入啦！",
+          message: `「${data.title}」會出現在你今天的小事裡 ✨`,
+          badge: "🌱 + 1 小事",
+          mood: "loving",
+        });
+      }
       setShowAdd(false);
-      setCelebrate({
-        title: "加入啦！",
-        message: `「${data.title}」會出現在你今天的小事裡 ✨`,
-        badge: "🌱 + 1 小事",
-        mood: "loving",
-      });
+      setEditingHabit(null);
     } catch (err) {
-      alert("沒能加進去，再試一次：" + (err?.message || ""));
+      alert("沒能儲存，再試一次：" + (err?.message || ""));
+    } finally {
+      setSavingHabit(false);
+    }
+  }
+
+  async function handleDeleteHabit(habit) {
+    if (!confirm(`確定要刪除「${habit.title}」嗎？`)) return;
+    setSavingHabit(true);
+    try {
+      const { error } = await supabase
+        .from("habits")
+        .delete()
+        .eq("id", habit.id);
+      if (error) throw error;
+      setHabits((hs) => hs.filter((h) => h.id !== habit.id));
+      setDoneSet((s) => {
+        const next = new Set(s);
+        next.delete(habit.id);
+        return next;
+      });
+      setShowAdd(false);
+      setEditingHabit(null);
+    } catch (err) {
+      alert("沒能刪除，再試一次：" + (err?.message || ""));
     } finally {
       setSavingHabit(false);
     }
@@ -254,7 +337,7 @@ export default function HomeClient({
             <button
               onClick={() => setShowAdd(true)}
               className="mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold text-cream-card shadow-soft"
-              style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+              style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
             >
               建立第一個小事 ✨
             </button>
@@ -268,6 +351,7 @@ export default function HomeClient({
                 done={doneSet.has(h.id)}
                 busy={busyId === h.id}
                 onToggle={(habit, ev) => toggleHabit(habit, ev)}
+                onEdit={openEditHabit}
               />
             ))}
           </div>
@@ -298,7 +382,7 @@ export default function HomeClient({
         {/* mascot card */}
         <div
           className="relative mt-3.5 flex items-center gap-3.5 overflow-hidden rounded-xl2 p-4 shadow-soft"
-          style={{ background: "linear-gradient(135deg,#F4D5BC 0%,#E8BFA0 100%)" }}
+          style={{ background: "linear-gradient(135deg, rgb(var(--grad-mascot-from)) 0%, rgb(var(--grad-mascot-to)) 100%)" }}
         >
           <div className="animate-floaty">
             <Mochi mood={mood} size={64} />
@@ -306,7 +390,9 @@ export default function HomeClient({
           <div>
             <div className="font-hand text-sm text-cocoa">mochi 想跟你說 ✨</div>
             <div className="mt-0.5 text-[13px] font-medium leading-relaxed text-cocoa-deep">
-              {totalCount === 0
+              {aiMessage
+                ? `「${aiMessage}」`
+                : totalCount === 0
                 ? "「我們慢慢開始就好，不用急～」"
                 : doneCount >= totalCount
                 ? "「今天的小事全部完成了！你好棒好棒 🎀」"
@@ -327,12 +413,16 @@ export default function HomeClient({
         </div>
       ))}
 
-      {/* FAB + modals */}
-      <Fab onClick={() => setShowAdd(true)} />
+      {/* modals (FAB lives in the app shell) */}
       <AddHabitModal
         open={showAdd}
-        onClose={() => setShowAdd(false)}
-        onSave={handleAddHabit}
+        onClose={() => {
+          setShowAdd(false);
+          setEditingHabit(null);
+        }}
+        onSave={handleSaveHabit}
+        onDelete={handleDeleteHabit}
+        habit={editingHabit}
         saving={savingHabit}
       />
       <CelebrateModal

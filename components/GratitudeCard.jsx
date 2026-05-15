@@ -22,8 +22,8 @@ export default function GratitudeCard({ quote, todayEntry, onSave, saving }) {
       className="relative overflow-hidden rounded-xl2 border border-line/50 p-[18px] shadow-soft"
       style={{
         background: done
-          ? "linear-gradient(135deg,#E8F0DA 0%,#D4DFC2 100%)"
-          : "linear-gradient(135deg,#FAF4E8 0%,#F2E8D2 100%)",
+          ? "linear-gradient(135deg, rgb(var(--c-sage) / 0.45) 0%, rgb(var(--c-sage) / 0.65) 100%)"
+          : "linear-gradient(135deg, rgb(var(--c-cream-card)) 0%, rgb(var(--c-beige) / 0.55) 100%)",
       }}
     >
       <div className="absolute right-4 top-3 rotate-12 text-[22px] opacity-50">
@@ -32,7 +32,7 @@ export default function GratitudeCard({ quote, todayEntry, onSave, saving }) {
 
       <div className="mb-3.5 pr-7 font-hand text-[15px] leading-snug text-cocoa-soft">
         {done ? (
-          <span className="font-semibold text-[#6b7f4d]">
+          <span className="font-semibold text-cocoa">
             ✓ 已完成今日感恩 ·{" "}
           </span>
         ) : null}
@@ -60,14 +60,9 @@ export default function GratitudeCard({ quote, todayEntry, onSave, saving }) {
           disabled={!allFilled || saving}
           className={`mt-2 flex w-full items-center justify-center gap-1.5 rounded-[14px] py-2.5 text-[13px] font-semibold transition ${
             allFilled && !saving
-              ? "text-cream-card shadow-soft hover:-translate-y-px"
+              ? "btn-gratitude shadow-soft hover:-translate-y-px"
               : "cursor-not-allowed bg-beige text-milktea"
           }`}
-          style={
-            allFilled && !saving
-              ? { background: "linear-gradient(135deg,#B5BFA0,#98A485)" }
-              : undefined
-          }
         >
           <span>🌱</span>
           {saving ? "記下中…" : "記下今天的感恩 · +20 pt"}

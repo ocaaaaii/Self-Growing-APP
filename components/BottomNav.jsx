@@ -11,7 +11,7 @@ const ITEMS = [
 ];
 
 function Icon({ name, active }) {
-  const stroke = active ? "#5C4332" : "#B89478";
+  const stroke = active ? "rgb(var(--c-cocoa-deep))" : "rgb(var(--c-milktea))";
   const common = {
     width: 22,
     height: 22,
@@ -81,7 +81,7 @@ export default function BottomNav() {
   const router = useRouter();
 
   return (
-    <nav className="absolute bottom-0 left-0 right-0 grid grid-cols-5 gap-1 border-t border-line/60 bg-cream-paper/95 px-4 pb-6 pt-3 backdrop-blur">
+    <nav className="grid flex-shrink-0 grid-cols-5 gap-1 border-t border-line/60 bg-cream-paper/95 px-4 pb-5 pt-3 backdrop-blur">
       {ITEMS.map((it) => {
         const active = pathname === it.href;
         return (

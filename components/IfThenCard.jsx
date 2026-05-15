@@ -10,14 +10,14 @@ export default function IfThenCard({ rule, onEdit, onToggle, busy }) {
     >
       <div onClick={() => onEdit(rule)} className="cursor-pointer">
         <div className="flex items-start gap-2.5 text-[13px] leading-relaxed text-cocoa">
-          <span className="mt-px flex-shrink-0 rounded-lg bg-[#E8D5C8] px-2 py-0.5 text-[10px] font-bold tracking-wide text-[#B86B6B]">
+          <span className="mt-px flex-shrink-0 rounded-lg bg-dusty/40 px-2 py-0.5 text-[10px] font-bold tracking-wide text-cocoa">
             IF
           </span>
           <span>{rule.trigger_condition}</span>
         </div>
         <div className="my-1.5 text-center text-sm text-cocoa-soft">↓</div>
         <div className="flex items-start gap-2.5 text-[13px] font-medium leading-relaxed text-cocoa-deep">
-          <span className="mt-px flex-shrink-0 rounded-lg bg-sage px-2 py-0.5 text-[10px] font-bold tracking-wide text-[#5e7044]">
+          <span className="mt-px flex-shrink-0 rounded-lg bg-sage px-2 py-0.5 text-[10px] font-bold tracking-wide text-cocoa">
             THEN
           </span>
           <span>{rule.action_response}</span>
@@ -29,7 +29,7 @@ export default function IfThenCard({ rule, onEdit, onToggle, busy }) {
         <button
           onClick={() => !busy && onToggle(rule)}
           className={`flex items-center gap-1.5 text-[10px] font-semibold ${
-            rule.is_enabled ? "text-[#5e7044]" : "text-milktea"
+            rule.is_enabled ? "text-cocoa" : "text-milktea"
           }`}
         >
           <span

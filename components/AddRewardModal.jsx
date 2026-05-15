@@ -22,12 +22,15 @@ function Pill({ active, children, onClick }) {
 }
 
 const COST_PRESETS = [100, 200, 350, 500, 800, 1200];
+// null = 無限
+const STOCK_PRESETS = [null, 1, 3, 5, 10];
 
 export default function AddRewardModal({ open, onClose, onSave, saving }) {
   const [title, setTitle] = useState("");
   const [emoji, setEmoji] = useState(REWARD_EMOJI_CHOICES[0]);
   const [category, setCategory] = useState(REWARD_CATEGORIES[0]);
   const [cost, setCost] = useState(200);
+  const [stock, setStock] = useState(null); // null = 無限
   const [description, setDescription] = useState("");
 
   function reset() {
@@ -35,6 +38,7 @@ export default function AddRewardModal({ open, onClose, onSave, saving }) {
     setEmoji(REWARD_EMOJI_CHOICES[0]);
     setCategory(REWARD_CATEGORIES[0]);
     setCost(200);
+    setStock(null);
     setDescription("");
   }
 
@@ -44,6 +48,7 @@ export default function AddRewardModal({ open, onClose, onSave, saving }) {
       emoji,
       category,
       point_cost: Math.max(1, Number(cost) || 1),
+      stock: stock === null ? null : Math.max(1, Number(stock) || 1),
       description: description.trim() || null,
     });
     reset();
@@ -131,6 +136,26 @@ export default function AddRewardModal({ open, onClose, onSave, saving }) {
 
       <div className="mb-3.5">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+          可兌換數量
+        </label>
+        <div className="flex flex-wrap gap-1.5">
+          {STOCK_PRESETS.map((s) => (
+            <Pill
+              key={s === null ? "inf" : s}
+              active={stock === s}
+              onClick={() => setStock(s)}
+            >
+              {s === null ? "無限" : `${s} 次`}
+            </Pill>
+          ))}
+        </div>
+        <p className="mt-1.5 text-[11px] text-milktea">
+          設定後，每兌換一次就會少一個，換完就會休息
+        </p>
+      </div>
+
+      <div className="mb-3.5">
+        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
           備註（可選）
         </label>
         <textarea
@@ -144,8 +169,7 @@ export default function AddRewardModal({ open, onClose, onSave, saving }) {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px disabled:opacity-60"
-        style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+        className="btn-cocoa mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
       >
         {saving ? "加入中…" : "加入獎勵清單 🎀"}
       </button>

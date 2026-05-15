@@ -156,12 +156,12 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="rounded-xl bg-dusty/25 px-3 py-2 text-xs text-[#9c5b52]">
+            <div className="rounded-xl bg-dusty/25 px-3 py-2 text-xs text-cocoa-deep">
               {error}
             </div>
           )}
           {notice && (
-            <div className="rounded-xl bg-sage/25 px-3 py-2 text-xs text-[#5e7044]">
+            <div className="rounded-xl bg-sage/25 px-3 py-2 text-xs text-cocoa">
               {notice}
             </div>
           )}
@@ -170,7 +170,7 @@ export default function LoginPage() {
             type="submit"
             disabled={loading}
             className="mt-1 w-full rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px disabled:opacity-60"
-            style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+            style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
           >
             {loading
               ? "請稍等…"

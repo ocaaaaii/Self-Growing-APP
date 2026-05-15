@@ -106,7 +106,7 @@ export default function WelcomePage() {
           <button
             onClick={() => (isLast ? router.push("/login") : setStep(step + 1))}
             className="flex-1 rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px"
-            style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+            style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
           >
             {isLast ? "開始我的成長 🌱" : "下一步"}
           </button>

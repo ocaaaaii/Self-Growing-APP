@@ -3,15 +3,22 @@
 // One habit row with a check-off box.
 // Presentational — parent passes `done` and handles `onToggle`.
 const ICON_BG = {
-  健康: "#C5CDB0",
-  學習: "#E8D5C8",
-  生活: "#DDD0B8",
-  心靈: "#E8D5C8",
-  不要做: "#C5D2D6",
+  健康: "bg-sage",
+  學習: "bg-dusty",
+  生活: "bg-beige",
+  心靈: "bg-cheek",
+  不要做: "bg-sky",
 };
 
-export default function HabitCard({ habit, done, busy, onToggle, showMeta = true }) {
-  const bg = ICON_BG[habit.category] || "#DDD0B8";
+export default function HabitCard({
+  habit,
+  done,
+  busy,
+  onToggle,
+  onEdit,
+  showMeta = true,
+}) {
+  const bgClass = ICON_BG[habit.category] || "bg-beige";
 
   return (
     <div
@@ -21,11 +28,10 @@ export default function HabitCard({ habit, done, busy, onToggle, showMeta = true
           ? "opacity-75"
           : "bg-cream-card hover:-translate-y-px hover:shadow-lift"
       }`}
-      style={done ? { background: "linear-gradient(135deg,#EDE6D4,#E5DBC3)" } : undefined}
+      style={done ? { background: "linear-gradient(135deg, rgb(var(--c-beige)), rgb(var(--c-milktea-soft)))" } : undefined}
     >
       <div
-        className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[14px] text-[22px]"
-        style={{ background: bg }}
+        className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[14px] text-[22px] ${bgClass}`}
       >
         {habit.emoji}
       </div>
@@ -45,11 +51,31 @@ export default function HabitCard({ habit, done, busy, onToggle, showMeta = true
             </span>
             <span>{habit.frequency}</span>
             {habit.streak > 0 && (
-              <span className="font-semibold text-[#C97B5C]">🔥 {habit.streak}</span>
+              <span className="font-semibold text-cocoa-soft">🔥 {habit.streak}</span>
             )}
           </div>
         )}
       </div>
+
+      {onEdit && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(habit);
+          }}
+          className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-milktea transition hover:bg-beige hover:text-cocoa"
+          aria-label="編輯"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 20h4L18.5 9.5a2.12 2.12 0 00-3-3L5 17v3z"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      )}
 
       <div
         className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[10px] border-2 transition ${

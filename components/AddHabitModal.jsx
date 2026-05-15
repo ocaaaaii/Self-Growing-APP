@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import Bow from "./Bow";
 import { DIFFICULTY, CATEGORIES, FREQUENCIES, EMOJI_CHOICES } from "@/lib/constants";
@@ -21,20 +21,33 @@ function Pill({ active, children, onClick }) {
   );
 }
 
-export default function AddHabitModal({ open, onClose, onSave, saving }) {
+// Add OR edit a habit. Pass `habit` to edit, omit to add.
+export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, saving }) {
+  const editing = !!habit;
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState(EMOJI_CHOICES[0]);
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [diffIdx, setDiffIdx] = useState(0);
   const [frequency, setFrequency] = useState(FREQUENCIES[0]);
 
-  function reset() {
-    setName("");
-    setEmoji(EMOJI_CHOICES[0]);
-    setCategory(CATEGORIES[0]);
-    setDiffIdx(0);
-    setFrequency(FREQUENCIES[0]);
-  }
+  // sync form when opening (for both add & edit)
+  useEffect(() => {
+    if (!open) return;
+    if (habit) {
+      setName(habit.title || "");
+      setEmoji(habit.emoji || EMOJI_CHOICES[0]);
+      setCategory(habit.category || CATEGORIES[0]);
+      const di = DIFFICULTY.findIndex((d) => d.label === habit.difficulty);
+      setDiffIdx(di >= 0 ? di : 0);
+      setFrequency(habit.frequency || FREQUENCIES[0]);
+    } else {
+      setName("");
+      setEmoji(EMOJI_CHOICES[0]);
+      setCategory(CATEGORIES[0]);
+      setDiffIdx(0);
+      setFrequency(FREQUENCIES[0]);
+    }
+  }, [open, habit]);
 
   function handleSave() {
     const d = DIFFICULTY[diffIdx];
@@ -46,7 +59,6 @@ export default function AddHabitModal({ open, onClose, onSave, saving }) {
       point_value: d.points,
       frequency,
     });
-    reset();
   }
 
   return (
@@ -60,7 +72,7 @@ export default function AddHabitModal({ open, onClose, onSave, saving }) {
       </button>
 
       <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
-        <Bow size={20} /> 新增一件小事
+        <Bow size={20} /> {editing ? "編輯小事" : "新增一件小事"}
       </h2>
       <p className="mb-[18px] text-xs text-milktea">慢慢養成喜歡的自己 🌱</p>
 
@@ -145,11 +157,19 @@ export default function AddHabitModal({ open, onClose, onSave, saving }) {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px disabled:opacity-60"
-        style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+        className="btn-cocoa mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
       >
-        {saving ? "加入中…" : "加入我的小事 ✨"}
+        {saving ? "儲存中…" : editing ? "儲存修改 ✨" : "加入我的小事 ✨"}
       </button>
+
+      {editing && (
+        <button
+          onClick={() => onDelete(habit)}
+          className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa-deep"
+        >
+          刪除這個小事
+        </button>
+      )}
     </Modal>
   );
 }

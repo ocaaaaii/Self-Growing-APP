@@ -19,7 +19,7 @@ export default function CelebrateModal({ open, onClose, title, message, badge, m
       {badge && (
         <div
           className="my-4 inline-block rounded-[18px] px-[22px] py-1.5 font-hand text-[28px] font-bold text-cocoa-deep"
-          style={{ background: "linear-gradient(135deg,#F4DDC0,#E8C9A0)" }}
+          style={{ background: "linear-gradient(135deg, rgb(var(--c-butter)), rgb(var(--c-beige)))" }}
         >
           {badge}
         </div>
@@ -27,7 +27,7 @@ export default function CelebrateModal({ open, onClose, title, message, badge, m
       <button
         onClick={onClose}
         className="mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px"
-        style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+        style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
       >
         繼續加油！
       </button>

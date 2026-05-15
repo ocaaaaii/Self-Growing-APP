@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { IFTHEN_CATEGORIES } from "@/lib/constants";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
 import IfThenCard from "./IfThenCard";
 import IfThenModal from "./IfThenModal";
-import Fab from "./Fab";
 
 const FILTERS = ["全部", ...IFTHEN_CATEGORIES];
 
@@ -32,6 +31,12 @@ export default function IfThenClient({ rules: initialRules }) {
     setEditing(rule);
     setShowModal(true);
   }
+
+  // shared FAB (in the app shell) fires this event
+  useEffect(() => {
+    window.addEventListener("app-fab", openAdd);
+    return () => window.removeEventListener("app-fab", openAdd);
+  }, []);
 
   async function handleSave(form) {
     setSaving(true);
@@ -146,7 +151,7 @@ export default function IfThenClient({ rules: initialRules }) {
             <button
               onClick={openAdd}
               className="mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold text-cream-card shadow-soft"
-              style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+              style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
             >
               建立第一個規則 💫
             </button>
@@ -174,7 +179,6 @@ export default function IfThenClient({ rules: initialRules }) {
         </div>
       </div>
 
-      <Fab onClick={openAdd} />
       <IfThenModal
         open={showModal}
         onClose={() => {

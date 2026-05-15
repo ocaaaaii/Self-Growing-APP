@@ -15,7 +15,14 @@ export default async function GrowthPage() {
   const firstOfMonth = `${year}-${pad(month + 1)}-01`;
   const lastOfMonth = `${year}-${pad(month + 1)}-${pad(lastDay)}`;
 
-  const [profileRes, habitsRes, monthLogsRes, allLogsRes] = await Promise.all([
+  const [
+    profileRes,
+    habitsRes,
+    monthLogsRes,
+    allLogsRes,
+    gratCountRes,
+    redeemCountRes,
+  ] = await Promise.all([
     supabase.from("profiles").select("total_points").eq("id", user.id).maybeSingle(),
     supabase.from("habits").select("streak").eq("user_id", user.id),
     supabase
@@ -25,6 +32,14 @@ export default async function GrowthPage() {
       .gte("completed_on", firstOfMonth)
       .lte("completed_on", lastOfMonth),
     supabase.from("habit_logs").select("completed_on").eq("user_id", user.id),
+    supabase
+      .from("gratitude_entries")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
+    supabase
+      .from("reward_history")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
   ]);
 
   // count logs per day this month
@@ -50,6 +65,8 @@ export default async function GrowthPage() {
       longestStreak={longestStreak}
       growthDays={growthDays}
       habitCount={habits.length}
+      gratitudeCount={gratCountRes.count ?? 0}
+      redeemCount={redeemCountRes.count ?? 0}
     />
   );
 }

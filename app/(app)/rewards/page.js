@@ -17,7 +17,7 @@ export default async function RewardsPage() {
       .order("created_at", { ascending: true }),
     supabase
       .from("reward_history")
-      .select("id, points_spent, redeemed_at, rewards(title, emoji)")
+      .select("id, points_spent, redeemed_at, photo_url, note, rewards(title, emoji)")
       .eq("user_id", user.id)
       .order("redeemed_at", { ascending: false })
       .limit(20),

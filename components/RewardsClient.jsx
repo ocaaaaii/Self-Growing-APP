@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { REWARD_CATEGORIES } from "@/lib/constants";
@@ -10,9 +10,8 @@ import PointsCard from "./PointsCard";
 import RewardCard from "./RewardCard";
 import AddRewardModal from "./AddRewardModal";
 import RewardConfirmModal from "./RewardConfirmModal";
-import CelebrateModal from "./CelebrateModal";
+import JoyRecordModal from "./JoyRecordModal";
 import Modal from "./Modal";
-import Fab from "./Fab";
 
 const FILTERS = ["全部", ...REWARD_CATEGORIES];
 
@@ -28,11 +27,18 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
   const [saving, setSaving] = useState(false);
   const [confirm, setConfirm] = useState(null); // {reward, affordable}
   const [busy, setBusy] = useState(false);
-  const [celebrate, setCelebrate] = useState(null);
+  const [joyRecord, setJoyRecord] = useState(null); // {historyId, rewardTitle}
   const [showHistory, setShowHistory] = useState(false);
 
   const shown =
     filter === "全部" ? rewards : rewards.filter((r) => r.category === filter);
+
+  // shared FAB (in the app shell) fires this event
+  useEffect(() => {
+    const open = () => setShowAdd(true);
+    window.addEventListener("app-fab", open);
+    return () => window.removeEventListener("app-fab", open);
+  }, []);
 
   function confetti() {
     if (!frameRef.current) return;
@@ -89,7 +95,14 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
       setRewards((rs) =>
         rs.map((r) =>
           r.id === confirm.reward.id
-            ? { ...r, redeemed_count: r.redeemed_count + 1 }
+            ? {
+                ...r,
+                redeemed_count: r.redeemed_count + 1,
+                stock:
+                  r.stock !== null && r.stock !== undefined
+                    ? Math.max(r.stock - 1, 0)
+                    : r.stock,
+              }
             : r
         )
       );
@@ -98,11 +111,9 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
       confetti();
       setTimeout(
         () =>
-          setCelebrate({
-            title: "兌換成功！",
-            message: `好好享受「${redeemed.title}」— 你值得 💕`,
-            badge: "🎀 enjoy it",
-            mood: "loving",
+          setJoyRecord({
+            historyId: row.history_id,
+            rewardTitle: redeemed.title,
           }),
         250
       );
@@ -165,7 +176,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
             <button
               onClick={() => setShowAdd(true)}
               className="mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold text-cream-card shadow-soft"
-              style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+              style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
             >
               建立第一個獎勵 🎀
             </button>
@@ -181,9 +192,15 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                 key={r.id}
                 reward={r}
                 points={points}
-                onClick={(reward, affordable) =>
-                  setConfirm({ reward, affordable })
-                }
+                onClick={(reward) => {
+                  const soldOut =
+                    reward.stock !== null &&
+                    reward.stock !== undefined &&
+                    reward.stock <= 0;
+                  const affordable =
+                    !soldOut && points >= reward.point_cost;
+                  setConfirm({ reward, affordable, soldOut });
+                }}
               />
             ))}
           </div>
@@ -193,8 +210,6 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
           <Bow size={14} /> 我有努力，所以我值得
         </div>
       </div>
-
-      <Fab onClick={() => setShowAdd(true)} />
 
       <AddRewardModal
         open={showAdd}
@@ -207,19 +222,19 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
         onClose={() => setConfirm(null)}
         reward={confirm?.reward}
         affordable={confirm?.affordable}
+        soldOut={confirm?.soldOut}
         busy={busy}
         onConfirm={handleConfirmRedeem}
       />
-      <CelebrateModal
-        open={!!celebrate}
+      <JoyRecordModal
+        open={!!joyRecord}
         onClose={() => {
-          setCelebrate(null);
+          setJoyRecord(null);
           router.refresh();
         }}
-        title={celebrate?.title}
-        message={celebrate?.message}
-        badge={celebrate?.badge}
-        mood={celebrate?.mood}
+        historyId={joyRecord?.historyId}
+        rewardTitle={joyRecord?.rewardTitle}
+        onSaved={() => router.refresh()}
       />
 
       {/* history modal */}
@@ -246,20 +261,36 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
             {history.map((h) => (
               <div
                 key={h.id}
-                className="flex items-center gap-3 rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-3"
+                className="rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-3"
               >
-                <span className="text-2xl">{h.rewards?.emoji || "🎁"}</span>
-                <div className="flex-1">
-                  <div className="text-[13px] font-semibold text-cocoa-deep">
-                    {h.rewards?.title || "獎勵"}
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{h.rewards?.emoji || "🎁"}</span>
+                  <div className="flex-1">
+                    <div className="text-[13px] font-semibold text-cocoa-deep">
+                      {h.rewards?.title || "獎勵"}
+                    </div>
+                    <div className="text-[11px] text-milktea">
+                      {new Date(h.redeemed_at).toLocaleDateString("zh-TW")}
+                    </div>
                   </div>
-                  <div className="text-[11px] text-milktea">
-                    {new Date(h.redeemed_at).toLocaleDateString("zh-TW")}
-                  </div>
+                  <span className="text-xs font-bold text-cocoa">
+                    - {h.points_spent} pt
+                  </span>
                 </div>
-                <span className="text-xs font-bold text-cocoa">
-                  - {h.points_spent} pt
-                </span>
+
+                {h.photo_url && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={h.photo_url}
+                    alt="兌換照片"
+                    className="mt-2.5 h-36 w-full rounded-xl object-cover"
+                  />
+                )}
+                {h.note && (
+                  <p className="mt-2 rounded-xl bg-cream-paper px-3 py-2 text-[12px] italic leading-relaxed text-cocoa">
+                    「{h.note}」
+                  </p>
+                )}
               </div>
             ))}
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Bow from "./Bow";
+import { ACHIEVEMENTS } from "@/lib/constants";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -9,9 +10,9 @@ const MONTH_NAMES = [
 
 // dot colour by how many habits were completed that day
 function dotClass(count) {
-  if (count >= 4) return { bg: "#A8B58E", text: "white" };   // 超棒
-  if (count >= 2) return { bg: "#D8C580", text: "#5C4332" }; // 完成大部分
-  if (count === 1) return { bg: "#D4A89E", text: "white" };  // 有完成一些
+  if (count >= 4) return "bg-sage";   // 超棒
+  if (count >= 2) return "bg-butter"; // 完成大部分
+  if (count === 1) return "bg-dusty"; // 有完成一些
   return null;
 }
 
@@ -24,6 +25,8 @@ export default function GrowthClient({
   longestStreak,
   growthDays,
   habitCount,
+  gratitudeCount = 0,
+  redeemCount = 0,
 }) {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstWeekday = new Date(year, month, 1).getDay(); // 0=Sun
@@ -32,6 +35,21 @@ export default function GrowthClient({
   const activeDays = Object.keys(dayCounts).length;
   const completionRate =
     todayDate > 0 ? Math.round((activeDays / todayDate) * 100) : 0;
+
+  // achievement unlock status, computed from the user's data
+  const stats = {
+    totalPoints,
+    longestStreak,
+    growthDays,
+    habitCount,
+    gratitudeCount,
+    redeemCount,
+  };
+  const badges = ACHIEVEMENTS.map((a) => ({
+    ...a,
+    unlocked: a.check(stats),
+  }));
+  const unlockedCount = badges.filter((b) => b.unlocked).length;
 
   const cells = [];
   for (let i = 0; i < firstWeekday; i++) cells.push(null);
@@ -75,13 +93,9 @@ export default function GrowthClient({
           return (
             <div
               key={d}
-              className="flex aspect-square items-center justify-center rounded-full text-[11px] font-medium transition"
-              style={{
-                background: dot ? dot.bg : "#D8CFC2",
-                color: dot ? dot.text : "#8B5E3F",
-                boxShadow: isToday ? "0 0 0 2px #5C4332" : "none",
-                fontWeight: isToday ? 700 : 500,
-              }}
+              className={`flex aspect-square items-center justify-center rounded-full text-[11px] transition ${
+                dot ? `${dot} text-cocoa-deep` : "bg-milktea-soft text-cocoa"
+              } ${isToday ? "font-bold ring-2 ring-cocoa-deep" : "font-medium"}`}
             >
               {d}
             </div>
@@ -92,19 +106,16 @@ export default function GrowthClient({
       {/* legend */}
       <div className="mt-3.5 flex flex-wrap gap-x-3.5 gap-y-2 rounded-2xl border border-line/40 bg-cream-card px-4 py-3.5 shadow-soft">
         {[
-          { c: "#A8B58E", label: "超棒的一天" },
-          { c: "#D8C580", label: "完成大部分" },
-          { c: "#D4A89E", label: "有完成一些" },
-          { c: "#D8CFC2", label: "還沒紀錄" },
+          { c: "bg-sage", label: "超棒的一天" },
+          { c: "bg-butter", label: "完成大部分" },
+          { c: "bg-dusty", label: "有完成一些" },
+          { c: "bg-milktea-soft", label: "還沒紀錄" },
         ].map((item) => (
           <div
             key={item.label}
             className="flex items-center gap-1.5 text-[11px] text-milktea"
           >
-            <span
-              className="h-3 w-3 rounded-full"
-              style={{ background: item.c }}
-            />
+            <span className={`h-3 w-3 rounded-full ${item.c}`} />
             {item.label}
           </div>
         ))}
@@ -135,6 +146,47 @@ export default function GrowthClient({
         <div className="font-hand text-2xl font-bold text-cocoa-deep">
           {growthDays} 天
         </div>
+      </div>
+
+      {/* achievement badges */}
+      <div className="mb-3 mt-[26px] flex items-baseline justify-between">
+        <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
+          <Bow size={18} /> 成就徽章
+          <span className="font-hand text-lg text-cocoa-soft">badges</span>
+        </h2>
+        <span className="text-xs text-milktea">
+          {unlockedCount} / {badges.length} 解鎖
+        </span>
+      </div>
+      <div className="grid grid-cols-3 gap-2.5">
+        {badges.map((b) => (
+          <div
+            key={b.key}
+            className={`flex flex-col items-center rounded-[16px] border p-2.5 text-center transition ${
+              b.unlocked
+                ? "border-line/40 bg-cream-card shadow-soft"
+                : "border-line/30 bg-cream-card/40"
+            }`}
+          >
+            <div
+              className={`text-[26px] ${
+                b.unlocked ? "" : "opacity-30 grayscale"
+              }`}
+            >
+              {b.emoji}
+            </div>
+            <div
+              className={`mt-1 text-[11px] font-semibold ${
+                b.unlocked ? "text-cocoa-deep" : "text-milktea"
+              }`}
+            >
+              {b.title}
+            </div>
+            <div className="mt-0.5 text-[9px] leading-tight text-milktea">
+              {b.desc}
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-milktea">

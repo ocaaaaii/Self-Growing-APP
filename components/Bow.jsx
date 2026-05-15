@@ -1,5 +1,9 @@
 // A little ribbon bow 🎀 — recurring decorative motif
-export default function Bow({ size = 20, fill = "#B89478", stroke = "#8B5E3F" }) {
+export default function Bow({
+  size = 20,
+  fill = "rgb(var(--c-milktea))",
+  stroke = "rgb(var(--c-cocoa))",
+}) {
   return (
     <svg
       width={size}

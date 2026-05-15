@@ -1,42 +1,44 @@
 /** @type {import('tailwindcss').Config} */
+
+// Colours reference CSS variables (RGB triplets) so the whole app
+// can be re-themed at runtime by setting [data-theme] on <html>.
+// See app/globals.css for the theme definitions.
+const v = (name) => `rgb(var(${name}) / <alpha-value>)`;
+
 module.exports = {
-  content: [
-    "./app/**/*.{js,jsx}",
-    "./components/**/*.{js,jsx}",
-  ],
+  content: ["./app/**/*.{js,jsx}", "./components/**/*.{js,jsx}"],
   theme: {
     extend: {
       colors: {
-        // Oat & cocoa palette — muted journal aesthetic
         cream: {
-          bg: "#E8DCC8",      // oat
-          paper: "#F0E5D0",   // lighter oat
-          card: "#FAF4E8",    // cream white
+          bg: v("--c-cream-bg"),
+          paper: v("--c-cream-paper"),
+          card: v("--c-cream-card"),
         },
         cocoa: {
-          DEFAULT: "#8B5E3F", // milk chocolate
-          deep: "#5C4332",    // dark cocoa
-          soft: "#A47854",    // lighter chocolate
+          DEFAULT: v("--c-cocoa"),
+          deep: v("--c-cocoa-deep"),
+          soft: v("--c-cocoa-soft"),
         },
         milktea: {
-          DEFAULT: "#B89478", // warm taupe
-          soft: "#D8CFC2",    // taupe grey
+          DEFAULT: v("--c-milktea"),
+          soft: v("--c-milktea-soft"),
         },
-        beige: "#DDD0B8",     // warm oat beige
-        cheek: "#E2A8A0",     // muted rose
-        dusty: "#D4A89E",     // dusty rose
-        sage: "#B5BFA0",      // muted sage
-        sky: "#B8C5C9",       // muted blue-grey
-        butter: "#E8D8A8",    // oat yellow
-        line: "#D8CFC2",
+        beige: v("--c-beige"),
+        cheek: v("--c-cheek"),
+        dusty: v("--c-dusty"),
+        sage: v("--c-sage"),
+        sky: v("--c-sky"),
+        butter: v("--c-butter"),
+        line: v("--c-line"),
       },
       fontFamily: {
         sans: ["Quicksand", "Noto Sans TC", "-apple-system", "sans-serif"],
         hand: ["Caveat", "cursive"],
       },
       boxShadow: {
-        soft: "0 2px 12px rgba(92, 67, 50, 0.08)",
-        lift: "0 6px 24px rgba(92, 67, 50, 0.15)",
+        soft: "0 2px 12px rgba(40, 30, 22, 0.08)",
+        lift: "0 6px 24px rgba(40, 30, 22, 0.15)",
       },
       borderRadius: {
         xl2: "22px",
@@ -69,6 +71,10 @@ module.exports = {
           "0%,100%": { transform: "translateY(0) rotate(0deg)" },
           "50%": { transform: "translateY(-2px) rotate(-5deg)" },
         },
+        pulseSoft: {
+          "0%,100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
       },
       animation: {
         fadeIn: "fadeIn 0.35s ease",
@@ -77,6 +83,7 @@ module.exports = {
         bounceIn: "bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
         floatUp: "floatUp 1.2s ease-out forwards",
         peek: "peek 4s ease-in-out infinite",
+        pulseSoft: "pulseSoft 1.5s ease-in-out infinite",
       },
     },
   },

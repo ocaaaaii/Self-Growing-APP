@@ -31,13 +31,15 @@
 3. 打開本專案的 `supabase/schema.sql`，把**整個檔案的內容**複製貼上
 4. 點右下角「Run」執行 — 看到成功訊息就完成了
 
-這會建立全部七張表（profiles、habits、habit_logs、rewards、reward_history、
-ifthen_rules、gratitude_entries）、安全規則（每個人只能看到自己的資料），
-還有打卡加點數、兌換獎勵、記錄感恩的邏輯。
+`schema.sql` 是「全部到位」的完整版 —— 七張表、安全規則、所有邏輯、
+主題欄位、獎勵庫存、兌換照片，全新安裝跑這一份就好。
 
-> **如果你之前只跑過第一階段的 schema**：不用重跑整個 `schema.sql`，
-> 只要把 `supabase/migration_phase2.sql` 的內容貼進 SQL Editor 執行一次，
-> 就會補上第二階段的四張表與功能（已有的資料不會被動到）。
+> **如果你之前已經跑過舊版 schema**：不用重跑整份，只要依序把還沒跑過的
+> migration 貼進 SQL Editor 執行一次即可（每份都安全、可重複執行）：
+> - `migration_phase2.sql` — 獎勵 / If-Then / 感恩
+> - `migration_phase3.sql` — 主題切換 + 獎勵庫存數量
+> - `migration_reward_photos.sql` — 兌換拍照 + 留言（含 Storage bucket）
+> - `fix_profiles.sql` — 修正暱稱顯示問題（如果有遇到）
 
 ### 拿到你的 API 金鑰
 
@@ -52,6 +54,19 @@ ifthen_rules、gratitude_entries）、安全規則（每個人只能看到自己
 1. 左邊選單點 **Authentication** → **Providers**
 2. 確認 **Email** 是開啟的
 3. （可選）在 **Authentication → Sign In / Up** 裡，如果你想讓朋友註冊後**不用收確認信就能直接用**，可以把「Confirm email」關掉。想保留確認信也可以，App 兩種情況都支援。
+
+### 確認 Storage bucket（兌換拍照功能用）
+
+`schema.sql` / `migration_reward_photos.sql` 會自動建立一個叫 `reward-photos`
+的 Storage bucket。執行完後可以到左邊選單 **Storage** 確認有看到它。
+有了它，兌換獎勵後就能拍照上傳、留言記錄喜悅。
+
+### （選填）AI 鼓勵金鑰
+
+mochi 在首頁的鼓勵語可以用 Anthropic API 生成個人化內容。到
+https://console.anthropic.com 申請一把金鑰，下一步填進 `.env.local` 的
+`ANTHROPIC_API_KEY`。**留空也完全沒問題** —— 沒有金鑰時 mochi 會用內建的
+鼓勵語，App 一樣正常運作。
 
 ---
 
@@ -157,4 +172,23 @@ growing-app/
 - ✅ 每日感恩三件事：首頁卡片，每天記一次 +20 點，可回顧過去 14 天
 - ✅ 成長月曆：依每天完成的習慣數上色的圓點月曆 + 活躍率 / 總點數 / 最長 streak / 成長天數
 
+**第三階段**
+- ✅ 主題切換：奶茶 / 薄荷 / 櫻花 / 夜貓 四種主題，在「我的小空間」一鍵切換，全 App 即時換色
+- ✅ 成就徽章：11 種徽章，從你的資料自動計算解鎖狀態，在成長頁展示
+- ✅ AI 鼓勵：mochi 用 Anthropic API 根據你的進度生成個人化鼓勵語（沒設金鑰會用內建語句）
+- ✅ 習慣可編輯 / 刪除（習慣卡片上的鉛筆圖示）
+- ✅ 獎勵可設定數量（庫存），換完會休息；兌換紀錄清單
+- ✅ 兌換獎勵可拍照上傳 + 留言，記錄這份喜悅
+- ✅ 狀態列顯示真實時間、固定畫面尺寸、固定底部導覽 + 內容獨立捲動
+
 設計來源是 `prototype-v1.html` 視覺原型。
+
+---
+
+## 疑難排解
+
+**問候只顯示 email 前綴、改暱稱沒反應？**
+
+早期註冊的帳號可能沒有對應的 profiles 資料列。到 Supabase SQL Editor
+執行一次 `supabase/fix_profiles.sql` 就會修好（安全、可重複執行）。
+之後回到 App 的「我的小空間」改暱稱就會正常生效。

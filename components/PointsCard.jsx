@@ -1,12 +1,12 @@
-// The featured chocolate-brown points card with bow pattern 🎀
-// Used on Home and (later) Rewards.
+// The featured points card with bow pattern 🎀  (always a saturated surface,
+// so its text uses --c-on-points which stays light in every theme).
 export default function PointsCard({ points = 0, todayDelta = null, compact = false }) {
+  const onPoints = "rgb(var(--c-on-points))";
   return (
     <div
-      className={`relative overflow-hidden rounded-xl3 text-cream-card shadow-soft ${
+      className={`surface-points relative overflow-hidden rounded-xl3 shadow-soft ${
         compact ? "px-[18px] py-[14px]" : "px-[22px] py-5"
       }`}
-      style={{ background: "linear-gradient(135deg, #9A6B4E 0%, #7E563F 100%)" }}
     >
       {/* bow pattern background */}
       <div
@@ -28,35 +28,35 @@ export default function PointsCard({ points = 0, todayDelta = null, compact = fa
       >
         <path
           d="M15 11 Q4 4 4 11 Q4 18 15 11 Q15 15 15 11 Q26 4 26 11 Q26 18 15 11 Z"
-          fill="#FAF4E8"
-          stroke="#FAF4E8"
+          fill={onPoints}
+          stroke={onPoints}
           strokeWidth="0.6"
           strokeLinejoin="round"
         />
-        <circle cx="15" cy="11" r="2.2" fill="#FAF4E8" />
+        <circle cx="15" cy="11" r="2.2" fill={onPoints} />
         <path
           d="M13 13 L11 18 M17 13 L19 18"
-          stroke="#FAF4E8"
+          stroke={onPoints}
           strokeWidth="1.4"
           strokeLinecap="round"
           fill="none"
         />
       </svg>
 
-      <div className="relative z-[2] text-[11px] font-medium tracking-[2px] text-cream-card/75">
+      <div className="relative z-[2] text-[11px] font-medium tracking-[2px] opacity-75">
         MY POINTS
       </div>
       <div
-        className={`relative z-[2] font-bold text-cream-card ${
+        className={`relative z-[2] font-bold ${
           compact ? "text-[28px]" : "text-[38px]"
         }`}
       >
         {points.toLocaleString()}
-        <span className="ml-1.5 text-sm font-medium text-cream-card/75">pt</span>
+        <span className="ml-1.5 text-sm font-medium opacity-75">pt</span>
       </div>
 
       {todayDelta !== null && todayDelta > 0 && (
-        <div className="relative z-[2] mt-2 inline-flex items-center gap-1 rounded-xl bg-cream-card/20 px-2.5 py-1 text-xs font-semibold text-cream-card backdrop-blur">
+        <div className="relative z-[2] mt-2 inline-flex items-center gap-1 rounded-xl bg-white/15 px-2.5 py-1 text-xs font-semibold backdrop-blur">
           ↑ +{todayDelta} 今天賺到的
         </div>
       )}

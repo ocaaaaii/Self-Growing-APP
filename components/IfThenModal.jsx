@@ -45,7 +45,7 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
 
       <div className="mb-3.5">
         <label className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-cocoa">
-          <span className="rounded-lg bg-[#E8D5C8] px-2 py-0.5 text-[10px] font-bold text-[#B86B6B]">
+          <span className="rounded-lg bg-dusty/40 px-2 py-0.5 text-[10px] font-bold text-cocoa">
             IF
           </span>
           當...發生
@@ -60,7 +60,7 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
 
       <div className="mb-3.5">
         <label className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-cocoa">
-          <span className="rounded-lg bg-sage px-2 py-0.5 text-[10px] font-bold text-[#5e7044]">
+          <span className="rounded-lg bg-sage px-2 py-0.5 text-[10px] font-bold text-cocoa">
             THEN
           </span>
           我就...
@@ -99,7 +99,7 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
         onClick={handleSave}
         disabled={saving}
         className="mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px disabled:opacity-60"
-        style={{ background: "linear-gradient(135deg,#A47854,#8B5E3F)" }}
+        style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
       >
         {saving ? "儲存中…" : editing ? "儲存修改 💫" : "建立規則 💫"}
       </button>
@@ -107,7 +107,7 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
       {editing && (
         <button
           onClick={() => onDelete(rule)}
-          className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-[#9c5b52]"
+          className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa-deep"
         >
           刪除這個規則
         </button>

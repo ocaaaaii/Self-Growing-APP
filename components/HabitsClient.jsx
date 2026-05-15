@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { CATEGORIES, ENCOURAGEMENTS } from "@/lib/constants";
@@ -10,7 +10,6 @@ import HabitCard from "./HabitCard";
 import CelebrateModal from "./CelebrateModal";
 import AddHabitModal from "./AddHabitModal";
 import ProfileModal from "./ProfileModal";
-import Fab from "./Fab";
 
 const FILTERS = ["全部", ...CATEGORIES];
 
@@ -25,12 +24,28 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
   const [filter, setFilter] = useState("全部");
   const [busyId, setBusyId] = useState(null);
   const [celebrate, setCelebrate] = useState(null);
-  const [showAdd, setShowAdd] = useState(false);
+  const [showHabitModal, setShowHabitModal] = useState(false);
+  const [editingHabit, setEditingHabit] = useState(null);
   const [savingHabit, setSavingHabit] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
   const shown =
     filter === "全部" ? habits : habits.filter((h) => h.category === filter);
+
+  // shared FAB (in the app shell) fires this event → open in ADD mode
+  useEffect(() => {
+    const open = () => {
+      setEditingHabit(null);
+      setShowHabitModal(true);
+    };
+    window.addEventListener("app-fab", open);
+    return () => window.removeEventListener("app-fab", open);
+  }, []);
+
+  function openEditHabit(habit) {
+    setEditingHabit(habit);
+    setShowHabitModal(true);
+  }
 
   async function toggleHabit(habit) {
     if (busyId) return;
@@ -85,28 +100,65 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
     }
   }
 
-  async function handleAddHabit(form) {
+  async function handleSaveHabit(form) {
     setSavingHabit(true);
     try {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      const { data, error } = await supabase
-        .from("habits")
-        .insert({ ...form, user_id: user.id })
-        .select()
-        .single();
-      if (error) throw error;
-      setHabits((hs) => [...hs, data]);
-      setShowAdd(false);
-      setCelebrate({
-        title: "加入啦！",
-        message: `「${data.title}」已經放進你的習慣清單 ✨`,
-        badge: "🌱 + 1 小事",
-        mood: "loving",
-      });
+
+      if (editingHabit) {
+        const { data, error } = await supabase
+          .from("habits")
+          .update(form)
+          .eq("id", editingHabit.id)
+          .select()
+          .single();
+        if (error) throw error;
+        setHabits((hs) => hs.map((h) => (h.id === editingHabit.id ? data : h)));
+      } else {
+        const { data, error } = await supabase
+          .from("habits")
+          .insert({ ...form, user_id: user.id })
+          .select()
+          .single();
+        if (error) throw error;
+        setHabits((hs) => [...hs, data]);
+        setCelebrate({
+          title: "加入啦！",
+          message: `「${data.title}」已經放進你的習慣清單 ✨`,
+          badge: "🌱 + 1 小事",
+          mood: "loving",
+        });
+      }
+      setShowHabitModal(false);
+      setEditingHabit(null);
     } catch (err) {
-      alert("沒能加進去，再試一次：" + (err?.message || ""));
+      alert("沒能儲存，再試一次：" + (err?.message || ""));
+    } finally {
+      setSavingHabit(false);
+    }
+  }
+
+  async function handleDeleteHabit(habit) {
+    if (!confirm(`確定要刪除「${habit.title}」嗎？`)) return;
+    setSavingHabit(true);
+    try {
+      const { error } = await supabase
+        .from("habits")
+        .delete()
+        .eq("id", habit.id);
+      if (error) throw error;
+      setHabits((hs) => hs.filter((h) => h.id !== habit.id));
+      setDoneSet((s) => {
+        const next = new Set(s);
+        next.delete(habit.id);
+        return next;
+      });
+      setShowHabitModal(false);
+      setEditingHabit(null);
+    } catch (err) {
+      alert("沒能刪除，再試一次：" + (err?.message || ""));
     } finally {
       setSavingHabit(false);
     }
@@ -181,6 +233,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
                 done={doneSet.has(h.id)}
                 busy={busyId === h.id}
                 onToggle={toggleHabit}
+                onEdit={openEditHabit}
               />
             ))}
           </div>
@@ -192,11 +245,15 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
         </div>
       </div>
 
-      <Fab onClick={() => setShowAdd(true)} />
       <AddHabitModal
-        open={showAdd}
-        onClose={() => setShowAdd(false)}
-        onSave={handleAddHabit}
+        open={showHabitModal}
+        onClose={() => {
+          setShowHabitModal(false);
+          setEditingHabit(null);
+        }}
+        onSave={handleSaveHabit}
+        onDelete={handleDeleteHabit}
+        habit={editingHabit}
         saving={savingHabit}
       />
       <CelebrateModal

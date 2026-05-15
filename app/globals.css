@@ -4,14 +4,135 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --cream-bg: #e8dcc8;
-  --cream-paper: #f0e5d0;
-  --cream-card: #faf4e8;
-  --cocoa: #8b5e3f;
-  --cocoa-deep: #5c4332;
-  --cocoa-soft: #a47854;
-  --grid: rgba(139, 94, 63, 0.16);
+/* ============================================================
+   THEME SYSTEM
+   Colours are RGB triplets so Tailwind can apply opacity.
+   Switch theme by setting <html data-theme="mint"> etc.
+   ============================================================ */
+
+/* 奶茶 — default (oat & cocoa) */
+:root,
+[data-theme="oat"] {
+  --c-cream-bg: 232 220 200;
+  --c-cream-paper: 240 229 208;
+  --c-cream-card: 250 244 232;
+  --c-cocoa: 139 94 63;
+  --c-cocoa-deep: 92 67 50;
+  --c-cocoa-soft: 164 120 84;
+  --c-milktea: 184 148 120;
+  --c-milktea-soft: 216 207 194;
+  --c-beige: 221 208 184;
+  --c-cheek: 226 168 160;
+  --c-dusty: 212 168 158;
+  --c-sage: 181 191 160;
+  --c-sky: 184 197 201;
+  --c-butter: 232 216 168;
+  --c-line: 216 207 194;
+  --grad-btn-from: 164 120 84;
+  --grad-btn-to: 139 94 63;
+  --grad-points-from: 154 107 78;
+  --grad-points-to: 126 86 63;
+  --grad-mascot-from: 244 213 188;
+  --grad-mascot-to: 232 191 160;
+  --grad-grat-from: 181 191 160;
+  --grad-grat-to: 152 164 133;
+  --c-on-points: 250 244 232;
+  --c-on-btn: 250 244 232;
+  --bg-glow-1: 239 227 204;
+  --bg-glow-2: 220 201 172;
+}
+
+/* 薄荷 — mint */
+[data-theme="mint"] {
+  --c-cream-bg: 223 233 224;
+  --c-cream-paper: 234 241 233;
+  --c-cream-card: 246 250 244;
+  --c-cocoa: 92 122 92;
+  --c-cocoa-deep: 58 80 58;
+  --c-cocoa-soft: 124 154 120;
+  --c-milktea: 138 165 138;
+  --c-milktea-soft: 205 218 203;
+  --c-beige: 214 226 210;
+  --c-cheek: 226 168 160;
+  --c-dusty: 176 198 176;
+  --c-sage: 160 188 162;
+  --c-sky: 178 200 198;
+  --c-butter: 224 230 168;
+  --c-line: 205 218 203;
+  --grad-btn-from: 124 154 120;
+  --grad-btn-to: 92 122 92;
+  --grad-points-from: 100 134 100;
+  --grad-points-to: 74 102 74;
+  --grad-mascot-from: 206 230 206;
+  --grad-mascot-to: 180 214 184;
+  --grad-grat-from: 160 188 162;
+  --grad-grat-to: 130 160 130;
+  --c-on-points: 246 250 244;
+  --c-on-btn: 246 250 244;
+  --bg-glow-1: 228 240 228;
+  --bg-glow-2: 205 224 206;
+}
+
+/* 櫻花 — sakura */
+[data-theme="sakura"] {
+  --c-cream-bg: 244 226 230;
+  --c-cream-paper: 250 235 238;
+  --c-cream-card: 253 246 248;
+  --c-cocoa: 170 100 112;
+  --c-cocoa-deep: 116 64 76;
+  --c-cocoa-soft: 196 130 142;
+  --c-milktea: 192 150 158;
+  --c-milktea-soft: 231 215 219;
+  --c-beige: 240 220 226;
+  --c-cheek: 230 150 162;
+  --c-dusty: 220 168 178;
+  --c-sage: 186 196 168;
+  --c-sky: 188 198 210;
+  --c-butter: 240 222 182;
+  --c-line: 231 215 219;
+  --grad-btn-from: 196 130 142;
+  --grad-btn-to: 170 100 112;
+  --grad-points-from: 182 110 126;
+  --grad-points-to: 150 86 102;
+  --grad-mascot-from: 250 220 226;
+  --grad-mascot-to: 244 198 210;
+  --grad-grat-from: 186 196 168;
+  --grad-grat-to: 158 170 142;
+  --c-on-points: 253 246 248;
+  --c-on-btn: 253 246 248;
+  --bg-glow-1: 250 230 234;
+  --bg-glow-2: 240 212 220;
+}
+
+/* 夜貓 — night (dark) */
+[data-theme="night"] {
+  --c-cream-bg: 38 34 30;
+  --c-cream-paper: 50 45 40;
+  --c-cream-card: 62 56 50;
+  --c-cocoa: 222 184 152;
+  --c-cocoa-deep: 240 230 218;
+  --c-cocoa-soft: 200 162 132;
+  --c-milktea: 168 152 136;
+  --c-milktea-soft: 86 78 70;
+  --c-beige: 78 70 62;
+  --c-cheek: 226 168 160;
+  --c-dusty: 184 134 128;
+  --c-sage: 150 168 138;
+  --c-sky: 150 166 170;
+  --c-butter: 206 188 136;
+  --c-line: 86 78 70;
+  --grad-btn-from: 200 162 132;
+  --grad-btn-to: 168 128 100;
+  --grad-points-from: 110 84 64;
+  --grad-points-to: 78 58 44;
+  --grad-mascot-from: 96 84 72;
+  --grad-mascot-to: 82 72 62;
+  --grad-grat-from: 120 138 110;
+  --grad-grat-to: 92 108 86;
+  --c-on-points: 244 232 218;
+  --c-on-btn: 44 38 32;
+  --bg-glow-1: 48 43 38;
+  --bg-glow-2: 32 29 25;
 }
 
 * {
@@ -21,20 +142,63 @@
 html,
 body {
   background:
-    radial-gradient(circle at 20% 10%, #efe3cc 0%, transparent 55%),
-    radial-gradient(circle at 80% 90%, #dcc9ac 0%, transparent 55%),
-    var(--cream-bg);
-  color: var(--cocoa-deep);
+    radial-gradient(circle at 20% 10%, rgb(var(--bg-glow-1)) 0%, transparent 55%),
+    radial-gradient(circle at 80% 90%, rgb(var(--bg-glow-2)) 0%, transparent 55%),
+    rgb(var(--c-cream-bg));
+  color: rgb(var(--c-cocoa-deep));
   min-height: 100vh;
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
-/* ---- Journal grid-paper surface (used by the app shell) ---- */
+/* ---- Journal grid-paper surface (the app shell) ---- */
 .paper {
-  background-color: var(--cream-paper);
+  background-color: rgb(var(--c-cream-paper));
   background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    linear-gradient(rgb(var(--c-cocoa) / 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--c-cocoa) / 0.14) 1px, transparent 1px);
   background-size: 28px 28px;
+  transition: background-color 0.4s ease;
+}
+
+/* ---- Themeable gradient surfaces & buttons ---- */
+.btn-cocoa {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--grad-btn-from)),
+    rgb(var(--grad-btn-to))
+  );
+  color: rgb(var(--c-on-btn));
+}
+.surface-points {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--grad-points-from)),
+    rgb(var(--grad-points-to))
+  );
+  color: rgb(var(--c-on-points));
+}
+.surface-mascot {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--grad-mascot-from)),
+    rgb(var(--grad-mascot-to))
+  );
+}
+.btn-gratitude {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--grad-grat-from)),
+    rgb(var(--grad-grat-to))
+  );
+  color: rgb(var(--c-on-points));
+}
+.celebrate-badge {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--c-butter)),
+    rgb(var(--c-beige))
+  );
+  color: rgb(var(--c-cocoa-deep));
 }
 
 /* ---- Hand-drawn highlight under text ---- */
@@ -49,7 +213,7 @@ body {
   left: 0;
   right: 0;
   height: 8px;
-  background: #e8d8a8;
+  background: rgb(var(--c-butter));
   border-radius: 4px;
   z-index: -1;
   opacity: 0.7;
@@ -71,7 +235,7 @@ body {
   font-family: "Caveat", cursive;
   font-size: 24px;
   font-weight: 700;
-  color: #8b5e3f;
+  color: rgb(var(--c-cocoa));
   z-index: 100;
   animation: floatUp 1.2s ease-out forwards;
 }
@@ -123,11 +287,15 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(92, 67, 50, 0.15));
+  filter: drop-shadow(0 2px 4px rgba(40, 30, 22, 0.15));
 }
 .mochi-wrap .cheek {
   position: absolute;
-  background: radial-gradient(ellipse, #e2a8a0 30%, transparent 70%);
+  background: radial-gradient(
+    ellipse,
+    rgb(var(--c-cheek)) 30%,
+    transparent 70%
+  );
   border-radius: 50%;
   pointer-events: none;
 }
@@ -153,7 +321,7 @@ body {
   top: 0;
   right: -8px;
   font-family: "Caveat", cursive;
-  color: var(--cocoa-soft);
+  color: rgb(var(--c-cocoa-soft));
   animation: zzzFloat 2s ease-in-out infinite;
 }
 .mochi-wrap[data-mood="sad"] .overlay.tear {
