@@ -270,7 +270,14 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                       {h.rewards?.title || "獎勵"}
                     </div>
                     <div className="text-[11px] text-milktea">
-                      {new Date(h.redeemed_at).toLocaleDateString("zh-TW")}
+                      {new Date(h.redeemed_at).toLocaleString("zh-TW", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      })}
                     </div>
                   </div>
                   <span className="text-xs font-bold text-cocoa">
