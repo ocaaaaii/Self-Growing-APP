@@ -102,7 +102,8 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
   }
 
   async function handleDeleteReward(reward) {
-    if (!confirm(`確定要刪除「${reward.title}」嗎？`)) return;
+    // 注意：用 window.confirm，因為這個元件裡有 state 叫 `confirm`，會遮蔽全域的 confirm()
+    if (!window.confirm(`確定要刪除「${reward.title}」嗎？`)) return;
     setSaving(true);
     try {
       const { error } = await supabase
@@ -183,8 +184,25 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
 
         <PointsCard points={points} compact />
 
-        {/* filter + history */}
-        <div className="no-scrollbar mb-4 mt-4 flex items-center gap-2 overflow-x-auto pb-1">
+        {/* history banner — its own row, more visible */}
+        <button
+          onClick={() => setShowHistory(true)}
+          className="mt-3 flex w-full items-center justify-between rounded-xl2 border border-line/50 bg-cream-card px-4 py-3 shadow-soft transition hover:-translate-y-px hover:shadow-lift"
+        >
+          <span className="flex items-center gap-2 text-[13px] font-semibold text-cocoa-deep">
+            <span className="text-base">🎀</span>
+            兌換紀錄
+            {history.length > 0 && (
+              <span className="rounded-full bg-beige px-2 py-0.5 text-[10px] font-bold text-cocoa">
+                {history.length}
+              </span>
+            )}
+          </span>
+          <span className="text-xs text-milktea">看回憶 →</span>
+        </button>
+
+        {/* category filter */}
+        <div className="no-scrollbar mb-4 mt-3 flex items-center gap-2 overflow-x-auto pb-1">
           {FILTERS.map((f) => (
             <button
               key={f}
@@ -198,12 +216,6 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
               {f}
             </button>
           ))}
-          <button
-            onClick={() => setShowHistory(true)}
-            className="ml-auto flex-shrink-0 rounded-2xl border border-line bg-cream-card px-3 py-[7px] text-xs font-medium text-milktea"
-          >
-            兌換紀錄
-          </button>
         </div>
 
         {/* grid */}

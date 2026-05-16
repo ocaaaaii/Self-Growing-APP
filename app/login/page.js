@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const REMEMBERED_EMAIL_KEY = "growing-app:lastEmail";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Mochi from "@/components/Mochi";
@@ -17,6 +19,22 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+
+  // 載入上次用過的 email（瀏覽器密碼管理員也會記得密碼）
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+      if (saved) setEmail(saved);
+    } catch {
+      // 隱私模式等情況可能沒有 localStorage，忽略
+    }
+  }, []);
+
+  function rememberEmail(addr) {
+    try {
+      if (addr) localStorage.setItem(REMEMBERED_EMAIL_KEY, addr);
+    } catch {}
+  }
 
   function switchMode(m) {
     setMode(m);
@@ -48,6 +66,7 @@ export default function LoginPage() {
           },
         });
         if (error) throw error;
+        rememberEmail(email);
         if (data.session) {
           router.push("/home");
           router.refresh();
@@ -61,6 +80,7 @@ export default function LoginPage() {
           password,
         });
         if (error) throw error;
+        rememberEmail(email);
         router.push("/home");
         router.refresh();
       }
@@ -144,6 +164,7 @@ export default function LoginPage() {
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 placeholder="想讓 mochi 怎麼稱呼你？"
+                autoComplete="nickname"
                 className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
               />
             </div>
@@ -158,6 +179,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
+              autoComplete="email"
               className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
             />
           </div>
@@ -174,6 +196,9 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="至少 6 個字"
+                autoComplete={
+                  mode === "signup" ? "new-password" : "current-password"
+                }
                 className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
               />
             </div>
