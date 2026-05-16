@@ -600,3 +600,11 @@ begin
   return next;
 end;
 $$;
+
+
+-- ============================================================
+--  AI 留言（與 migration_ai_comment.sql 相同）
+-- ============================================================
+
+alter table public.reward_history
+  add column if not exists ai_comment text;

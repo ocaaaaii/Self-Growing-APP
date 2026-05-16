@@ -8,7 +8,7 @@ const IMG_BG = {
 };
 
 // One reward in the 2-column grid.
-export default function RewardCard({ reward, points, onClick }) {
+export default function RewardCard({ reward, points, onClick, onEdit }) {
   // stock: null = unlimited; 0 = sold out
   const soldOut = reward.stock !== null && reward.stock !== undefined && reward.stock <= 0;
   const affordable = !soldOut && points >= reward.point_cost;
@@ -22,6 +22,27 @@ export default function RewardCard({ reward, points, onClick }) {
         affordable ? "hover:-translate-y-0.5 hover:shadow-lift" : ""
       }`}
     >
+      {/* edit button — top-left */}
+      {onEdit && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(reward);
+          }}
+          className="absolute left-2 top-2 z-[1] flex h-6 w-6 items-center justify-center rounded-full bg-cream-paper text-milktea transition hover:bg-beige hover:text-cocoa"
+          aria-label="編輯"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 20h4L18.5 9.5a2.12 2.12 0 00-3-3L5 17v3z"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      )}
+
       {/* stock badge */}
       {reward.stock !== null && reward.stock !== undefined && (
         <div

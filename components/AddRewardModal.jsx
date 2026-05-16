@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import Bow from "./Bow";
 import { REWARD_CATEGORIES, REWARD_EMOJI_CHOICES } from "@/lib/constants";
@@ -25,22 +25,42 @@ const COST_PRESETS = [100, 200, 350, 500, 800, 1200];
 // null = 無限
 const STOCK_PRESETS = [null, 1, 3, 5, 10];
 
-export default function AddRewardModal({ open, onClose, onSave, saving }) {
+// Add OR edit a reward. Pass `reward` to edit, omit to add.
+export default function AddRewardModal({
+  open,
+  onClose,
+  onSave,
+  onDelete,
+  reward,
+  saving,
+}) {
+  const editing = !!reward;
   const [title, setTitle] = useState("");
   const [emoji, setEmoji] = useState(REWARD_EMOJI_CHOICES[0]);
   const [category, setCategory] = useState(REWARD_CATEGORIES[0]);
   const [cost, setCost] = useState(200);
-  const [stock, setStock] = useState(null); // null = 無限
+  const [stock, setStock] = useState(null);
   const [description, setDescription] = useState("");
 
-  function reset() {
-    setTitle("");
-    setEmoji(REWARD_EMOJI_CHOICES[0]);
-    setCategory(REWARD_CATEGORIES[0]);
-    setCost(200);
-    setStock(null);
-    setDescription("");
-  }
+  // sync form when opening (for both add & edit)
+  useEffect(() => {
+    if (!open) return;
+    if (reward) {
+      setTitle(reward.title || "");
+      setEmoji(reward.emoji || REWARD_EMOJI_CHOICES[0]);
+      setCategory(reward.category || REWARD_CATEGORIES[0]);
+      setCost(reward.point_cost ?? 200);
+      setStock(reward.stock ?? null);
+      setDescription(reward.description || "");
+    } else {
+      setTitle("");
+      setEmoji(REWARD_EMOJI_CHOICES[0]);
+      setCategory(REWARD_CATEGORIES[0]);
+      setCost(200);
+      setStock(null);
+      setDescription("");
+    }
+  }, [open, reward]);
 
   function handleSave() {
     onSave({
@@ -51,7 +71,6 @@ export default function AddRewardModal({ open, onClose, onSave, saving }) {
       stock: stock === null ? null : Math.max(1, Number(stock) || 1),
       description: description.trim() || null,
     });
-    reset();
   }
 
   return (
@@ -65,7 +84,7 @@ export default function AddRewardModal({ open, onClose, onSave, saving }) {
       </button>
 
       <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
-        <Bow size={20} /> 新增一個獎勵
+        <Bow size={20} /> {editing ? "編輯獎勵" : "新增一個獎勵"}
       </h2>
       <p className="mb-[18px] text-xs text-milktea">你有努力，所以你值得 🎀</p>
 
@@ -171,8 +190,17 @@ export default function AddRewardModal({ open, onClose, onSave, saving }) {
         disabled={saving}
         className="btn-cocoa mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
       >
-        {saving ? "加入中…" : "加入獎勵清單 🎀"}
+        {saving ? "儲存中…" : editing ? "儲存修改 🎀" : "加入獎勵清單 🎀"}
       </button>
+
+      {editing && (
+        <button
+          onClick={() => onDelete(reward)}
+          className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa-deep"
+        >
+          刪除這個獎勵
+        </button>
+      )}
     </Modal>
   );
 }

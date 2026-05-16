@@ -39,6 +39,7 @@
 > - `migration_phase2.sql` — 獎勵 / If-Then / 感恩
 > - `migration_phase3.sql` — 主題切換 + 獎勵庫存數量
 > - `migration_reward_photos.sql` — 兌換拍照 + 留言（含 Storage bucket）
+> - `migration_ai_comment.sql` — 兌換照片的 AI 影像辨識留言
 > - `fix_profiles.sql` — 修正暱稱顯示問題（如果有遇到）
 
 ### 拿到你的 API 金鑰
@@ -192,3 +193,17 @@ growing-app/
 早期註冊的帳號可能沒有對應的 profiles 資料列。到 Supabase SQL Editor
 執行一次 `supabase/fix_profiles.sql` 就會修好（安全、可重複執行）。
 之後回到 App 的「我的小空間」改暱稱就會正常生效。
+
+**忘記密碼怎麼辦？**
+
+登入頁有「忘記密碼？」連結 — 輸入 email、按「寄送重設信」就會收到信，
+點信裡的連結會帶你到 `/reset-password` 設定新密碼。
+
+> 上架到 Vercel 後，記得在 Supabase **Authentication → URL Configuration**
+> 的 **Redirect URLs** 加上 `https://你的網址/auth/callback`，重設信的連結
+> 才能正確導回 App。
+
+**兌換照片沒看到 AI 留言？**
+
+確認你已經跑過 `migration_ai_comment.sql`，並且在 `.env.local` 設了
+`ANTHROPIC_API_KEY`。沒設金鑰也不會壞掉，只是會用內建的鼓勵語代替。

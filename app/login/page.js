@@ -10,13 +10,19 @@ export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [mode, setMode] = useState("login"); // "login" | "signup"
+  const [mode, setMode] = useState("login"); // "login" | "signup" | "reset"
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+
+  function switchMode(m) {
+    setMode(m);
+    setError("");
+    setNotice("");
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -25,7 +31,14 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      if (mode === "signup") {
+      if (mode === "reset") {
+        // 寄送重設密碼信
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+        });
+        if (error) throw error;
+        setNotice("重設密碼的信已寄到你的信箱囉～點開信裡的連結就能設定新密碼 💌");
+      } else if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -35,7 +48,6 @@ export default function LoginPage() {
           },
         });
         if (error) throw error;
-        // If email confirmation is OFF, a session exists right away.
         if (data.session) {
           router.push("/home");
           router.refresh();
@@ -54,7 +66,6 @@ export default function LoginPage() {
       }
     } catch (err) {
       const msg = err?.message || "發生了一點問題，再試一次看看";
-      // friendlier messages for common cases
       if (msg.includes("Invalid login credentials")) {
         setError("email 或密碼不太對喔，再檢查一下");
       } else if (msg.includes("already registered")) {
@@ -69,13 +80,15 @@ export default function LoginPage() {
     }
   }
 
+  const isReset = mode === "reset";
+
   return (
     <main className="flex min-h-screen items-center justify-center px-3 py-6">
-      <div className="paper relative w-full max-w-[390px] overflow-hidden rounded-[36px] px-7 pb-10 pt-14 shadow-[0_8px_32px_rgba(92,67,50,0.18)]">
+      <div className="paper relative w-full max-w-[390px] overflow-hidden rounded-[36px] px-7 pb-10 pt-14 shadow-[0_8px_32px_rgba(40,30,22,0.2)]">
         {/* mascot + title */}
         <div className="mb-7 flex flex-col items-center text-center">
           <div className="animate-floaty">
-            <Mochi mood="happy" size={96} />
+            <Mochi mood={isReset ? "calm" : "happy"} size={96} />
           </div>
           <h1 className="mt-3 flex items-center gap-1.5 text-2xl font-semibold text-cocoa-deep">
             <Bow size={22} /> 慢慢變好
@@ -85,29 +98,38 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* mode toggle */}
-        <div className="mb-5 flex gap-1 rounded-2xl bg-beige/60 p-1">
-          {[
-            { k: "login", label: "登入" },
-            { k: "signup", label: "註冊" },
-          ].map((t) => (
-            <button
-              key={t.k}
-              onClick={() => {
-                setMode(t.k);
-                setError("");
-                setNotice("");
-              }}
-              className={`flex-1 rounded-xl py-2 text-sm font-semibold transition ${
-                mode === t.k
-                  ? "bg-cream-card text-cocoa-deep shadow-soft"
-                  : "text-milktea"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
+        {/* mode toggle — hidden in reset mode */}
+        {!isReset && (
+          <div className="mb-5 flex gap-1 rounded-2xl bg-beige/60 p-1">
+            {[
+              { k: "login", label: "登入" },
+              { k: "signup", label: "註冊" },
+            ].map((t) => (
+              <button
+                key={t.k}
+                onClick={() => switchMode(t.k)}
+                className={`flex-1 rounded-xl py-2 text-sm font-semibold transition ${
+                  mode === t.k
+                    ? "bg-cream-card text-cocoa-deep shadow-soft"
+                    : "text-milktea"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {isReset && (
+          <div className="mb-4 text-center">
+            <h2 className="text-base font-semibold text-cocoa-deep">
+              忘記密碼了嗎？
+            </h2>
+            <p className="mt-1 text-xs text-milktea">
+              沒關係～輸入 email，我們寄一封重設信給你
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           {mode === "signup" && (
@@ -140,20 +162,22 @@ export default function LoginPage() {
             />
           </div>
 
-          <div>
-            <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-              密碼
-            </label>
-            <input
-              type="password"
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="至少 6 個字"
-              className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
-            />
-          </div>
+          {!isReset && (
+            <div>
+              <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+                密碼
+              </label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="至少 6 個字"
+                className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
+              />
+            </div>
+          )}
 
           {error && (
             <div className="rounded-xl bg-dusty/25 px-3 py-2 text-xs text-cocoa-deep">
@@ -169,22 +193,43 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-1 w-full rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px disabled:opacity-60"
-            style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
+            className="btn-cocoa mt-1 w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
           >
             {loading
               ? "請稍等…"
+              : isReset
+              ? "寄送重設信 💌"
               : mode === "signup"
               ? "建立我的帳號 🌱"
               : "進來繼續成長 ✨"}
           </button>
         </form>
 
-        <p className="mt-5 text-center text-[11px] leading-relaxed text-milktea">
-          {mode === "signup"
-            ? "註冊就會有一個只屬於你的成長空間"
-            : "歡迎回來，mochi 一直在等你"}
-        </p>
+        {/* footer links */}
+        {isReset ? (
+          <button
+            onClick={() => switchMode("login")}
+            className="mt-4 w-full text-center text-xs font-medium text-cocoa-soft"
+          >
+            ← 返回登入
+          </button>
+        ) : (
+          <>
+            {mode === "login" && (
+              <button
+                onClick={() => switchMode("reset")}
+                className="mt-4 w-full text-center text-xs font-medium text-cocoa-soft"
+              >
+                忘記密碼？
+              </button>
+            )}
+            <p className="mt-3 text-center text-[11px] leading-relaxed text-milktea">
+              {mode === "signup"
+                ? "註冊就會有一個只屬於你的成長空間"
+                : "歡迎回來，mochi 一直在等你"}
+            </p>
+          </>
+        )}
       </div>
     </main>
   );

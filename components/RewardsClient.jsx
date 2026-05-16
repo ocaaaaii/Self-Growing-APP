@@ -24,6 +24,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
   const [rewards, setRewards] = useState(initialRewards);
   const [filter, setFilter] = useState("全部");
   const [showAdd, setShowAdd] = useState(false);
+  const [editingReward, setEditingReward] = useState(null);
   const [saving, setSaving] = useState(false);
   const [confirm, setConfirm] = useState(null); // {reward, affordable}
   const [busy, setBusy] = useState(false);
@@ -33,12 +34,20 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
   const shown =
     filter === "全部" ? rewards : rewards.filter((r) => r.category === filter);
 
-  // shared FAB (in the app shell) fires this event
+  // shared FAB (in the app shell) fires this event → open in ADD mode
   useEffect(() => {
-    const open = () => setShowAdd(true);
+    const open = () => {
+      setEditingReward(null);
+      setShowAdd(true);
+    };
     window.addEventListener("app-fab", open);
     return () => window.removeEventListener("app-fab", open);
   }, []);
+
+  function openEditReward(reward) {
+    setEditingReward(reward);
+    setShowAdd(true);
+  }
 
   function confetti() {
     if (!frameRef.current) return;
@@ -56,22 +65,56 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
     });
   }
 
-  async function handleAddReward(form) {
+  async function handleSaveReward(form) {
     setSaving(true);
     try {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      const { data, error } = await supabase
-        .from("rewards")
-        .insert({ ...form, user_id: user.id })
-        .select()
-        .single();
-      if (error) throw error;
-      setRewards((rs) => [...rs, data]);
+
+      if (editingReward) {
+        const { data, error } = await supabase
+          .from("rewards")
+          .update(form)
+          .eq("id", editingReward.id)
+          .select()
+          .single();
+        if (error) throw error;
+        setRewards((rs) =>
+          rs.map((r) => (r.id === editingReward.id ? data : r))
+        );
+      } else {
+        const { data, error } = await supabase
+          .from("rewards")
+          .insert({ ...form, user_id: user.id })
+          .select()
+          .single();
+        if (error) throw error;
+        setRewards((rs) => [...rs, data]);
+      }
       setShowAdd(false);
+      setEditingReward(null);
     } catch (err) {
-      alert("沒能加進去，再試一次：" + (err?.message || ""));
+      alert("沒能儲存，再試一次：" + (err?.message || ""));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDeleteReward(reward) {
+    if (!confirm(`確定要刪除「${reward.title}」嗎？`)) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("rewards")
+        .delete()
+        .eq("id", reward.id);
+      if (error) throw error;
+      setRewards((rs) => rs.filter((r) => r.id !== reward.id));
+      setShowAdd(false);
+      setEditingReward(null);
+    } catch (err) {
+      alert("沒能刪除，再試一次：" + (err?.message || ""));
     } finally {
       setSaving(false);
     }
@@ -192,6 +235,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                 key={r.id}
                 reward={r}
                 points={points}
+                onEdit={openEditReward}
                 onClick={(reward) => {
                   const soldOut =
                     reward.stock !== null &&
@@ -213,8 +257,13 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
 
       <AddRewardModal
         open={showAdd}
-        onClose={() => setShowAdd(false)}
-        onSave={handleAddReward}
+        onClose={() => {
+          setShowAdd(false);
+          setEditingReward(null);
+        }}
+        onSave={handleSaveReward}
+        onDelete={handleDeleteReward}
+        reward={editingReward}
         saving={saving}
       />
       <RewardConfirmModal
@@ -296,6 +345,11 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                 {h.note && (
                   <p className="mt-2 rounded-xl bg-cream-paper px-3 py-2 text-[12px] italic leading-relaxed text-cocoa">
                     「{h.note}」
+                  </p>
+                )}
+                {h.ai_comment && (
+                  <p className="mt-2 rounded-xl bg-beige/60 px-3 py-2 text-[12px] leading-relaxed text-cocoa-deep">
+                    🐻💬 {h.ai_comment}
                   </p>
                 )}
               </div>
