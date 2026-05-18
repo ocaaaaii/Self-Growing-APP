@@ -104,6 +104,99 @@
   --bg-glow-2: 240 212 220;
 }
 
+/* 深海 — deep (ocean blue) */
+[data-theme="deep"] {
+  --c-cream-bg: 208 218 230;
+  --c-cream-paper: 220 228 240;
+  --c-cream-card: 236 242 250;
+  --c-cocoa: 64 95 128;
+  --c-cocoa-deep: 38 62 92;
+  --c-cocoa-soft: 95 126 158;
+  --c-milktea: 128 152 178;
+  --c-milktea-soft: 194 208 222;
+  --c-beige: 208 220 234;
+  --c-cheek: 148 185 214;
+  --c-dusty: 158 178 200;
+  --c-sage: 88 158 190;
+  --c-sky: 148 190 208;
+  --c-butter: 206 180 128;
+  --c-line: 194 208 222;
+  --grad-btn-from: 95 130 165;
+  --grad-btn-to: 64 95 128;
+  --grad-points-from: 58 95 130;
+  --grad-points-to: 38 68 105;
+  --grad-mascot-from: 200 220 238;
+  --grad-mascot-to: 178 204 226;
+  --grad-grat-from: 88 158 190;
+  --grad-grat-to: 60 130 162;
+  --c-on-points: 236 242 250;
+  --c-on-btn: 236 242 250;
+  --bg-glow-1: 218 230 244;
+  --bg-glow-2: 198 214 232;
+}
+
+/* 碳黑 — carbon (charcoal + amber) */
+[data-theme="carbon"] {
+  --c-cream-bg: 24 22 20;
+  --c-cream-paper: 34 31 28;
+  --c-cream-card: 46 42 38;
+  --c-cocoa: 210 175 135;
+  --c-cocoa-deep: 235 205 170;
+  --c-cocoa-soft: 185 150 110;
+  --c-milktea: 155 135 115;
+  --c-milktea-soft: 72 64 56;
+  --c-beige: 62 56 48;
+  --c-cheek: 218 132 72;
+  --c-dusty: 175 118 65;
+  --c-sage: 200 158 88;
+  --c-sky: 120 148 162;
+  --c-butter: 210 162 72;
+  --c-line: 72 64 56;
+  --grad-btn-from: 200 145 72;
+  --grad-btn-to: 162 108 44;
+  --grad-points-from: 106 78 50;
+  --grad-points-to: 74 54 34;
+  --grad-mascot-from: 90 80 68;
+  --grad-mascot-to: 76 68 58;
+  --grad-grat-from: 175 138 80;
+  --grad-grat-to: 140 106 55;
+  --c-on-points: 235 205 170;
+  --c-on-btn: 40 34 28;
+  --bg-glow-1: 42 38 32;
+  --bg-glow-2: 28 24 20;
+}
+
+/* 森林 — forest (deep green + earthy bark) */
+[data-theme="forest"] {
+  --c-cream-bg: 204 218 204;
+  --c-cream-paper: 218 230 216;
+  --c-cream-card: 236 246 234;
+  --c-cocoa: 62 95 65;
+  --c-cocoa-deep: 36 62 40;
+  --c-cocoa-soft: 88 122 90;
+  --c-milktea: 115 145 115;
+  --c-milktea-soft: 188 208 186;
+  --c-beige: 200 218 196;
+  --c-cheek: 165 142 108;
+  --c-dusty: 150 130 100;
+  --c-sage: 96 145 98;
+  --c-sky: 128 165 158;
+  --c-butter: 195 180 135;
+  --c-line: 188 208 186;
+  --grad-btn-from: 88 128 92;
+  --grad-btn-to: 60 98 64;
+  --grad-points-from: 56 92 60;
+  --grad-points-to: 38 68 42;
+  --grad-mascot-from: 202 225 200;
+  --grad-mascot-to: 178 210 178;
+  --grad-grat-from: 96 145 98;
+  --grad-grat-to: 68 118 72;
+  --c-on-points: 236 246 234;
+  --c-on-btn: 236 246 234;
+  --bg-glow-1: 222 238 220;
+  --bg-glow-2: 200 220 198;
+}
+
 /* 夜貓 — night (dark) */
 [data-theme="night"] {
   --c-cream-bg: 38 34 30;

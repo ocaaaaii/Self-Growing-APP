@@ -126,8 +126,27 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
         <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
           主題色 {themeSaving && <span className="text-milktea">· 儲存中…</span>}
         </label>
-        <div className="grid grid-cols-4 gap-2">
-          {THEMES.map((t) => (
+        {/* 前四個（女生 / 中性）放第一排，後三個（男生偏好）放第二排 */}
+        <div className="mb-1.5 grid grid-cols-4 gap-2">
+          {THEMES.slice(0, 4).map((t) => (
+            <button
+              key={t.key}
+              onClick={() => pickTheme(t.key)}
+              className={`flex flex-col items-center gap-1 rounded-[14px] border-2 py-2.5 transition ${
+                theme === t.key
+                  ? "border-cocoa bg-beige"
+                  : "border-line bg-cream-card"
+              }`}
+            >
+              <span className="text-xl">{t.emoji}</span>
+              <span className="text-[11px] font-medium text-cocoa-deep">
+                {t.label}
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {THEMES.slice(4).map((t) => (
             <button
               key={t.key}
               onClick={() => pickTheme(t.key)}
