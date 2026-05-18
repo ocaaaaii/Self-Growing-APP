@@ -16,6 +16,7 @@ export default function HabitCard({
   busy,
   onToggle,
   onEdit,
+  onCalendar,   // 有傳才顯示日曆按鈕
   showMeta = true,
 }) {
   const bgClass = ICON_BG[habit.category] || "bg-beige";
@@ -57,6 +58,22 @@ export default function HabitCard({
         )}
       </div>
 
+      {onCalendar && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onCalendar(habit);
+          }}
+          className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-milktea transition hover:bg-beige hover:text-cocoa"
+          aria-label="打卡日曆"
+        >
+          {/* calendar icon */}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.8"/>
+            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          </svg>
+        </button>
+      )}
       {onEdit && (
         <button
           onClick={(e) => {

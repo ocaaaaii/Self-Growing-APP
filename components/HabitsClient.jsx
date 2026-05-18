@@ -10,6 +10,7 @@ import HabitCard from "./HabitCard";
 import CelebrateModal from "./CelebrateModal";
 import AddHabitModal from "./AddHabitModal";
 import ProfileModal from "./ProfileModal";
+import HabitCalendarModal from "./HabitCalendarModal";
 
 const FILTERS = ["全部", ...CATEGORIES];
 
@@ -28,6 +29,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
   const [editingHabit, setEditingHabit] = useState(null);
   const [savingHabit, setSavingHabit] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [calendarHabit, setCalendarHabit] = useState(null);
 
   const shown =
     filter === "全部" ? habits : habits.filter((h) => h.category === filter);
@@ -234,6 +236,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
                 busy={busyId === h.id}
                 onToggle={toggleHabit}
                 onEdit={openEditHabit}
+                onCalendar={(habit) => setCalendarHabit(habit)}
               />
             ))}
           </div>
@@ -271,6 +274,11 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
         open={showProfile}
         onClose={() => setShowProfile(false)}
         currentNickname={nickname}
+      />
+      <HabitCalendarModal
+        open={!!calendarHabit}
+        onClose={() => setCalendarHabit(null)}
+        habit={calendarHabit}
       />
     </div>
   );

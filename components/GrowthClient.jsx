@@ -3,6 +3,106 @@
 import Bow from "./Bow";
 import { ACHIEVEMENTS } from "@/lib/constants";
 
+// SVG 折線圖元件（過去 14 天每日點數）
+function PointsChart({ data }) {
+  if (!data || data.length < 2) return null;
+
+  const W = 320, H = 100;
+  const PL = 28, PR = 8, PT = 8, PB = 22;
+  const chartW = W - PL - PR;
+  const chartH = H - PT - PB;
+  const n = data.length;
+
+  const values = data.map((d) => d.pts);
+  const maxV = Math.max(...values, 5);
+
+  const px = (i) => PL + (i / (n - 1)) * chartW;
+  const py = (v) => PT + chartH - (v / maxV) * chartH;
+
+  const linePoints = data.map((d, i) => `${px(i)},${py(d.pts)}`).join(" ");
+  const areaPoints = `${px(0)},${py(0)} ${linePoints} ${px(n - 1)},${py(0)}`;
+
+  // Y 刻度：0、半、最大
+  const yTicks = [0, Math.round(maxV / 2), maxV];
+  // X 標籤：顯示第 1、第 7、第 14 天
+  const xLabels = [0, 6, 13].filter((i) => i < n).map((i) => ({
+    i,
+    label: data[i]?.date?.slice(5).replace("-", "/") ?? "",
+  }));
+
+  return (
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      style={{ width: "100%", height: H, display: "block" }}
+      aria-label="過去 14 天點數趨勢"
+    >
+      {/* Y 參考線 */}
+      {yTicks.slice(1).map((v) => (
+        <line
+          key={v}
+          x1={PL} x2={W - PR}
+          y1={py(v)} y2={py(v)}
+          stroke="rgba(0,0,0,0.07)"
+          strokeWidth="1"
+          strokeDasharray="3 3"
+        />
+      ))}
+
+      {/* 面積填色 */}
+      <polygon
+        points={areaPoints}
+        style={{ fill: "rgb(var(--c-sage) / 0.18)" }}
+      />
+
+      {/* 折線 */}
+      <polyline
+        points={linePoints}
+        style={{ stroke: "rgb(var(--c-sage))", fill: "none" }}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+
+      {/* 資料點 */}
+      {data.map((d, i) => (
+        <circle
+          key={i}
+          cx={px(i)} cy={py(d.pts)} r={d.pts > 0 ? 3 : 2}
+          style={{ fill: d.pts > 0 ? "rgb(var(--c-sage))" : "rgb(var(--c-milktea-soft))" }}
+          stroke="white"
+          strokeWidth="1.5"
+        />
+      ))}
+
+      {/* Y 軸標籤 */}
+      {yTicks.map((v) => (
+        <text
+          key={v}
+          x={PL - 4} y={py(v) + 4}
+          textAnchor="end"
+          fontSize="8"
+          style={{ fill: "rgb(var(--c-milktea))" }}
+        >
+          {v}
+        </text>
+      ))}
+
+      {/* X 軸標籤 */}
+      {xLabels.map(({ i, label }) => (
+        <text
+          key={i}
+          x={px(i)} y={H - 4}
+          textAnchor="middle"
+          fontSize="8"
+          style={{ fill: "rgb(var(--c-milktea))" }}
+        >
+          {label}
+        </text>
+      ))}
+    </svg>
+  );
+}
+
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
@@ -27,6 +127,7 @@ export default function GrowthClient({
   habitCount,
   gratitudeCount = 0,
   redeemCount = 0,
+  dailyPoints = [],
 }) {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstWeekday = new Date(year, month, 1).getDay(); // 0=Sun
@@ -147,6 +248,24 @@ export default function GrowthClient({
           {growthDays} 天
         </div>
       </div>
+
+      {/* 點數趨勢折線圖 */}
+      {dailyPoints.length >= 2 && (
+        <>
+          <div className="mb-3 mt-[26px] flex items-baseline justify-between">
+            <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
+              <Bow size={18} /> 點數趨勢
+              <span className="font-hand text-lg text-cocoa-soft">14 days</span>
+            </h2>
+            <span className="text-xs text-milktea">
+              最高 {Math.max(...dailyPoints.map((d) => d.pts))} pt / 天
+            </span>
+          </div>
+          <div className="rounded-xl2 border border-line/40 bg-cream-card px-3 pb-2 pt-3 shadow-soft">
+            <PointsChart data={dailyPoints} />
+          </div>
+        </>
+      )}
 
       {/* achievement badges */}
       <div className="mb-3 mt-[26px] flex items-baseline justify-between">

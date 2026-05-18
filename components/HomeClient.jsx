@@ -12,6 +12,8 @@ import CelebrateModal from "./CelebrateModal";
 import AddHabitModal from "./AddHabitModal";
 import GratitudeCard from "./GratitudeCard";
 import ReflectionModal from "./ReflectionModal";
+import RestDayModal from "./RestDayModal";
+import WeeklyReviewModal from "./WeeklyReviewModal";
 import Modal from "./Modal";
 
 // 判斷某個習慣今天是否應該顯示（client-side 版本，供新增/編輯後使用）
@@ -46,6 +48,10 @@ export default function HomeClient({
   yesterdayNeedsReflection,
   yesterdayIncompleteHabits,
   yesterdayStr,
+  todayIsRestDay: initialRestDay,
+  isSunday,
+  weekStart,
+  weeklyReviewDone: initialWeeklyReviewDone,
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -86,25 +92,51 @@ export default function HomeClient({
   const [showYesterdayReflection, setShowYesterdayReflection] = useState(false);
   const [yesterdayReflectionDone, setYesterdayReflectionDone] = useState(false);
 
+  // rest day
+  const [isRestDay, setIsRestDay] = useState(initialRestDay);
+  const [showRestDay, setShowRestDay] = useState(false);
+  const [savingRestDay, setSavingRestDay] = useState(false);
+
+  // weekly review
+  const [showWeeklyReview, setShowWeeklyReview] = useState(false);
+  const [savingWeeklyReview, setSavingWeeklyReview] = useState(false);
+  const [weeklyReviewDoneState, setWeeklyReviewDoneState] = useState(initialWeeklyReviewDone);
+  const weeklyReviewShownRef = useRef(false);
+
   // 只計今天應顯示習慣中已完成的數量
   const doneCount = habits.filter((h) => doneSet.has(h.id)).length;
   const totalCount = habits.length;
   const incompleteHabits = habits.filter((h) => !doneSet.has(h.id));
 
-  // 晚上 23:55 後若有未完成習慣、且今天還沒復盤 → 自動彈出一次
+  // 週日 20:00 後若還沒做本週回顧 → 自動彈出一次
+  useEffect(() => {
+    if (weeklyReviewShownRef.current) return;
+    if (!isSunday) return;
+    if (weeklyReviewDoneState) return;
+    if (new Date().getHours() < 20) return;
+
+    const timer = setTimeout(() => {
+      setShowWeeklyReview(true);
+      weeklyReviewShownRef.current = true;
+    }, 3000); // 比 reflection 晚一點，不要同時彈
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 晚上 23:55 後若有未完成習慣、且今天還沒復盤、且不是休息日 → 自動彈出一次
   useEffect(() => {
     if (reflectionShownRef.current) return;
     if (reflectionDone) return;
+    if (isRestDay) return; // 休息日不彈
     if (totalCount === 0) return;
 
     const now = new Date();
-    const hour = now.getHours();
-    const minute = now.getMinutes();
-    const isLateEnough = hour === 23 && minute >= 55;
-    if (!isLateEnough) return; // 23:55 之前不彈
+    const isLateEnough = now.getHours() === 23 && now.getMinutes() >= 55;
+    if (!isLateEnough) return;
 
     const incomplete = habits.filter((h) => !doneSet.has(h.id));
-    if (incomplete.length === 0) return; // 全做完就不彈
+    if (incomplete.length === 0) return;
 
     const timer = setTimeout(() => {
       setShowReflection(true);
@@ -409,11 +441,74 @@ export default function HomeClient({
     }
   }
 
-  // 是否顯示今晚復盤提示條（23:55 後、有未做完、還沒復盤）
+  async function handleSaveWeeklyReview(proudMoment) {
+    setSavingWeeklyReview(true);
+    try {
+      const { data, error } = await supabase.rpc("save_weekly_review", {
+        p_week_start: weekStart,
+        p_proud_moment: proudMoment,
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row?.already_done) {
+        setPoints(row?.new_total ?? points + 15);
+        setTodayDelta((d) => d + 15);
+      }
+      setWeeklyReviewDoneState(true);
+      setShowWeeklyReview(false);
+      setTimeout(
+        () =>
+          setCelebrate({
+            title: "本週回顧完成 🌸",
+            message: "看見自己的成長，本身就是一種力量。下週繼續加油 🌱",
+            badge: row?.already_done ? "🌸 本週已回顧" : "+15 pt",
+            mood: "loving",
+          }),
+        200
+      );
+    } catch (err) {
+      alert("沒能儲存，再試一次：" + (err?.message || ""));
+    } finally {
+      setSavingWeeklyReview(false);
+    }
+  }
+
+  async function handleSaveRestDay(reason) {
+    setSavingRestDay(true);
+    try {
+      const { data, error } = await supabase.rpc("save_rest_day", {
+        p_reason: reason,
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row?.already_done) {
+        setPoints(row?.new_total ?? points + 5);
+        setTodayDelta((d) => d + 5);
+      }
+      setIsRestDay(true);
+      setShowRestDay(false);
+      setTimeout(
+        () =>
+          setCelebrate({
+            title: "好好休息 🛁",
+            message: "今天的請假已記下。休息也是照顧自己的一部分。",
+            badge: row?.already_done ? "🛁 今天已請假" : "+5 pt",
+            mood: "loving",
+          }),
+        200
+      );
+    } catch (err) {
+      alert("沒能記下來，再試一次：" + (err?.message || ""));
+    } finally {
+      setSavingRestDay(false);
+    }
+  }
+
+  // 是否顯示今晚復盤提示條（23:55 後、有未做完、還沒復盤、不是休息日）
   const now = new Date();
   const isLateNight = now.getHours() === 23 && now.getMinutes() >= 55;
   const showReflectionBanner =
-    isLateNight && incompleteHabits.length > 0 && !reflectionDone && totalCount > 0;
+    isLateNight && incompleteHabits.length > 0 && !reflectionDone && !isRestDay && totalCount > 0;
 
   // 是否顯示昨天補復盤提示條
   const showYesterdayBanner =
@@ -444,6 +539,26 @@ export default function HomeClient({
         {/* points */}
         <PointsCard points={points} todayDelta={todayDelta} />
 
+        {/* 本週回顧提示條（週日才顯示）*/}
+        {isSunday && !weeklyReviewDoneState && (
+          <button
+            onClick={() => setShowWeeklyReview(true)}
+            className="mt-4 w-full rounded-[14px] border border-sage/40 bg-sage/10 px-4 py-3 text-left shadow-soft transition hover:-translate-y-px"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[13px] font-semibold text-cocoa-deep">
+                  🌸 本週回顧
+                </p>
+                <p className="mt-0.5 text-[11px] text-milktea">
+                  看看這週的進步，寫下最驕傲的事 +15pt
+                </p>
+              </div>
+              <span className="text-cocoa-soft">→</span>
+            </div>
+          </button>
+        )}
+
         {/* 昨天補復盤提示條 */}
         {showYesterdayBanner && (
           <button
@@ -470,9 +585,22 @@ export default function HomeClient({
             <Bow size={18} /> 今天的小事
             <span className="font-hand text-lg text-cocoa-soft">today</span>
           </h2>
-          <span className="text-xs text-milktea">
-            {doneCount} / {totalCount} 完成
-          </span>
+          <div className="flex items-center gap-2">
+            {/* 休息日按鈕 */}
+            {isRestDay ? (
+              <span className="text-xs text-milktea">🛁 今天請假</span>
+            ) : (
+              <button
+                onClick={() => setShowRestDay(true)}
+                className="text-xs text-milktea underline-offset-2 hover:underline"
+              >
+                今天請假
+              </button>
+            )}
+            <span className="text-xs text-milktea">
+              {doneCount} / {totalCount} 完成
+            </span>
+          </div>
         </div>
 
         {totalCount === 0 ? (
@@ -605,6 +733,19 @@ export default function HomeClient({
         message={celebrate?.message}
         badge={celebrate?.badge}
         mood={celebrate?.mood}
+      />
+      <WeeklyReviewModal
+        open={showWeeklyReview}
+        onClose={() => setShowWeeklyReview(false)}
+        onSave={handleSaveWeeklyReview}
+        saving={savingWeeklyReview}
+        weekStart={weekStart}
+      />
+      <RestDayModal
+        open={showRestDay}
+        onClose={() => setShowRestDay(false)}
+        onSave={handleSaveRestDay}
+        saving={savingRestDay}
       />
       <ReflectionModal
         open={showReflection}
