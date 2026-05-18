@@ -11,7 +11,29 @@ import HabitCard from "./HabitCard";
 import CelebrateModal from "./CelebrateModal";
 import AddHabitModal from "./AddHabitModal";
 import GratitudeCard from "./GratitudeCard";
+import ReflectionModal from "./ReflectionModal";
 import Modal from "./Modal";
+
+// 判斷某個習慣今天是否應該顯示（client-side 版本，供新增/編輯後使用）
+function shouldShowToday(habit) {
+  const dayOfWeek = new Date().getDay();
+  switch (habit.frequency) {
+    case "每日":
+      return true;
+    case "平日":
+      return dayOfWeek >= 1 && dayOfWeek <= 5;
+    case "每週 3 次":
+      return (
+        Array.isArray(habit.schedule_days) &&
+        habit.schedule_days.length > 0 &&
+        habit.schedule_days.includes(dayOfWeek)
+      );
+    case "自由":
+      return false;
+    default:
+      return true;
+  }
+}
 
 export default function HomeClient({
   initialPoints,
@@ -20,6 +42,10 @@ export default function HomeClient({
   todayLogs,
   todayGratitude,
   gratitudeHistory,
+  todayReflectionDone: initialReflectionDone,
+  yesterdayNeedsReflection,
+  yesterdayIncompleteHabits,
+  yesterdayStr,
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -50,8 +76,44 @@ export default function HomeClient({
     () => GRATITUDE_QUOTES[Math.floor(Math.random() * GRATITUDE_QUOTES.length)]
   );
 
-  const doneCount = doneSet.size;
+  // reflection — today
+  const [showReflection, setShowReflection] = useState(false);
+  const [savingReflection, setSavingReflection] = useState(false);
+  const [reflectionDone, setReflectionDone] = useState(initialReflectionDone);
+  const reflectionShownRef = useRef(false);
+
+  // reflection — yesterday
+  const [showYesterdayReflection, setShowYesterdayReflection] = useState(false);
+  const [yesterdayReflectionDone, setYesterdayReflectionDone] = useState(false);
+
+  // 只計今天應顯示習慣中已完成的數量
+  const doneCount = habits.filter((h) => doneSet.has(h.id)).length;
   const totalCount = habits.length;
+  const incompleteHabits = habits.filter((h) => !doneSet.has(h.id));
+
+  // 晚上 23:55 後若有未完成習慣、且今天還沒復盤 → 自動彈出一次
+  useEffect(() => {
+    if (reflectionShownRef.current) return;
+    if (reflectionDone) return;
+    if (totalCount === 0) return;
+
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const isLateEnough = hour === 23 && minute >= 55;
+    if (!isLateEnough) return; // 23:55 之前不彈
+
+    const incomplete = habits.filter((h) => !doneSet.has(h.id));
+    if (incomplete.length === 0) return; // 全做完就不彈
+
+    const timer = setTimeout(() => {
+      setShowReflection(true);
+      reflectionShownRef.current = true;
+    }, 1800);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // the shared FAB (in the app shell) fires this event → open in ADD mode
   useEffect(() => {
@@ -68,8 +130,7 @@ export default function HomeClient({
     setShowAdd(true);
   }
 
-  // AI encouragement from Mochi (via /api/encourage). Falls back silently
-  // to the built-in message if no API key is configured.
+  // AI encouragement from Mochi (via /api/encourage). Falls back silently.
   const [aiMessage, setAiMessage] = useState(null);
   useEffect(() => {
     let cancelled = false;
@@ -95,7 +156,6 @@ export default function HomeClient({
     return () => {
       cancelled = true;
     };
-    // run once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -138,7 +198,6 @@ export default function HomeClient({
           )
         );
 
-        // cute feedback
         const cardEl = ev?.currentTarget;
         flyPoints(cardEl, earned);
         setMood("cheer");
@@ -200,7 +259,19 @@ export default function HomeClient({
           .select()
           .single();
         if (error) throw error;
-        setHabits((hs) => hs.map((h) => (h.id === editingHabit.id ? data : h)));
+
+        // 頻率或排程改變後，判斷今天是否還應顯示
+        if (shouldShowToday(data)) {
+          setHabits((hs) => hs.map((h) => (h.id === editingHabit.id ? data : h)));
+        } else {
+          // 不該顯示了，從今日清單移除
+          setHabits((hs) => hs.filter((h) => h.id !== editingHabit.id));
+          setDoneSet((s) => {
+            const next = new Set(s);
+            next.delete(editingHabit.id);
+            return next;
+          });
+        }
       } else {
         const { data, error } = await supabase
           .from("habits")
@@ -208,10 +279,17 @@ export default function HomeClient({
           .select()
           .single();
         if (error) throw error;
-        setHabits((hs) => [...hs, data]);
+
+        // 只有今天應顯示的習慣才加進清單
+        if (shouldShowToday(data)) {
+          setHabits((hs) => [...hs, data]);
+        }
+
         setCelebrate({
           title: "加入啦！",
-          message: `「${data.title}」會出現在你今天的小事裡 ✨`,
+          message: shouldShowToday(data)
+            ? `「${data.title}」會出現在你今天的小事裡 ✨`
+            : `「${data.title}」已建立，會在設定的日子出現 🌱`,
           badge: "🌱 + 1 小事",
           mood: "loving",
         });
@@ -289,6 +367,58 @@ export default function HomeClient({
     }
   }
 
+  // entryDate: 'today'（預設）or yesterdayStr（補昨天）
+  async function handleSaveReflection(text, entryDate) {
+    setSavingReflection(true);
+    const isYesterday = !!entryDate && entryDate !== undefined;
+    try {
+      const rpcArgs = { p_reflection: text };
+      if (isYesterday) rpcArgs.p_entry_date = entryDate;
+
+      const { data, error } = await supabase.rpc("save_reflection", rpcArgs);
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+
+      if (!row?.already_done) {
+        setPoints(row?.new_total ?? points + 10);
+        setTodayDelta((d) => d + 10);
+      }
+
+      if (isYesterday) {
+        setYesterdayReflectionDone(true);
+        setShowYesterdayReflection(false);
+      } else {
+        setReflectionDone(true);
+        setShowReflection(false);
+      }
+
+      setTimeout(
+        () =>
+          setCelebrate({
+            title: "謝謝你的誠實 🌿",
+            message: "對自己 100% 誠實，需要很大的勇氣。mochi 很敬佩你。",
+            badge: row?.already_done ? "🌿 已復盤過" : "+10 pt",
+            mood: "loving",
+          }),
+        200
+      );
+    } catch (err) {
+      alert("沒能記下來，再試一次：" + (err?.message || ""));
+    } finally {
+      setSavingReflection(false);
+    }
+  }
+
+  // 是否顯示今晚復盤提示條（23:55 後、有未做完、還沒復盤）
+  const now = new Date();
+  const isLateNight = now.getHours() === 23 && now.getMinutes() >= 55;
+  const showReflectionBanner =
+    isLateNight && incompleteHabits.length > 0 && !reflectionDone && totalCount > 0;
+
+  // 是否顯示昨天補復盤提示條
+  const showYesterdayBanner =
+    yesterdayNeedsReflection && !yesterdayReflectionDone;
+
   return (
     <div ref={frameRef} className="relative">
       <div className="animate-fadeIn px-[22px] pb-[100px] pt-2">
@@ -314,6 +444,26 @@ export default function HomeClient({
         {/* points */}
         <PointsCard points={points} todayDelta={todayDelta} />
 
+        {/* 昨天補復盤提示條 */}
+        {showYesterdayBanner && (
+          <button
+            onClick={() => setShowYesterdayReflection(true)}
+            className="mt-4 w-full rounded-[14px] border border-milktea/30 bg-beige/80 px-4 py-3 text-left shadow-soft transition hover:-translate-y-px"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[13px] font-semibold text-cocoa-deep">
+                  🌙 昨天的復盤還沒做
+                </p>
+                <p className="mt-0.5 text-[11px] text-milktea">
+                  昨天有 {yesterdayIncompleteHabits?.length} 件沒完成，補一下也不晚 +10pt
+                </p>
+              </div>
+              <span className="text-cocoa-soft">→</span>
+            </div>
+          </button>
+        )}
+
         {/* today's habits */}
         <div className="mb-3 mt-[22px] flex items-baseline justify-between">
           <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
@@ -329,17 +479,17 @@ export default function HomeClient({
           <div className="flex flex-col items-center rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center shadow-soft">
             <Mochi mood="happy" size={84} />
             <p className="mt-3 text-sm font-medium text-cocoa-deep">
-              還沒有任何小事
+              今天沒有排定的小事
             </p>
             <p className="mt-1 text-xs text-milktea">
-              要不要跟 mochi 一起，建立第一個習慣？
+              休息也很重要 🛁 要不要建立新的習慣？
             </p>
             <button
               onClick={() => setShowAdd(true)}
               className="mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold text-cream-card shadow-soft"
               style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
             >
-              建立第一個小事 ✨
+              建立新習慣 ✨
             </button>
           </div>
         ) : (
@@ -355,6 +505,26 @@ export default function HomeClient({
               />
             ))}
           </div>
+        )}
+
+        {/* 晚間復盤提示條 */}
+        {showReflectionBanner && (
+          <button
+            onClick={() => setShowReflection(true)}
+            className="mt-3 w-full rounded-[14px] border border-line/60 bg-cream-card/80 px-4 py-3 text-left shadow-soft transition hover:-translate-y-px"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[13px] font-semibold text-cocoa-deep">
+                  🌙 今日復盤
+                </p>
+                <p className="mt-0.5 text-[11px] text-milktea">
+                  有 {incompleteHabits.length} 件沒完成，對自己誠實一下 +10pt
+                </p>
+              </div>
+              <span className="text-cocoa-soft">→</span>
+            </div>
+          </button>
         )}
 
         {/* daily gratitude */}
@@ -393,7 +563,7 @@ export default function HomeClient({
               {aiMessage
                 ? `「${aiMessage}」`
                 : totalCount === 0
-                ? "「我們慢慢開始就好，不用急～」"
+                ? "「今天是你的自由日，好好休息 🛁」"
                 : doneCount >= totalCount
                 ? "「今天的小事全部完成了！你好棒好棒 🎀」"
                 : `「再做 ${totalCount - doneCount} 件就達成今日目標啦～你超棒的！」`}
@@ -413,7 +583,7 @@ export default function HomeClient({
         </div>
       ))}
 
-      {/* modals (FAB lives in the app shell) */}
+      {/* modals */}
       <AddHabitModal
         open={showAdd}
         onClose={() => {
@@ -435,6 +605,22 @@ export default function HomeClient({
         message={celebrate?.message}
         badge={celebrate?.badge}
         mood={celebrate?.mood}
+      />
+      <ReflectionModal
+        open={showReflection}
+        onClose={() => setShowReflection(false)}
+        onSave={(text) => handleSaveReflection(text)}
+        saving={savingReflection}
+        incompleteHabits={incompleteHabits}
+        isYesterday={false}
+      />
+      <ReflectionModal
+        open={showYesterdayReflection}
+        onClose={() => setShowYesterdayReflection(false)}
+        onSave={(text) => handleSaveReflection(text, yesterdayStr)}
+        saving={savingReflection}
+        incompleteHabits={yesterdayIncompleteHabits}
+        isYesterday={true}
       />
 
       {/* gratitude history */}

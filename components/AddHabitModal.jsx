@@ -5,12 +5,30 @@ import Modal from "./Modal";
 import Bow from "./Bow";
 import { DIFFICULTY, CATEGORIES, FREQUENCIES, EMOJI_CHOICES } from "@/lib/constants";
 
+const DAY_LABELS = ["日", "一", "二", "三", "四", "五", "六"];
+
 function Pill({ active, children, onClick }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={`rounded-xl border px-3 py-[7px] text-xs font-medium transition ${
+        active
+          ? "border-cocoa bg-cocoa text-cream-card"
+          : "border-line bg-cream-card text-cocoa"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function DayPill({ active, children, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex h-9 w-9 items-center justify-center rounded-full border text-xs font-semibold transition ${
         active
           ? "border-cocoa bg-cocoa text-cream-card"
           : "border-line bg-cream-card text-cocoa"
@@ -29,6 +47,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [diffIdx, setDiffIdx] = useState(0);
   const [frequency, setFrequency] = useState(FREQUENCIES[0]);
+  const [scheduleDays, setScheduleDays] = useState([]); // 0=日…6=六
 
   // sync form when opening (for both add & edit)
   useEffect(() => {
@@ -40,14 +59,22 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
       const di = DIFFICULTY.findIndex((d) => d.label === habit.difficulty);
       setDiffIdx(di >= 0 ? di : 0);
       setFrequency(habit.frequency || FREQUENCIES[0]);
+      setScheduleDays(habit.schedule_days || []);
     } else {
       setName("");
       setEmoji(EMOJI_CHOICES[0]);
       setCategory(CATEGORIES[0]);
       setDiffIdx(0);
       setFrequency(FREQUENCIES[0]);
+      setScheduleDays([]);
     }
   }, [open, habit]);
+
+  function toggleDay(day) {
+    setScheduleDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
+  }
 
   function handleSave() {
     const d = DIFFICULTY[diffIdx];
@@ -58,6 +85,8 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
       difficulty: d.label,
       point_value: d.points,
       frequency,
+      // 只有「每週 3 次」才儲存 schedule_days，其他設為 null
+      schedule_days: frequency === "每週 3 次" ? scheduleDays : null,
     });
   }
 
@@ -147,11 +176,55 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
         </label>
         <div className="flex flex-wrap gap-1.5">
           {FREQUENCIES.map((f) => (
-            <Pill key={f} active={frequency === f} onClick={() => setFrequency(f)}>
+            <Pill
+              key={f}
+              active={frequency === f}
+              onClick={() => {
+                setFrequency(f);
+                if (f !== "每週 3 次") setScheduleDays([]);
+              }}
+            >
               {f}
             </Pill>
           ))}
         </div>
+      </div>
+
+      {/* 每週 3 次：選擇固定星期 */}
+      {frequency === "每週 3 次" && (
+        <div className="mb-3.5 rounded-[14px] border border-line bg-cream-card/60 px-3.5 py-3">
+          <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
+            指定哪幾天出現在首頁
+            <span className="ml-1.5 font-normal text-milktea">（不選的話不會出現在首頁）</span>
+          </label>
+          <div className="flex gap-1.5">
+            {DAY_LABELS.map((label, i) => (
+              <DayPill
+                key={i}
+                active={scheduleDays.includes(i)}
+                onClick={() => toggleDay(i)}
+              >
+                {label}
+              </DayPill>
+            ))}
+          </div>
+          {scheduleDays.length > 0 && (
+            <p className="mt-2 text-[11px] text-cocoa-soft">
+              每週{scheduleDays.map((d) => DAY_LABELS[d]).join("、")}會出現在首頁 ✓
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* 頻率說明 */}
+      <div className="mb-4 rounded-[12px] bg-beige/60 px-3 py-2.5 text-[11px] leading-relaxed text-milktea">
+        {frequency === "每日" && "每天都會出現在首頁的當日清單 🌱"}
+        {frequency === "平日" && "週一到週五顯示，週末讓自己休息 🛁"}
+        {frequency === "每週 3 次" &&
+          (scheduleDays.length > 0
+            ? `只在你指定的日子出現，其他天就放鬆 🌸`
+            : "不指定日子的話，這個習慣不會出現在首頁")}
+        {frequency === "自由" && "不固定出現在首頁，自己決定什麼時候做 ☁️"}
       </div>
 
       <button
