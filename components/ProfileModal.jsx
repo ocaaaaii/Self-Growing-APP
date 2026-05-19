@@ -8,36 +8,36 @@ import Modal from "./Modal";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
 
-// 帶 Yami 小熊的主題預覽按鈕
+// 主題預覽按鈕：主題背景色 + 對應 PNG 圖示
 function ThemeCard({ t, selected, onClick }) {
   return (
     <button
       onClick={onClick}
       style={{
         background: t.bg,
-        borderColor: selected ? t.accent : "transparent",
+        borderColor: selected ? t.accent : "rgba(0,0,0,0.06)",
       }}
-      className="relative flex flex-col items-center overflow-hidden rounded-[18px] border-[3px] pb-1.5 pt-2 transition active:scale-95"
+      className="relative flex flex-col items-center overflow-hidden rounded-[18px] border-[3px] pb-2 pt-2.5 transition active:scale-95"
     >
-      {/* selected glow overlay */}
+      {/* selected glow */}
       {selected && (
         <div
-          className="pointer-events-none absolute inset-0 rounded-[15px] opacity-15"
+          className="pointer-events-none absolute inset-0 rounded-[15px] opacity-10"
           style={{ background: t.accent }}
         />
       )}
-      {/* Yami bear */}
+      {/* theme icon */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/yami.png"
-        alt="yami"
-        width={48}
-        height={48}
+        src={t.icon}
+        alt={t.label}
+        width={44}
+        height={44}
         style={{ objectFit: "contain", display: "block" }}
       />
       {/* label */}
       <span
-        className="mt-0.5 text-[10px] font-semibold"
+        className="mt-1 text-[10px] font-semibold"
         style={{ color: t.accent }}
       >
         {t.label}
@@ -164,7 +164,7 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
         <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
           主題色 {themeSaving && <span className="text-milktea">· 儲存中…</span>}
         </label>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {THEMES.map((t) => (
             <ThemeCard
               key={t.key}

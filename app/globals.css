@@ -104,6 +104,37 @@
   --bg-glow-2: 240 212 220;
 }
 
+/* 摩奇 — mochi (warm chocolate brown) */
+[data-theme="mochi"] {
+  --c-cream-bg: 238 222 200;
+  --c-cream-paper: 246 232 212;
+  --c-cream-card: 252 244 230;
+  --c-cocoa: 140 88 48;
+  --c-cocoa-deep: 88 52 28;
+  --c-cocoa-soft: 172 118 76;
+  --c-milktea: 190 154 118;
+  --c-milktea-soft: 228 210 186;
+  --c-beige: 238 218 190;
+  --c-cheek: 218 155 110;
+  --c-dusty: 205 165 130;
+  --c-sage: 175 188 155;
+  --c-sky: 178 194 198;
+  --c-butter: 235 208 145;
+  --c-line: 228 210 186;
+  --grad-btn-from: 168 110 60;
+  --grad-btn-to: 118 72 32;
+  --grad-points-from: 148 96 52;
+  --grad-points-to: 108 68 30;
+  --grad-mascot-from: 244 226 200;
+  --grad-mascot-to: 232 206 172;
+  --grad-grat-from: 175 188 155;
+  --grad-grat-to: 148 162 128;
+  --c-on-points: 252 244 230;
+  --c-on-btn: 252 244 230;
+  --bg-glow-1: 244 228 205;
+  --bg-glow-2: 228 206 176;
+}
+
 /* 深海 — deep (ocean blue) */
 [data-theme="deep"] {
   --c-cream-bg: 208 218 230;
