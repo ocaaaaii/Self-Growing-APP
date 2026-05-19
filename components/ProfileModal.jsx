@@ -8,7 +8,7 @@ import Modal from "./Modal";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
 
-// 帶 Mochi 的主題預覽按鈕
+// 帶 Yami 小熊的主題預覽按鈕
 function ThemeCard({ t, selected, onClick }) {
   return (
     <button
@@ -16,24 +16,25 @@ function ThemeCard({ t, selected, onClick }) {
       style={{
         background: t.bg,
         borderColor: selected ? t.accent : "transparent",
-        "--cheek-color": t.cheek,
       }}
       className="relative flex flex-col items-center overflow-hidden rounded-[18px] border-[3px] pb-1.5 pt-2 transition active:scale-95"
     >
-      {/* selected ring glow */}
+      {/* selected glow overlay */}
       {selected && (
         <div
-          className="pointer-events-none absolute inset-0 rounded-[15px] opacity-20"
+          className="pointer-events-none absolute inset-0 rounded-[15px] opacity-15"
           style={{ background: t.accent }}
         />
       )}
-      {/* Mochi with theme cheek color */}
-      <div
-        className="relative"
-        style={{ "--c-cheek": t.cheek.replace("rgb(", "").replace(")", "").split(",").join(" ") }}
-      >
-        <Mochi mood="happy" size={46} />
-      </div>
+      {/* Yami bear */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/yami.png"
+        alt="yami"
+        width={48}
+        height={48}
+        style={{ objectFit: "contain", display: "block" }}
+      />
       {/* label */}
       <span
         className="mt-0.5 text-[10px] font-semibold"
