@@ -6,7 +6,8 @@ function shouldShowOn(habit, dayOfWeek) {
   switch (habit.frequency) {
     case "每日": return true;
     case "平日": return dayOfWeek >= 1 && dayOfWeek <= 5;
-    case "每週 3 次":
+    case "每週自訂":
+    case "每週 3 次": // backward compat for old habits
       return Array.isArray(habit.schedule_days) &&
         habit.schedule_days.length > 0 &&
         habit.schedule_days.includes(dayOfWeek);

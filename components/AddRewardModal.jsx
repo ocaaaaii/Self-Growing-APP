@@ -26,6 +26,7 @@ const COST_PRESETS = [100, 200, 350, 500, 800, 1200];
 const STOCK_PRESETS = [null, 1, 3, 5, 10];
 
 // Add OR edit a reward. Pass `reward` to edit, omit to add.
+// Pass `defaultCategory` to pre-select a category when adding.
 export default function AddRewardModal({
   open,
   onClose,
@@ -33,6 +34,7 @@ export default function AddRewardModal({
   onDelete,
   reward,
   saving,
+  defaultCategory,
 }) {
   const editing = !!reward;
   const [title, setTitle] = useState("");
@@ -55,7 +57,10 @@ export default function AddRewardModal({
     } else {
       setTitle("");
       setEmoji(REWARD_EMOJI_CHOICES[0]);
-      setCategory(REWARD_CATEGORIES[0]);
+      // 如果從已選分類的頁面開啟，預設選那個分類
+      setCategory(defaultCategory && REWARD_CATEGORIES.includes(defaultCategory)
+        ? defaultCategory
+        : REWARD_CATEGORIES[0]);
       setCost(200);
       setStock(null);
       setDescription("");

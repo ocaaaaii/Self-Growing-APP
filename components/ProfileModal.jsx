@@ -145,7 +145,7 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
             </button>
           ))}
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {THEMES.slice(4).map((t) => (
             <button
               key={t.key}

@@ -135,35 +135,66 @@
   --bg-glow-2: 198 214 232;
 }
 
-/* 碳黑 — carbon (charcoal + amber) */
+/* 碳黑 — carbon (cool dark gray + steel blue) */
 [data-theme="carbon"] {
-  --c-cream-bg: 24 22 20;
-  --c-cream-paper: 34 31 28;
-  --c-cream-card: 46 42 38;
-  --c-cocoa: 210 175 135;
-  --c-cocoa-deep: 235 205 170;
-  --c-cocoa-soft: 185 150 110;
-  --c-milktea: 155 135 115;
-  --c-milktea-soft: 72 64 56;
-  --c-beige: 62 56 48;
-  --c-cheek: 218 132 72;
-  --c-dusty: 175 118 65;
-  --c-sage: 200 158 88;
-  --c-sky: 120 148 162;
-  --c-butter: 210 162 72;
-  --c-line: 72 64 56;
-  --grad-btn-from: 200 145 72;
-  --grad-btn-to: 162 108 44;
-  --grad-points-from: 106 78 50;
-  --grad-points-to: 74 54 34;
-  --grad-mascot-from: 90 80 68;
-  --grad-mascot-to: 76 68 58;
-  --grad-grat-from: 175 138 80;
-  --grad-grat-to: 140 106 55;
-  --c-on-points: 235 205 170;
-  --c-on-btn: 40 34 28;
-  --bg-glow-1: 42 38 32;
-  --bg-glow-2: 28 24 20;
+  --c-cream-bg: 28 30 34;
+  --c-cream-paper: 38 40 46;
+  --c-cream-card: 50 53 60;
+  --c-cocoa: 192 196 206;
+  --c-cocoa-deep: 222 226 234;
+  --c-cocoa-soft: 162 168 178;
+  --c-milktea: 128 134 148;
+  --c-milktea-soft: 66 70 80;
+  --c-beige: 58 62 70;
+  --c-cheek: 148 168 196;
+  --c-dusty: 130 148 168;
+  --c-sage: 140 165 192;
+  --c-sky: 128 155 178;
+  --c-butter: 188 195 208;
+  --c-line: 66 70 80;
+  --grad-btn-from: 118 132 152;
+  --grad-btn-to: 88 100 118;
+  --grad-points-from: 80 90 106;
+  --grad-points-to: 56 64 78;
+  --grad-mascot-from: 78 84 96;
+  --grad-mascot-to: 65 72 85;
+  --grad-grat-from: 112 130 155;
+  --grad-grat-to: 85 100 122;
+  --c-on-points: 222 226 234;
+  --c-on-btn: 38 40 46;
+  --bg-glow-1: 40 44 52;
+  --bg-glow-2: 26 28 34;
+}
+
+/* 暖陽 — sunrise (golden amber + warm cream) */
+[data-theme="sunrise"] {
+  --c-cream-bg: 242 228 206;
+  --c-cream-paper: 248 236 214;
+  --c-cream-card: 255 248 232;
+  --c-cocoa: 176 112 56;
+  --c-cocoa-deep: 128 76 32;
+  --c-cocoa-soft: 202 144 88;
+  --c-milktea: 204 172 136;
+  --c-milktea-soft: 234 218 195;
+  --c-beige: 242 225 196;
+  --c-cheek: 236 158 100;
+  --c-dusty: 222 176 138;
+  --c-sage: 218 182 88;
+  --c-sky: 192 202 172;
+  --c-butter: 248 214 96;
+  --c-line: 234 218 195;
+  --grad-btn-from: 220 148 72;
+  --grad-btn-to: 188 112 44;
+  --grad-points-from: 192 130 62;
+  --grad-points-to: 155 95 36;
+  --grad-mascot-from: 248 226 194;
+  --grad-mascot-to: 240 205 168;
+  --grad-grat-from: 218 182 88;
+  --grad-grat-to: 186 150 60;
+  --c-on-points: 255 248 232;
+  --c-on-btn: 255 248 232;
+  --bg-glow-1: 250 236 210;
+  --bg-glow-2: 236 214 178;
 }
 
 /* 森林 — forest (deep green + earthy bark) */

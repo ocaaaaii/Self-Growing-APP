@@ -58,7 +58,9 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
       setCategory(habit.category || CATEGORIES[0]);
       const di = DIFFICULTY.findIndex((d) => d.label === habit.difficulty);
       setDiffIdx(di >= 0 ? di : 0);
-      setFrequency(habit.frequency || FREQUENCIES[0]);
+      // 向下相容：舊習慣儲存的是 "每週 3 次"，統一對應到 "每週自訂"
+      const freq = habit.frequency === "每週 3 次" ? "每週自訂" : (habit.frequency || FREQUENCIES[0]);
+      setFrequency(freq);
       setScheduleDays(habit.schedule_days || []);
     } else {
       setName("");
@@ -85,8 +87,8 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
       difficulty: d.label,
       point_value: d.points,
       frequency,
-      // 只有「每週 3 次」才儲存 schedule_days，其他設為 null
-      schedule_days: frequency === "每週 3 次" ? scheduleDays : null,
+      // 只有「每週自訂」才儲存 schedule_days，其他設為 null
+      schedule_days: frequency === "每週自訂" ? scheduleDays : null,
     });
   }
 
@@ -181,7 +183,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
               active={frequency === f}
               onClick={() => {
                 setFrequency(f);
-                if (f !== "每週 3 次") setScheduleDays([]);
+                if (f !== "每週自訂") setScheduleDays([]);
               }}
             >
               {f}
@@ -190,12 +192,12 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
         </div>
       </div>
 
-      {/* 每週 3 次：選擇固定星期 */}
-      {frequency === "每週 3 次" && (
+      {/* 每週自訂：選擇哪幾天（任意天數） */}
+      {frequency === "每週自訂" && (
         <div className="mb-3.5 rounded-[14px] border border-line bg-cream-card/60 px-3.5 py-3">
           <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
-            指定哪幾天出現在首頁
-            <span className="ml-1.5 font-normal text-milktea">（不選的話不會出現在首頁）</span>
+            選想做的日子
+            <span className="ml-1.5 font-normal text-milktea">（幾天都行，不選的話不顯示在首頁）</span>
           </label>
           <div className="flex gap-1.5">
             {DAY_LABELS.map((label, i) => (
@@ -210,7 +212,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
           </div>
           {scheduleDays.length > 0 && (
             <p className="mt-2 text-[11px] text-cocoa-soft">
-              每週{scheduleDays.map((d) => DAY_LABELS[d]).join("、")}會出現在首頁 ✓
+              每週{scheduleDays.sort((a,b)=>a-b).map((d) => DAY_LABELS[d]).join("、")}會出現在首頁 ✓
             </p>
           )}
         </div>
@@ -220,10 +222,10 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
       <div className="mb-4 rounded-[12px] bg-beige/60 px-3 py-2.5 text-[11px] leading-relaxed text-milktea">
         {frequency === "每日" && "每天都會出現在首頁的當日清單 🌱"}
         {frequency === "平日" && "週一到週五顯示，週末讓自己休息 🛁"}
-        {frequency === "每週 3 次" &&
+        {frequency === "每週自訂" &&
           (scheduleDays.length > 0
-            ? `只在你指定的日子出現，其他天就放鬆 🌸`
-            : "不指定日子的話，這個習慣不會出現在首頁")}
+            ? `只在你選的 ${scheduleDays.length} 天出現，其他天就放鬆 🌸`
+            : "選好日子之後才會出現在首頁")}
         {frequency === "自由" && "不固定出現在首頁，自己決定什麼時候做 ☁️"}
       </div>
 

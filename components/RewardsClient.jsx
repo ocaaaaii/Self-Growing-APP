@@ -35,6 +35,10 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
     filter === "全部" ? rewards : rewards.filter((r) => r.category === filter);
 
   // shared FAB (in the app shell) fires this event → open in ADD mode
+  // 用 ref 儲存最新 filter，讓 FAB 點擊時也能拿到目前分類
+  const filterRef = useRef(filter);
+  useEffect(() => { filterRef.current = filter; }, [filter]);
+
   useEffect(() => {
     const open = () => {
       setEditingReward(null);
@@ -277,6 +281,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
         onDelete={handleDeleteReward}
         reward={editingReward}
         saving={saving}
+        defaultCategory={filter !== "全部" ? filter : undefined}
       />
       <RewardConfirmModal
         open={!!confirm}

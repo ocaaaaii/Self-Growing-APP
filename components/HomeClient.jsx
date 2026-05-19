@@ -12,6 +12,7 @@ import CelebrateModal from "./CelebrateModal";
 import AddHabitModal from "./AddHabitModal";
 import GratitudeCard from "./GratitudeCard";
 import ReflectionModal from "./ReflectionModal";
+import ReflectionListModal from "./ReflectionListModal";
 import RestDayModal from "./RestDayModal";
 import WeeklyReviewModal from "./WeeklyReviewModal";
 import Modal from "./Modal";
@@ -24,7 +25,8 @@ function shouldShowToday(habit) {
       return true;
     case "平日":
       return dayOfWeek >= 1 && dayOfWeek <= 5;
-    case "每週 3 次":
+    case "每週自訂":
+    case "每週 3 次": // backward compat
       return (
         Array.isArray(habit.schedule_days) &&
         habit.schedule_days.length > 0 &&
@@ -84,6 +86,7 @@ export default function HomeClient({
 
   // reflection — today
   const [showReflection, setShowReflection] = useState(false);
+  const [showReflectionList, setShowReflectionList] = useState(false);
   const [savingReflection, setSavingReflection] = useState(false);
   const [reflectionDone, setReflectionDone] = useState(initialReflectionDone);
   const reflectionShownRef = useRef(false);
@@ -655,8 +658,33 @@ export default function HomeClient({
           </button>
         )}
 
-        {/* daily gratitude */}
+        {/* 復盤日誌入口（小小的，常駐在感恩上方）*/}
         <div className="mb-3 mt-[22px] flex items-baseline justify-between">
+          <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
+            <Bow size={18} /> 復盤日誌
+            <span className="font-hand text-lg text-cocoa-soft">reflection</span>
+          </h2>
+          <button
+            onClick={() => setShowReflectionList(true)}
+            className="text-xs text-milktea"
+          >
+            查看 →
+          </button>
+        </div>
+
+        {/* 已完成今日復盤 / 提示條 */}
+        {reflectionDone ? (
+          <div className="mb-[22px] flex items-center gap-2 rounded-[12px] border border-line/40 bg-cream-card/60 px-3.5 py-2.5 text-[12px] text-cocoa-soft">
+            <span>🌙</span> 今天的復盤已完成，mochi 為你驕傲
+          </div>
+        ) : totalCount > 0 && !isRestDay ? (
+          <div className="mb-[22px] flex items-center gap-2 rounded-[12px] bg-beige/50 px-3.5 py-2.5 text-[12px] text-milktea">
+            <span>🌙</span> 晚上 23:55 後會提醒你做今日復盤 +10pt
+          </div>
+        ) : null}
+
+        {/* daily gratitude */}
+        <div className="mb-3 flex items-baseline justify-between">
           <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
             <Bow size={18} /> 感恩三件事
             <span className="font-hand text-lg text-cocoa-soft">gratitude</span>
@@ -746,6 +774,10 @@ export default function HomeClient({
         onClose={() => setShowRestDay(false)}
         onSave={handleSaveRestDay}
         saving={savingRestDay}
+      />
+      <ReflectionListModal
+        open={showReflectionList}
+        onClose={() => setShowReflectionList(false)}
       />
       <ReflectionModal
         open={showReflection}
