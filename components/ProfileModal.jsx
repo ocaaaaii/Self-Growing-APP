@@ -8,6 +8,43 @@ import Modal from "./Modal";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
 
+// 帶 Mochi 的主題預覽按鈕
+function ThemeCard({ t, selected, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        background: t.bg,
+        borderColor: selected ? t.accent : "transparent",
+        "--cheek-color": t.cheek,
+      }}
+      className="relative flex flex-col items-center overflow-hidden rounded-[18px] border-[3px] pb-1.5 pt-2 transition active:scale-95"
+    >
+      {/* selected ring glow */}
+      {selected && (
+        <div
+          className="pointer-events-none absolute inset-0 rounded-[15px] opacity-20"
+          style={{ background: t.accent }}
+        />
+      )}
+      {/* Mochi with theme cheek color */}
+      <div
+        className="relative"
+        style={{ "--c-cheek": t.cheek.replace("rgb(", "").replace(")", "").split(",").join(" ") }}
+      >
+        <Mochi mood="happy" size={46} />
+      </div>
+      {/* label */}
+      <span
+        className="mt-0.5 text-[10px] font-semibold"
+        style={{ color: t.accent }}
+      >
+        {t.label}
+      </span>
+    </button>
+  );
+}
+
 // Lets the user change their nickname + theme + sign out.
 export default function ProfileModal({ open, onClose, currentNickname }) {
   const router = useRouter();
@@ -126,44 +163,17 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
         <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
           主題色 {themeSaving && <span className="text-milktea">· 儲存中…</span>}
         </label>
-        {/* 前四個（女生 / 中性）放第一排，後三個（男生偏好）放第二排 */}
-        <div className="mb-1.5 grid grid-cols-4 gap-2">
-          {THEMES.slice(0, 4).map((t) => (
-            <button
-              key={t.key}
-              onClick={() => pickTheme(t.key)}
-              className={`flex flex-col items-center gap-1 rounded-[14px] border-2 py-2.5 transition ${
-                theme === t.key
-                  ? "border-cocoa bg-beige"
-                  : "border-line bg-cream-card"
-              }`}
-            >
-              <span className="text-xl">{t.emoji}</span>
-              <span className="text-[11px] font-medium text-cocoa-deep">
-                {t.label}
-              </span>
-            </button>
-          ))}
-        </div>
         <div className="grid grid-cols-4 gap-2">
-          {THEMES.slice(4).map((t) => (
-            <button
+          {THEMES.map((t) => (
+            <ThemeCard
               key={t.key}
+              t={t}
+              selected={theme === t.key}
               onClick={() => pickTheme(t.key)}
-              className={`flex flex-col items-center gap-1 rounded-[14px] border-2 py-2.5 transition ${
-                theme === t.key
-                  ? "border-cocoa bg-beige"
-                  : "border-line bg-cream-card"
-              }`}
-            >
-              <span className="text-xl">{t.emoji}</span>
-              <span className="text-[11px] font-medium text-cocoa-deep">
-                {t.label}
-              </span>
-            </button>
+            />
           ))}
         </div>
-        <p className="mt-1.5 text-[11px] text-milktea">
+        <p className="mt-2 text-[11px] text-milktea">
           點一下就會立刻換上，整個 App 都會跟著變 ✨
         </p>
       </div>
