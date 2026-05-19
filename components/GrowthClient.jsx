@@ -2,6 +2,7 @@
 
 import Bow from "./Bow";
 import { ACHIEVEMENTS } from "@/lib/constants";
+import { useLocale } from "@/components/LocaleProvider";
 
 // SVG 折線圖元件（過去 14 天每日點數）
 function PointsChart({ data }) {
@@ -129,6 +130,7 @@ export default function GrowthClient({
   redeemCount = 0,
   dailyPoints = [],
 }) {
+  const { t } = useLocale();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstWeekday = new Date(year, month, 1).getDay(); // 0=Sun
 
@@ -159,10 +161,13 @@ export default function GrowthClient({
   return (
     <div className="animate-fadeIn px-[22px] pb-[100px] pt-2">
       <div className="mb-[18px] mt-1.5">
-        <div className="font-hand text-lg text-milktea">my growth</div>
+        <div className="font-hand text-lg text-milktea">{t("growth.handwriting")}</div>
         <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
-          慢慢變好的<span className="underline-cute">證據</span> 🌷
+          {t("growth.title")}
         </h1>
+        <p className="mt-1 text-[13px] text-milktea">
+          {t("growth.subtitle")}
+        </p>
       </div>
 
       {/* month header */}
@@ -226,8 +231,8 @@ export default function GrowthClient({
       <div className="mt-3.5 grid grid-cols-3 gap-2.5">
         {[
           { emoji: "📈", num: `${completionRate}%`, label: "本月活躍率" },
-          { emoji: "⭐", num: totalPoints.toLocaleString(), label: "總點數" },
-          { emoji: "🔥", num: longestStreak, label: "最長連續" },
+          { emoji: "⭐", num: totalPoints.toLocaleString(), label: t("growth.totalPoints") },
+          { emoji: "🔥", num: longestStreak, label: t("growth.longestStreak") },
         ].map((s) => (
           <div
             key={s.label}
@@ -242,10 +247,10 @@ export default function GrowthClient({
 
       <div className="mt-3.5 flex items-center justify-between rounded-2xl border border-line/40 bg-cream-card px-4 py-3.5 shadow-soft">
         <div className="flex items-center gap-2 text-[13px] text-cocoa">
-          <span className="text-lg">🌷</span> 累積成長天數
+          <span className="text-lg">🌷</span> {t("growth.growthDays")}
         </div>
         <div className="font-hand text-2xl font-bold text-cocoa-deep">
-          {growthDays} 天
+          {growthDays} {t("growth.days")}
         </div>
       </div>
 
@@ -254,8 +259,8 @@ export default function GrowthClient({
         <>
           <div className="mb-3 mt-[26px] flex items-baseline justify-between">
             <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
-              <Bow size={18} /> 點數趨勢
-              <span className="font-hand text-lg text-cocoa-soft">14 days</span>
+              <Bow size={18} /> {t("growth.pointsTrend")}
+              <span className="font-hand text-lg text-cocoa-soft">{t("growth.last7days")}</span>
             </h2>
             <span className="text-xs text-milktea">
               最高 {Math.max(...dailyPoints.map((d) => d.pts))} pt / 天
@@ -270,7 +275,7 @@ export default function GrowthClient({
       {/* achievement badges */}
       <div className="mb-3 mt-[26px] flex items-baseline justify-between">
         <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
-          <Bow size={18} /> 成就徽章
+          <Bow size={18} /> {t("growth.achievements")}
           <span className="font-hand text-lg text-cocoa-soft">badges</span>
         </h2>
         <span className="text-xs text-milktea">
@@ -303,6 +308,9 @@ export default function GrowthClient({
             </div>
             <div className="mt-0.5 text-[9px] leading-tight text-milktea">
               {b.desc}
+            </div>
+            <div className={`mt-1 text-[8px] font-semibold ${b.unlocked ? "text-sage" : "text-milktea opacity-60"}`}>
+              {b.unlocked ? t("growth.unlocked") : t("growth.locked")}
             </div>
           </div>
         ))}

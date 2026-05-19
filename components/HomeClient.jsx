@@ -16,6 +16,7 @@ import ReflectionListModal from "./ReflectionListModal";
 import RestDayModal from "./RestDayModal";
 import WeeklyReviewModal from "./WeeklyReviewModal";
 import Modal from "./Modal";
+import { useLocale } from "@/components/LocaleProvider";
 
 // 判斷某個習慣今天是否應該顯示（client-side 版本，供新增/編輯後使用）
 function shouldShowToday(habit) {
@@ -57,6 +58,7 @@ export default function HomeClient({
 }) {
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useLocale();
   const frameRef = useRef(null);
 
   const [points, setPoints] = useState(initialPoints);
@@ -273,7 +275,7 @@ export default function HomeClient({
         );
       }
     } catch (err) {
-      alert("有點小狀況，再試一次看看：" + (err?.message || ""));
+      alert(t("home.error_toggle") + (err?.message || ""));
     } finally {
       setBusyId(null);
     }
@@ -321,25 +323,25 @@ export default function HomeClient({
         }
 
         setCelebrate({
-          title: "加入啦！",
+          title: t("home.habitAdded_title"),
           message: shouldShowToday(data)
-            ? `「${data.title}」會出現在你今天的小事裡 ✨`
-            : `「${data.title}」已建立，會在設定的日子出現 🌱`,
-          badge: "🌱 + 1 小事",
+            ? `「${data.title}」${t("home.habitAdded_today")}`
+            : `「${data.title}」${t("home.habitAdded_scheduled")}`,
+          badge: t("home.habitAdded_badge"),
           mood: "loving",
         });
       }
       setShowAdd(false);
       setEditingHabit(null);
     } catch (err) {
-      alert("沒能儲存，再試一次：" + (err?.message || ""));
+      alert(t("home.error_save") + (err?.message || ""));
     } finally {
       setSavingHabit(false);
     }
   }
 
   async function handleDeleteHabit(habit) {
-    if (!confirm(`確定要刪除「${habit.title}」嗎？`)) return;
+    if (!confirm(t("home.confirmDelete", { title: habit.title }))) return;
     setSavingHabit(true);
     try {
       const { error } = await supabase
@@ -356,7 +358,7 @@ export default function HomeClient({
       setShowAdd(false);
       setEditingHabit(null);
     } catch (err) {
-      alert("沒能刪除，再試一次：" + (err?.message || ""));
+      alert(t("home.error_delete") + (err?.message || ""));
     } finally {
       setSavingHabit(false);
     }
@@ -386,17 +388,16 @@ export default function HomeClient({
       setTimeout(
         () =>
           setCelebrate({
-            title: "感恩已記下 🌿",
-            message:
-              "mochi 也覺得今天很值得被記得。願你的心也輕輕的。",
-            badge: row?.already_done ? "🌿 今天已記過" : "+20 pt",
+            title: t("gratitude.celebrate_title"),
+            message: t("gratitude.celebrate_msg"),
+            badge: row?.already_done ? t("gratitude.celebrate_badge_done") : t("gratitude.celebrate_badge_new"),
             mood: "loving",
           }),
         200
       );
       setTimeout(() => setMood("happy"), 4000);
     } catch (err) {
-      alert("沒能記下來，再試一次：" + (err?.message || ""));
+      alert(t("home.error_save") + (err?.message || ""));
     } finally {
       setSavingGratitude(false);
     }
@@ -430,15 +431,15 @@ export default function HomeClient({
       setTimeout(
         () =>
           setCelebrate({
-            title: "謝謝你的誠實 🌿",
-            message: "對自己 100% 誠實，需要很大的勇氣。mochi 很敬佩你。",
-            badge: row?.already_done ? "🌿 已復盤過" : "+10 pt",
+            title: t("reflection.celebrate_title"),
+            message: t("reflection.celebrate_msg"),
+            badge: row?.already_done ? t("reflection.celebrate_badge_done") : t("reflection.celebrate_badge_new"),
             mood: "loving",
           }),
         200
       );
     } catch (err) {
-      alert("沒能記下來，再試一次：" + (err?.message || ""));
+      alert(t("home.error_save") + (err?.message || ""));
     } finally {
       setSavingReflection(false);
     }
@@ -462,15 +463,15 @@ export default function HomeClient({
       setTimeout(
         () =>
           setCelebrate({
-            title: "本週回顧完成 🌸",
-            message: "看見自己的成長，本身就是一種力量。下週繼續加油 🌱",
-            badge: row?.already_done ? "🌸 本週已回顧" : "+15 pt",
+            title: t("weeklyReview.celebrate_title"),
+            message: t("weeklyReview.celebrate_msg"),
+            badge: row?.already_done ? t("weeklyReview.celebrate_badge_done") : t("weeklyReview.celebrate_badge_new"),
             mood: "loving",
           }),
         200
       );
     } catch (err) {
-      alert("沒能儲存，再試一次：" + (err?.message || ""));
+      alert(t("home.error_save") + (err?.message || ""));
     } finally {
       setSavingWeeklyReview(false);
     }
@@ -493,15 +494,15 @@ export default function HomeClient({
       setTimeout(
         () =>
           setCelebrate({
-            title: "好好休息 🛁",
-            message: "今天的請假已記下。休息也是照顧自己的一部分。",
-            badge: row?.already_done ? "🛁 今天已請假" : "+5 pt",
+            title: t("restDay.celebrate_title"),
+            message: t("restDay.celebrate_msg"),
+            badge: row?.already_done ? t("restDay.celebrate_badge_done") : t("restDay.celebrate_badge_new"),
             mood: "loving",
           }),
         200
       );
     } catch (err) {
-      alert("沒能記下來，再試一次：" + (err?.message || ""));
+      alert(t("home.error_save") + (err?.message || ""));
     } finally {
       setSavingRestDay(false);
     }
@@ -551,7 +552,7 @@ export default function HomeClient({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[13px] font-semibold text-cocoa-deep">
-                  🌸 本週回顧
+                  🌸 {t("home.weeklyReview")}
                 </p>
                 <p className="mt-0.5 text-[11px] text-milktea">
                   看看這週的進步，寫下最驕傲的事 +15pt
@@ -585,19 +586,19 @@ export default function HomeClient({
         {/* today's habits */}
         <div className="mb-3 mt-[22px] flex items-baseline justify-between">
           <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
-            <Bow size={18} /> 今天的小事
+            <Bow size={18} /> {t("home.todayHabits")}
             <span className="font-hand text-lg text-cocoa-soft">today</span>
           </h2>
           <div className="flex items-center gap-2">
             {/* 休息日按鈕 */}
             {isRestDay ? (
-              <span className="text-xs text-milktea">🛁 今天請假</span>
+              <span className="text-xs text-milktea">{t("home.restDay")}</span>
             ) : (
               <button
                 onClick={() => setShowRestDay(true)}
                 className="text-xs text-milktea underline-offset-2 hover:underline"
               >
-                今天請假
+                {t("home.restDayBtn")}
               </button>
             )}
             <span className="text-xs text-milktea">
@@ -610,7 +611,7 @@ export default function HomeClient({
           <div className="flex flex-col items-center rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center shadow-soft">
             <Mochi mood="happy" size={84} />
             <p className="mt-3 text-sm font-medium text-cocoa-deep">
-              今天沒有排定的小事
+              {t("home.noHabits")}
             </p>
             <p className="mt-1 text-xs text-milktea">
               休息也很重要 🛁 要不要建立新的習慣？
@@ -661,21 +662,21 @@ export default function HomeClient({
         {/* 復盤日誌入口（小小的，常駐在感恩上方）*/}
         <div className="mb-3 mt-[22px] flex items-baseline justify-between">
           <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
-            <Bow size={18} /> 復盤日誌
+            <Bow size={18} /> {t("home.reflectionSection")}
             <span className="font-hand text-lg text-cocoa-soft">reflection</span>
           </h2>
           <button
             onClick={() => setShowReflectionList(true)}
             className="text-xs text-milktea"
           >
-            查看 →
+            {t("home.viewReflection")}
           </button>
         </div>
 
         {/* 已完成今日復盤 / 提示條 */}
         {reflectionDone ? (
           <div className="mb-[22px] flex items-center gap-2 rounded-[12px] border border-line/40 bg-cream-card/60 px-3.5 py-2.5 text-[12px] text-cocoa-soft">
-            <span>🌙</span> 今天的復盤已完成，mochi 為你驕傲
+            <span>🌙</span> {t("home.reflectionDone")}
           </div>
         ) : totalCount > 0 && !isRestDay ? (
           <div className="mb-[22px] flex items-center gap-2 rounded-[12px] bg-beige/50 px-3.5 py-2.5 text-[12px] text-milktea">
@@ -686,7 +687,7 @@ export default function HomeClient({
         {/* daily gratitude */}
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
-            <Bow size={18} /> 感恩三件事
+            <Bow size={18} /> {t("home.gratitudeSection")}
             <span className="font-hand text-lg text-cocoa-soft">gratitude</span>
           </h2>
           {gratitudeHistory.length > 0 && (

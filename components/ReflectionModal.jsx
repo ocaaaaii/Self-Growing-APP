@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Modal from "./Modal";
 import Mochi from "./Mochi";
+import { useLocale } from "@/components/LocaleProvider";
 
 export default function ReflectionModal({
   open,
@@ -12,6 +13,7 @@ export default function ReflectionModal({
   incompleteHabits,
   isYesterday = false,   // true = 補昨天的復盤
 }) {
+  const { t } = useLocale();
   const [text, setText] = useState("");
 
   function handleSave() {
@@ -25,14 +27,10 @@ export default function ReflectionModal({
     onClose();
   }
 
-  const title = isYesterday ? "補一下昨天的復盤 🌙" : "今天的復盤時間 🌙";
-  const subtitle = isYesterday
-    ? "昨天有一些事沒做完，現在補上也不晚。"
-    : "不是找藉口，是對自己 100% 誠實。";
-  const placeholder = isYesterday
-    ? "昨天發生了什麼？也許太累，也許被打斷了…誠實說就好，mochi 不評判 🌿"
-    : "也許是太累了，也許被什麼事情打斷了…誠實說就好，mochi 不會評判你的 🌿";
-  const incompleteLabel = isYesterday ? "昨天還沒完成的" : "今天還沒完成的";
+  const title = isYesterday ? t("reflection.title_yesterday") : t("reflection.title_today");
+  const subtitle = isYesterday ? t("reflection.subtitle_yesterday") : t("reflection.subtitle_today");
+  const placeholder = isYesterday ? t("reflection.placeholder_yesterday") : t("reflection.placeholder_today");
+  const incompleteLabel = isYesterday ? t("reflection.incomplete_yesterday") : t("reflection.incomplete_today");
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -55,7 +53,7 @@ export default function ReflectionModal({
           </h2>
           <p className="mt-0.5 text-xs leading-relaxed text-milktea">
             {subtitle}<br />
-            誠實就是成長的開始。
+            {t("reflection.footer")}
           </p>
         </div>
       </div>
@@ -80,7 +78,7 @@ export default function ReflectionModal({
       {/* reflection textarea */}
       <div className="mb-4">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          {isYesterday ? "昨天為什麼沒做到？" : "今天為什麼沒做到？"}
+          {isYesterday ? t("reflection.label_yesterday") : t("reflection.label_today")}
         </label>
         <textarea
           value={text}
@@ -95,8 +93,7 @@ export default function ReflectionModal({
       <div className="mb-4 flex items-center gap-2 rounded-[12px] bg-beige/60 px-3.5 py-2.5">
         <span className="text-base">✨</span>
         <p className="text-[12px] leading-relaxed text-cocoa-soft">
-          誠實面對自己，完成復盤可以得到{" "}
-          <span className="font-semibold text-cocoa-deep">+10 pt</span>
+          {t("reflection.pointsHint")}
         </p>
       </div>
 
@@ -105,14 +102,14 @@ export default function ReflectionModal({
         disabled={saving || !text.trim()}
         className="btn-cocoa w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
       >
-        {saving ? "記錄中…" : "完成復盤 🌿"}
+        {saving ? t("common.recording") : t("reflection.save")}
       </button>
 
       <button
         onClick={handleClose}
         className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa-deep"
       >
-        先跳過
+        {t("common.skip")}
       </button>
     </Modal>
   );

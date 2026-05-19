@@ -1,14 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-
-const ITEMS = [
-  { key: "home", label: "首頁", href: "/home", ready: true },
-  { key: "habits", label: "習慣", href: "/habits", ready: true },
-  { key: "ifthen", label: "規則", href: "/ifthen", ready: true },
-  { key: "rewards", label: "獎勵", href: "/rewards", ready: true },
-  { key: "growth", label: "成長", href: "/growth", ready: true },
-];
+import { useLocale } from "@/components/LocaleProvider";
 
 function Icon({ name, active }) {
   const stroke = active ? "rgb(var(--c-cocoa-deep))" : "rgb(var(--c-milktea))";
@@ -79,6 +72,15 @@ function Icon({ name, active }) {
 export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useLocale();
+
+  const ITEMS = [
+    { key: "home", label: t("nav.home"), href: "/home", ready: true },
+    { key: "habits", label: t("nav.habits"), href: "/habits", ready: true },
+    { key: "ifthen", label: t("nav.rules"), href: "/ifthen", ready: true },
+    { key: "rewards", label: t("nav.rewards"), href: "/rewards", ready: true },
+    { key: "growth", label: t("nav.growth"), href: "/growth", ready: true },
+  ];
 
   return (
     <nav className="grid flex-shrink-0 grid-cols-5 gap-1 border-t border-line/60 bg-cream-paper/95 px-4 pb-5 pt-3 backdrop-blur">

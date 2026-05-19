@@ -12,6 +12,7 @@ import AddRewardModal from "./AddRewardModal";
 import RewardConfirmModal from "./RewardConfirmModal";
 import JoyRecordModal from "./JoyRecordModal";
 import Modal from "./Modal";
+import { useLocale } from "@/components/LocaleProvider";
 
 const FILTERS = ["全部", ...REWARD_CATEGORIES];
 
@@ -19,6 +20,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
   const router = useRouter();
   const supabase = createClient();
   const frameRef = useRef(null);
+  const { t } = useLocale();
 
   const [points, setPoints] = useState(initialPoints);
   const [rewards, setRewards] = useState(initialRewards);
@@ -179,10 +181,10 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
         <div className="mb-[18px] mt-1.5">
           <div className="font-hand text-lg text-milktea">my rewards</div>
           <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
-            你<span className="underline-cute">值得</span>被寵愛 🎀
+            {t("rewards.title")}
           </h1>
           <p className="mt-1 text-[13px] text-milktea">
-            用累積的點數，溫柔地寵愛自己
+            {t("rewards.subtitle")}
           </p>
         </div>
 
@@ -217,7 +219,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                   : "border-line bg-cream-card text-cocoa"
               }`}
             >
-              {f}
+              {f === "全部" ? t("rewards.filterAll") : f}
             </button>
           ))}
         </div>
@@ -227,22 +229,22 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
           <div className="flex flex-col items-center rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center shadow-soft">
             <Mochi mood="happy" size={84} />
             <p className="mt-3 text-sm font-medium text-cocoa-deep">
-              還沒有任何獎勵
+              {t("rewards.noRewards")}
             </p>
             <p className="mt-1 text-xs text-milktea">
-              想想看 — 努力之後，你想用什麼寵愛自己？
+              {t("rewards.noRewardsHint")}
             </p>
             <button
               onClick={() => setShowAdd(true)}
               className="mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold text-cream-card shadow-soft"
               style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
             >
-              建立第一個獎勵 🎀
+              {t("rewards.addFirst")}
             </button>
           </div>
         ) : shown.length === 0 ? (
           <div className="rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center text-sm text-milktea shadow-soft">
-            這個分類還沒有獎勵～
+            {t("rewards.noFiltered")}
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
@@ -267,7 +269,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
         )}
 
         <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-milktea">
-          <Bow size={14} /> 我有努力，所以我值得
+          <Bow size={14} /> {t("rewards.buildSystem")}
         </div>
       </div>
 

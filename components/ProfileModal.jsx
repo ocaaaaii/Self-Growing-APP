@@ -7,6 +7,7 @@ import { THEMES } from "@/lib/constants";
 import Modal from "./Modal";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
+import { useLocale } from "@/components/LocaleProvider";
 
 // 主題預覽按鈕：主題背景色 + 對應 PNG 圖示
 function ThemeCard({ t, selected, onClick }) {
@@ -50,6 +51,8 @@ function ThemeCard({ t, selected, onClick }) {
 export default function ProfileModal({ open, onClose, currentNickname }) {
   const router = useRouter();
   const supabase = createClient();
+
+  const { t, locale, setLocale, locales } = useLocale();
 
   const [nickname, setNickname] = useState(currentNickname || "");
   const [saving, setSaving] = useState(false);
@@ -130,24 +133,24 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
       <div className="mb-4 flex flex-col items-center text-center">
         <Mochi mood="loving" size={80} />
         <h2 className="mt-2 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
-          <Bow size={20} /> 我的小空間
+          <Bow size={20} /> {t("profile.title")}
         </h2>
       </div>
 
       {/* nickname */}
       <div className="mb-3.5">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          暱稱
+          {t("profile.nickname")}
         </label>
         <input
           value={nickname}
           maxLength={20}
           onChange={(e) => setNickname(e.target.value)}
-          placeholder="想讓 mochi 怎麼稱呼你？"
+          placeholder={t("profile.nicknamePlaceholder")}
           className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
         />
         <p className="mt-1.5 text-[11px] text-milktea">
-          改好之後，mochi 問候你時就會用新的暱稱 🌱
+          {t("profile.nicknameHint")}
         </p>
       </div>
 
@@ -156,27 +159,50 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
         disabled={saving || !nickname.trim()}
         className="btn-cocoa w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
       >
-        {saved ? "已儲存 ✓" : saving ? "儲存中…" : "儲存暱稱 ✨"}
+        {saved ? t("profile.saved") : saving ? t("common.saving") : t("profile.saveNickname")}
       </button>
 
       {/* theme picker */}
       <div className="mb-3.5 mt-5">
         <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
-          主題色 {themeSaving && <span className="text-milktea">· 儲存中…</span>}
+          {t("profile.theme")}{themeSaving && <span className="text-milktea"> · {t("profile.themeSaving")}</span>}
         </label>
         <div className="grid grid-cols-4 gap-2">
-          {THEMES.map((t) => (
+          {THEMES.map((thm) => (
             <ThemeCard
-              key={t.key}
-              t={t}
-              selected={theme === t.key}
-              onClick={() => pickTheme(t.key)}
+              key={thm.key}
+              t={thm}
+              selected={theme === thm.key}
+              onClick={() => pickTheme(thm.key)}
             />
           ))}
         </div>
         <p className="mt-2 text-[11px] text-milktea">
-          點一下就會立刻換上，整個 App 都會跟著變 ✨
+          {t("profile.themeHint")}
         </p>
+      </div>
+
+      {/* language picker */}
+      <div className="mb-3.5 mt-5">
+        <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
+          {t("profile.language")}
+        </label>
+        <div className="grid grid-cols-2 gap-2">
+          {locales.map((loc) => (
+            <button
+              key={loc.code}
+              onClick={() => setLocale(loc.code)}
+              className={`flex items-center gap-2 rounded-[14px] border px-3 py-2.5 text-xs font-medium transition active:scale-[0.98] ${
+                locale === loc.code
+                  ? "border-cocoa bg-cocoa text-cream-card"
+                  : "border-line bg-cream-card text-cocoa"
+              }`}
+            >
+              <span className="text-base">{loc.flag}</span>
+              <span>{loc.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       <form action="/auth/signout" method="post" className="mt-2.5">
@@ -184,7 +210,7 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
           type="submit"
           className="w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa"
         >
-          登出
+          {t("profile.signOut")}
         </button>
       </form>
     </Modal>

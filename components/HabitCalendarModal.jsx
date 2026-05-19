@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { todayStr } from "@/lib/constants";
 import Modal from "./Modal";
-
-const DOW_LABELS = ["日", "一", "二", "三", "四", "五", "六"];
+import { useLocale } from "@/components/LocaleProvider";
 
 function buildCalendarDays() {
   // 找到「今天 - 34 天」所在週的週日，確保 grid 對齊
@@ -30,6 +29,7 @@ function buildCalendarDays() {
 }
 
 export default function HabitCalendarModal({ open, onClose, habit }) {
+  const { t } = useLocale();
   const supabase = createClient();
   const [logSet, setLogSet] = useState(new Set());
   const [loading, setLoading] = useState(true);
@@ -54,6 +54,12 @@ export default function HabitCalendarModal({ open, onClose, habit }) {
   }, [open, habit]);
 
   if (!habit) return null;
+
+  const DOW_LABELS = [
+    t("calendar.days_sun"), t("calendar.days_mon"), t("calendar.days_tue"),
+    t("calendar.days_wed"), t("calendar.days_thu"), t("calendar.days_fri"),
+    t("calendar.days_sat"),
+  ];
 
   const { days } = buildCalendarDays();
   const todayDateStr = todayStr(new Date());
@@ -83,7 +89,7 @@ export default function HabitCalendarModal({ open, onClose, habit }) {
         </div>
         <div>
           <h2 className="text-base font-semibold text-cocoa-deep">{habit.title}</h2>
-          <p className="text-xs text-milktea">過去 35 天的打卡記錄</p>
+          <p className="text-xs text-milktea">{t("calendar.title")}</p>
         </div>
       </div>
 
@@ -91,21 +97,21 @@ export default function HabitCalendarModal({ open, onClose, habit }) {
       <div className="mb-4 flex gap-2">
         <div className="flex-1 rounded-[14px] border border-line/40 bg-cream-card px-3 py-2.5 text-center">
           <div className="text-[18px] font-bold text-cocoa-deep">{doneIn35}</div>
-          <div className="text-[10px] text-milktea">次完成</div>
+          <div className="text-[10px] text-milktea">{t("calendar.completions")}</div>
         </div>
         <div className="flex-1 rounded-[14px] border border-line/40 bg-cream-card px-3 py-2.5 text-center">
           <div className="text-[18px] font-bold text-cocoa-deep">{rate}%</div>
-          <div className="text-[10px] text-milktea">打卡率</div>
+          <div className="text-[10px] text-milktea">{t("calendar.rate")}</div>
         </div>
         <div className="flex-1 rounded-[14px] border border-line/40 bg-cream-card px-3 py-2.5 text-center">
           <div className="text-[18px] font-bold text-cocoa-deep">🔥 {habit.streak}</div>
-          <div className="text-[10px] text-milktea">連續天</div>
+          <div className="text-[10px] text-milktea">{t("calendar.streak")}</div>
         </div>
       </div>
 
       {loading ? (
         <div className="flex h-32 items-center justify-center text-sm text-milktea">
-          載入中…
+          {t("common.loading")}
         </div>
       ) : (
         <>
@@ -146,10 +152,10 @@ export default function HabitCalendarModal({ open, onClose, habit }) {
           {/* legend */}
           <div className="mt-3 flex items-center justify-center gap-4 text-[10px] text-milktea">
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-full bg-sage" /> 完成
+              <span className="h-2.5 w-2.5 rounded-full bg-sage" /> {t("calendar.legend_done")}
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-full bg-milktea-soft/50" /> 沒記錄
+              <span className="h-2.5 w-2.5 rounded-full bg-milktea-soft/50" /> {t("calendar.legend_none")}
             </span>
           </div>
         </>

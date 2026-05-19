@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "@/components/LocaleProvider";
 
 // 每日感恩三件事 — 三格輸入，三件都填完才能送出。
 export default function GratitudeCard({ quote, todayEntry, onSave, saving }) {
+  const { t } = useLocale();
   const done = !!todayEntry;
   const [items, setItems] = useState([
     todayEntry?.item_1 || "",
@@ -33,7 +35,7 @@ export default function GratitudeCard({ quote, todayEntry, onSave, saving }) {
       <div className="mb-3.5 pr-7 font-hand text-[15px] leading-snug text-cocoa-soft">
         {done ? (
           <span className="font-semibold text-cocoa">
-            ✓ 已完成今日感恩 ·{" "}
+            {t("gratitude.done")}{" "}
           </span>
         ) : null}
         「{quote}」
@@ -48,7 +50,7 @@ export default function GratitudeCard({ quote, todayEntry, onSave, saving }) {
             value={items[i]}
             disabled={done || saving}
             onChange={(e) => setItem(i, e.target.value)}
-            placeholder="今天我感謝..."
+            placeholder={t("gratitude.placeholder")}
             className="flex-1 border-b-[1.5px] border-dashed border-line bg-transparent px-0.5 py-1.5 text-[13px] text-cocoa-deep italic outline-none placeholder:text-milktea focus:border-cocoa-soft disabled:opacity-80"
           />
         </div>
@@ -65,7 +67,7 @@ export default function GratitudeCard({ quote, todayEntry, onSave, saving }) {
           }`}
         >
           <span>🌱</span>
-          {saving ? "記下中…" : "記下今天的感恩 · +20 pt"}
+          {saving ? t("gratitude.saving") : t("gratitude.save")}
         </button>
       )}
     </div>

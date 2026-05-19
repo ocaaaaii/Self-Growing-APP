@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Modal from "./Modal";
 import Mochi from "./Mochi";
+import { useLocale } from "@/components/LocaleProvider";
 
 export default function RestDayModal({ open, onClose, onSave, saving }) {
+  const { t } = useLocale();
   const [reason, setReason] = useState("");
 
   function handleSave() {
@@ -35,11 +37,10 @@ export default function RestDayModal({ open, onClose, onSave, saving }) {
         </div>
         <div>
           <h2 className="text-lg font-semibold leading-snug text-cocoa-deep">
-            今天請假 🛁
+            {t("restDay.title")}
           </h2>
           <p className="mt-0.5 text-xs leading-relaxed text-milktea">
-            刻意給自己休息的許可，<br />
-            跟不小心忘記是完全不一樣的事。
+            {t("restDay.subtitle")}
           </p>
         </div>
       </div>
@@ -47,12 +48,12 @@ export default function RestDayModal({ open, onClose, onSave, saving }) {
       {/* reason textarea */}
       <div className="mb-4">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          請假理由
+          {t("restDay.reasonLabel")}
         </label>
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="例如：今天身體不舒服需要好好休息、出門旅行一天、給自己的恢復日…"
+          placeholder={t("restDay.reasonPlaceholder")}
           rows={4}
           className="w-full resize-none rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm leading-relaxed text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
         />
@@ -60,9 +61,9 @@ export default function RestDayModal({ open, onClose, onSave, saving }) {
 
       {/* what happens */}
       <div className="mb-4 rounded-[12px] bg-beige/60 px-3.5 py-3 text-[12px] leading-relaxed text-cocoa-soft">
-        <p>✓ &nbsp;今天的習慣不計入 streak 中斷</p>
-        <p>✓ &nbsp;不會觸發今晚的復盤提示</p>
-        <p>✓ &nbsp;請假登記完成 <span className="font-semibold text-cocoa-deep">+5 pt</span></p>
+        <p>{t("restDay.benefit1")}</p>
+        <p>{t("restDay.benefit2")}</p>
+        <p>{t("restDay.benefit3")}</p>
       </div>
 
       <button
@@ -70,14 +71,14 @@ export default function RestDayModal({ open, onClose, onSave, saving }) {
         disabled={saving || !reason.trim()}
         className="btn-cocoa w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
       >
-        {saving ? "記錄中…" : "好好休息去 🛁"}
+        {saving ? t("common.recording") : t("restDay.save")}
       </button>
 
       <button
         onClick={handleClose}
         className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa-deep"
       >
-        取消
+        {t("common.cancel")}
       </button>
     </Modal>
   );

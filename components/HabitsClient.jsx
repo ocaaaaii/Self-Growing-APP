@@ -11,12 +11,12 @@ import CelebrateModal from "./CelebrateModal";
 import AddHabitModal from "./AddHabitModal";
 import ProfileModal from "./ProfileModal";
 import HabitCalendarModal from "./HabitCalendarModal";
-
-const FILTERS = ["全部", ...CATEGORIES];
+import { useLocale } from "@/components/LocaleProvider";
 
 export default function HabitsClient({ habits: initialHabits, todayLogs, nickname }) {
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useLocale();
 
   const [habits, setHabits] = useState(initialHabits);
   const [doneSet, setDoneSet] = useState(
@@ -143,7 +143,6 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
   }
 
   async function handleDeleteHabit(habit) {
-    if (!confirm(`確定要刪除「${habit.title}」嗎？`)) return;
     setSavingHabit(true);
     try {
       const { error } = await supabase
@@ -206,7 +205,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
                   : "border-line bg-cream-card text-cocoa"
               }`}
             >
-              {f}
+              {f === "全部" ? t("habits.filterAll") : f === "已封存" ? t("habits.archived") : f}
             </button>
           ))}
         </div>
@@ -216,15 +215,15 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
           <div className="flex flex-col items-center rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center shadow-soft">
             <Mochi mood="happy" size={84} />
             <p className="mt-3 text-sm font-medium text-cocoa-deep">
-              還沒有任何習慣
+              {t("habits.noHabits")}
             </p>
             <p className="mt-1 text-xs text-milktea">
-              點右下角的 + 建立第一個吧
+              {t("habits.noHabitsHint")}
             </p>
           </div>
         ) : shown.length === 0 ? (
           <div className="rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center text-sm text-milktea shadow-soft">
-            這個分類還沒有習慣～
+            {t("habits.noFiltered")}
           </div>
         ) : (
           <div className="flex flex-col gap-2.5">
@@ -244,7 +243,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
 
         {/* gentle footer note */}
         <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-milktea">
-          <Bow size={14} /> 你不是被逼著成長，是慢慢把自己養成喜歡的樣子
+          <Bow size={14} /> {t("habits.buildSystem")}
         </div>
       </div>
 

@@ -2,9 +2,11 @@
 
 import Modal from "./Modal";
 import Mochi from "./Mochi";
+import { useLocale } from "@/components/LocaleProvider";
 
 // Celebration popup — Mochi bounces in, shows points earned.
 export default function CelebrateModal({ open, onClose, title, message, badge, mood = "loving" }) {
+  const { t } = useLocale();
   return (
     <Modal open={open} onClose={onClose} className="text-center">
       <div className="mx-auto mb-3.5 mt-2 animate-bounceIn" style={{ width: 120 }}>
@@ -29,7 +31,7 @@ export default function CelebrateModal({ open, onClose, title, message, badge, m
         className="mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px"
         style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
       >
-        繼續加油！
+        {t("common.keepGoing")}
       </button>
     </Modal>
   );

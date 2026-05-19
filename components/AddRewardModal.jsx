@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import Bow from "./Bow";
 import { REWARD_CATEGORIES, REWARD_EMOJI_CHOICES } from "@/lib/constants";
+import { useLocale } from "@/components/LocaleProvider";
 
 function Pill({ active, children, onClick }) {
   return (
@@ -36,6 +37,7 @@ export default function AddRewardModal({
   saving,
   defaultCategory,
 }) {
+  const { t } = useLocale();
   const editing = !!reward;
   const [title, setTitle] = useState("");
   const [emoji, setEmoji] = useState(REWARD_EMOJI_CHOICES[0]);
@@ -89,25 +91,25 @@ export default function AddRewardModal({
       </button>
 
       <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
-        <Bow size={20} /> {editing ? "編輯獎勵" : "新增一個獎勵"}
+        <Bow size={20} /> {editing ? t("addReward.titleEdit") : t("addReward.titleAdd")}
       </h2>
-      <p className="mb-[18px] text-xs text-milktea">你有努力，所以你值得 🎀</p>
+      <p className="mb-[18px] text-xs text-milktea">{t("addReward.subtitle")}</p>
 
       <div className="mb-3.5">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          名稱
+          {t("addReward.name")}
         </label>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="例如：去咖啡廳坐一個下午"
+          placeholder={t("addReward.namePlaceholder")}
           className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
         />
       </div>
 
       <div className="mb-3.5">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          挑一個圖示
+          {t("addReward.emoji")}
         </label>
         <div className="flex flex-wrap gap-1.5">
           {REWARD_EMOJI_CHOICES.map((e) => (
@@ -127,7 +129,7 @@ export default function AddRewardModal({
 
       <div className="mb-3.5">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          分類
+          {t("addReward.category")}
         </label>
         <div className="flex flex-wrap gap-1.5">
           {REWARD_CATEGORIES.map((c) => (
@@ -140,7 +142,7 @@ export default function AddRewardModal({
 
       <div className="mb-3.5">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          需要的點數
+          {t("addReward.cost")}
         </label>
         <div className="mb-2 flex flex-wrap gap-1.5">
           {COST_PRESETS.map((c) => (
@@ -160,7 +162,7 @@ export default function AddRewardModal({
 
       <div className="mb-3.5">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          可兌換數量
+          {t("addReward.stock")}
         </label>
         <div className="flex flex-wrap gap-1.5">
           {STOCK_PRESETS.map((s) => (
@@ -180,12 +182,12 @@ export default function AddRewardModal({
 
       <div className="mb-3.5">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          備註（可選）
+          {t("addReward.desc")}
         </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="想對未來的自己說的話…"
+          placeholder={t("addReward.descPlaceholder")}
           className="min-h-[60px] w-full resize-none rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
         />
       </div>
@@ -195,7 +197,7 @@ export default function AddRewardModal({
         disabled={saving}
         className="btn-cocoa mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
       >
-        {saving ? "儲存中…" : editing ? "儲存修改 🎀" : "加入獎勵清單 🎀"}
+        {saving ? t("common.saving") : (editing ? t("addReward.saveEdit") : t("addReward.saveAdd"))}
       </button>
 
       {editing && (
@@ -203,7 +205,7 @@ export default function AddRewardModal({
           onClick={() => onDelete(reward)}
           className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa-deep"
         >
-          刪除這個獎勵
+          {t("addReward.deleteReward")}
         </button>
       )}
     </Modal>

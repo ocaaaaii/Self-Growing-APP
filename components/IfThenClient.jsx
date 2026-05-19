@@ -7,11 +7,13 @@ import Mochi from "./Mochi";
 import Bow from "./Bow";
 import IfThenCard from "./IfThenCard";
 import IfThenModal from "./IfThenModal";
+import { useLocale } from "@/components/LocaleProvider";
 
 const FILTERS = ["全部", ...IFTHEN_CATEGORIES];
 
 export default function IfThenClient({ rules: initialRules }) {
   const supabase = createClient();
+  const { t } = useLocale();
 
   const [rules, setRules] = useState(initialRules);
   const [filter, setFilter] = useState("全部");
@@ -113,11 +115,11 @@ export default function IfThenClient({ rules: initialRules }) {
     <div className="relative">
       <div className="animate-fadeIn px-[22px] pb-[100px] pt-2">
         <div className="mb-[18px] mt-1.5">
-          <div className="font-hand text-lg text-milktea">if-then rules</div>
+          <div className="font-hand text-lg text-milktea">{t("ifthen.handwriting")}</div>
           <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
-            讓好習慣<span className="underline-cute">自動發生</span> 💫
+            {t("ifthen.title")}
           </h1>
-          <p className="mt-1 text-[13px] text-milktea">不靠意志力，靠自動反射</p>
+          <p className="mt-1 text-[13px] text-milktea">{t("ifthen.subtitle")}</p>
         </div>
 
         {/* filter */}
@@ -132,7 +134,7 @@ export default function IfThenClient({ rules: initialRules }) {
                   : "border-line bg-cream-card text-cocoa"
               }`}
             >
-              {f}
+              {f === "全部" ? t("ifthen.filterAll") : f}
             </button>
           ))}
         </div>
@@ -141,24 +143,22 @@ export default function IfThenClient({ rules: initialRules }) {
           <div className="flex flex-col items-center rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center shadow-soft">
             <Mochi mood="happy" size={84} />
             <p className="mt-3 text-sm font-medium text-cocoa-deep">
-              還沒有任何規則
+              {t("ifthen.noRules")}
             </p>
             <p className="mt-1 text-xs leading-relaxed text-milktea">
-              建立「IF 觸發 → THEN 行動」
-              <br />
-              讓好習慣變成不用想的反射動作
+              {t("ifthen.noRulesHint")}
             </p>
             <button
               onClick={openAdd}
               className="mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold text-cream-card shadow-soft"
               style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
             >
-              建立第一個規則 💫
+              {t("ifthen.addFirst")}
             </button>
           </div>
         ) : shown.length === 0 ? (
           <div className="rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center text-sm text-milktea shadow-soft">
-            這個分類還沒有規則～
+            {t("ifthen.noFiltered")}
           </div>
         ) : (
           <div className="flex flex-col gap-3">
@@ -175,7 +175,7 @@ export default function IfThenClient({ rules: initialRules }) {
         )}
 
         <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-milktea">
-          <Bow size={14} /> 建立你自己的生活系統
+          <Bow size={14} /> {t("ifthen.buildSystem")}
         </div>
       </div>
 

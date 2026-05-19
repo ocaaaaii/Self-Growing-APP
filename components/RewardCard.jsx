@@ -1,5 +1,7 @@
 "use client";
 
+import { useLocale } from "@/components/LocaleProvider";
+
 const IMG_BG = {
   小確幸: "bg-dusty",
   物品: "bg-sage",
@@ -9,6 +11,7 @@ const IMG_BG = {
 
 // One reward in the 2-column grid.
 export default function RewardCard({ reward, points, onClick, onEdit }) {
+  const { t } = useLocale();
   // stock: null = unlimited; 0 = sold out
   const soldOut = reward.stock !== null && reward.stock !== undefined && reward.stock <= 0;
   const affordable = !soldOut && points >= reward.point_cost;
@@ -30,7 +33,7 @@ export default function RewardCard({ reward, points, onClick, onEdit }) {
             onEdit(reward);
           }}
           className="absolute left-2 top-2 z-[1] flex h-6 w-6 items-center justify-center rounded-full bg-cream-paper text-milktea transition hover:bg-beige hover:text-cocoa"
-          aria-label="編輯"
+          aria-label={t("common.edit")}
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
             <path
@@ -52,7 +55,7 @@ export default function RewardCard({ reward, points, onClick, onEdit }) {
               : "bg-cocoa text-cream-card"
           }`}
         >
-          {soldOut ? "已換完" : `剩 ${reward.stock}`}
+          {soldOut ? t("rewards.soldOut") : t("rewards.remaining", { n: reward.stock })}
         </div>
       )}
 
@@ -86,7 +89,7 @@ export default function RewardCard({ reward, points, onClick, onEdit }) {
       )}
       {reward.redeemed_count > 0 && (
         <div className="mt-1.5 text-[10px] text-milktea">
-          已兌換 {reward.redeemed_count} 次
+          {t("rewards.redeemedCount", { n: reward.redeemed_count })}
         </div>
       )}
     </div>

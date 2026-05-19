@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { todayStr } from "@/lib/constants";
 import Modal from "./Modal";
 import Mochi from "./Mochi";
+import { useLocale } from "@/components/LocaleProvider";
 
 export default function WeeklyReviewModal({
   open,
@@ -13,6 +14,7 @@ export default function WeeklyReviewModal({
   saving,
   weekStart,      // "YYYY-MM-DD" (週一)
 }) {
+  const { t } = useLocale();
   const supabase = createClient();
   const [proudMoment, setProudMoment] = useState("");
   const [stats, setStats] = useState(null);
@@ -125,7 +127,7 @@ export default function WeeklyReviewModal({
         </div>
         <div>
           <h2 className="text-lg font-semibold leading-snug text-cocoa-deep">
-            本週回顧 🌸
+            {t("weeklyReview.title")}
           </h2>
           <p className="mt-0.5 text-xs text-milktea">{weekLabel}</p>
         </div>
@@ -134,18 +136,18 @@ export default function WeeklyReviewModal({
       {/* weekly stats */}
       {loadingStats ? (
         <div className="mb-4 flex h-20 items-center justify-center text-sm text-milktea">
-          計算中…
+          {t("common.calculating")}
         </div>
       ) : stats ? (
         <div className="mb-4">
           <div className="mb-2 grid grid-cols-2 gap-2">
             <div className="rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-3 text-center">
               <div className="text-xl font-bold text-cocoa-deep">+{stats.weeklyPoints}</div>
-              <div className="text-[10px] text-milktea">本週點數</div>
+              <div className="text-[10px] text-milktea">{t("weeklyReview.weeklyPoints")}</div>
             </div>
             <div className="rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-3 text-center">
               <div className="text-xl font-bold text-cocoa-deep">{stats.totalDone}</div>
-              <div className="text-[10px] text-milktea">打卡次數</div>
+              <div className="text-[10px] text-milktea">{t("weeklyReview.checkIns")}</div>
             </div>
           </div>
 
@@ -153,10 +155,10 @@ export default function WeeklyReviewModal({
             <div className="mb-2 flex items-center gap-2.5 rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-2.5">
               <span className="text-xl">{stats.best.emoji}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] text-milktea">這週最穩的一個 ✨</p>
+                <p className="text-[11px] text-milktea">{t("weeklyReview.mostStable")}</p>
                 <p className="truncate text-[13px] font-semibold text-cocoa-deep">{stats.best.title}</p>
               </div>
-              <span className="text-xs text-cocoa-soft">{stats.best.count}次</span>
+              <span className="text-xs text-cocoa-soft">{`${stats.best.count}${t("common.times")}`}</span>
             </div>
           )}
 
@@ -164,7 +166,7 @@ export default function WeeklyReviewModal({
             <div className="flex items-center gap-2.5 rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-2.5">
               <span className="text-xl">{stats.worst.emoji}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] text-milktea">這週比較不穩 🌱</p>
+                <p className="text-[11px] text-milktea">{t("weeklyReview.leastStable")}</p>
                 <p className="truncate text-[13px] font-semibold text-cocoa-deep">{stats.worst.title}</p>
               </div>
               <span className="text-xs text-cocoa-soft">{stats.worst.count}次</span>
@@ -176,12 +178,12 @@ export default function WeeklyReviewModal({
       {/* proud moment */}
       <div className="mb-4">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          這週我最驕傲的一件事 🎀
+          {t("weeklyReview.proudLabel")}
         </label>
         <textarea
           value={proudMoment}
           onChange={(e) => setProudMoment(e.target.value)}
-          placeholder="不用很大，可以只是堅持了一個習慣，或對自己說了一句溫柔的話…"
+          placeholder={t("weeklyReview.proudPlaceholder")}
           rows={4}
           className="w-full resize-none rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm leading-relaxed text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
         />
@@ -191,8 +193,7 @@ export default function WeeklyReviewModal({
       <div className="mb-4 flex items-center gap-2 rounded-[12px] bg-beige/60 px-3.5 py-2.5">
         <span className="text-base">✨</span>
         <p className="text-[12px] text-cocoa-soft">
-          完成本週回顧，得到{" "}
-          <span className="font-semibold text-cocoa-deep">+15 pt</span>
+          {t("weeklyReview.pointsHint")}
         </p>
       </div>
 
@@ -201,14 +202,14 @@ export default function WeeklyReviewModal({
         disabled={saving || !proudMoment.trim()}
         className="btn-cocoa w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
       >
-        {saving ? "儲存中…" : "完成本週回顧 🌸"}
+        {saving ? t("common.saving") : t("weeklyReview.save")}
       </button>
 
       <button
         onClick={handleClose}
         className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa-deep"
       >
-        先跳過
+        {t("common.skip")}
       </button>
     </Modal>
   );

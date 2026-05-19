@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import Bow from "./Bow";
 import { IFTHEN_CATEGORIES } from "@/lib/constants";
+import { useLocale } from "@/components/LocaleProvider";
 
 // Add OR edit an If→Then rule. Pass `rule` to edit, omit to add.
 export default function IfThenModal({ open, onClose, onSave, onDelete, rule, saving }) {
+  const { t } = useLocale();
   const editing = !!rule;
   const [ifText, setIfText] = useState("");
   const [thenText, setThenText] = useState("");
@@ -39,21 +41,21 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
       </button>
 
       <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
-        <Bow size={20} /> {editing ? "編輯規則" : "新增 If → Then 規則"}
+        <Bow size={20} /> {editing ? t("addIfthen.titleEdit") : t("addIfthen.titleAdd")}
       </h2>
-      <p className="mb-[18px] text-xs text-milktea">讓好習慣變成自動反應 💫</p>
+      <p className="mb-[18px] text-xs text-milktea">{t("addIfthen.subtitle")}</p>
 
       <div className="mb-3.5">
         <label className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-cocoa">
           <span className="rounded-lg bg-dusty/40 px-2 py-0.5 text-[10px] font-bold text-cocoa">
             IF
           </span>
-          當...發生
+          {t("addIfthen.ifLabel")}
         </label>
         <textarea
           value={ifText}
           onChange={(e) => setIfText(e.target.value)}
-          placeholder="例如：聽到鬧鐘"
+          placeholder={t("addIfthen.ifPlaceholder")}
           className="min-h-[56px] w-full resize-none rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
         />
       </div>
@@ -63,19 +65,19 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
           <span className="rounded-lg bg-sage px-2 py-0.5 text-[10px] font-bold text-cocoa">
             THEN
           </span>
-          我就...
+          {t("addIfthen.thenLabel")}
         </label>
         <textarea
           value={thenText}
           onChange={(e) => setThenText(e.target.value)}
-          placeholder="例如：立刻雙腳落地 → 開燈 → 去刷牙"
+          placeholder={t("addIfthen.thenPlaceholder")}
           className="min-h-[56px] w-full resize-none rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
         />
       </div>
 
       <div className="mb-3.5">
         <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-          分類
+          {t("addIfthen.category")}
         </label>
         <div className="flex flex-wrap gap-1.5">
           {IFTHEN_CATEGORIES.map((c) => (
@@ -101,7 +103,7 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
         className="mt-2 w-full rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px disabled:opacity-60"
         style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
       >
-        {saving ? "儲存中…" : editing ? "儲存修改 💫" : "建立規則 💫"}
+        {saving ? t("common.saving") : editing ? t("addIfthen.saveEdit") : t("addIfthen.saveAdd")}
       </button>
 
       {editing && (
@@ -109,7 +111,7 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
           onClick={() => onDelete(rule)}
           className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa-deep"
         >
-          刪除這個規則
+          {t("addIfthen.deleteRule")}
         </button>
       )}
     </Modal>

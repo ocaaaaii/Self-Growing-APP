@@ -1,7 +1,10 @@
 "use client";
 
+import { useLocale } from "@/components/LocaleProvider";
+
 // One If→Then rule card.
 export default function IfThenCard({ rule, onEdit, onToggle, busy }) {
+  const { t } = useLocale();
   return (
     <div
       className={`rounded-[20px] border border-line/40 bg-cream-card p-4 shadow-soft transition ${
@@ -43,7 +46,7 @@ export default function IfThenCard({ rule, onEdit, onToggle, busy }) {
               }`}
             />
           </span>
-          {rule.is_enabled ? "啟用中" : "已暫停"}
+          {rule.is_enabled ? t("ifthen.enabled") : t("ifthen.paused")}
         </button>
       </div>
     </div>
