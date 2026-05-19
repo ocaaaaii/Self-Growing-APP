@@ -8,12 +8,23 @@ import { createClient } from "@/lib/supabase/client";
 import Mochi from "@/components/Mochi";
 import Bow from "@/components/Bow";
 
+const LOCALES = [
+  { code: "zh-TW", label: "繁體中文", flag: "🇹🇼" },
+  { code: "zh-CN", label: "简体中文", flag: "🇨🇳" },
+  { code: "en",    label: "English",  flag: "🇺🇸" },
+  { code: "ja",    label: "日本語",   flag: "🇯🇵" },
+  { code: "ko",    label: "한국어",   flag: "🇰🇷" },
+  { code: "es",    label: "Español",  flag: "🇪🇸" },
+  { code: "pt",    label: "Português",flag: "🇧🇷" },
+];
+
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
 
   const [mode, setMode] = useState("login"); // "login" | "signup" | "reset"
   const [nickname, setNickname] = useState("");
+  const [selectedLocale, setSelectedLocale] = useState("zh-TW");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -61,13 +72,25 @@ export default function LoginPage() {
           email,
           password,
           options: {
-            // 暱稱會傳進 auth metadata，trigger 會用它建立 profile
-            data: { username: nickname.trim() || email.split("@")[0] },
+            // 暱稱 + 語言會傳進 auth metadata，trigger 會用它建立 profile
+            data: {
+              username: nickname.trim() || email.split("@")[0],
+              locale: selectedLocale,
+            },
           },
         });
         if (error) throw error;
         rememberEmail(email);
+
+        // 存進 localStorage，讓 LocaleProvider mount 時能立即套用
+        try { localStorage.setItem("locale", selectedLocale); } catch {}
+
         if (data.session) {
+          // 有立即 session → 直接寫進 profile
+          await supabase.from("profiles").upsert(
+            { id: data.session.user.id, locale: selectedLocale },
+            { onConflict: "id" }
+          );
           router.push("/home");
           router.refresh();
         } else {
@@ -153,21 +176,50 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           {mode === "signup" && (
-            <div>
-              <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-                暱稱
-              </label>
-              <input
-                type="text"
-                required
-                maxLength={20}
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-                placeholder="想讓 mochi 怎麼稱呼你？"
-                autoComplete="nickname"
-                className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
-              />
-            </div>
+            <>
+              <div>
+                <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+                  暱稱
+                </label>
+                <input
+                  type="text"
+                  required
+                  maxLength={20}
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                  placeholder="想讓 mochi 怎麼稱呼你？"
+                  autoComplete="nickname"
+                  className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
+                />
+              </div>
+
+              {/* language picker */}
+              <div>
+                <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
+                  語言 / Language
+                </label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {LOCALES.map((loc) => (
+                    <button
+                      key={loc.code}
+                      type="button"
+                      onClick={() => {
+                        setSelectedLocale(loc.code);
+                        try { localStorage.setItem("locale", loc.code); } catch {}
+                      }}
+                      className={`flex items-center gap-2 rounded-[14px] border px-3 py-2 text-xs font-medium transition active:scale-[0.97] ${
+                        selectedLocale === loc.code
+                          ? "border-cocoa bg-cocoa text-cream-card"
+                          : "border-line bg-cream-card text-cocoa"
+                      }`}
+                    >
+                      <span className="text-sm">{loc.flag}</span>
+                      <span>{loc.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
           )}
           <div>
             <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">

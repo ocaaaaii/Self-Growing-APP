@@ -13,6 +13,8 @@ import ProfileModal from "./ProfileModal";
 import HabitCalendarModal from "./HabitCalendarModal";
 import { useLocale } from "@/components/LocaleProvider";
 
+const FILTERS = ["全部", "已封存", ...CATEGORIES];
+
 export default function HabitsClient({ habits: initialHabits, todayLogs, nickname }) {
   const router = useRouter();
   const supabase = createClient();

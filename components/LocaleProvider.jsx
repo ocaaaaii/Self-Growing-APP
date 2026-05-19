@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { getMessage, LOCALES, DEFAULT_LOCALE } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
 
@@ -39,6 +39,18 @@ export function LocaleProvider({ children, initialLocale, initialMessages }) {
       console.warn("Failed to load locale", newLocale, err);
     }
   }, [supabase]);
+
+  // On first mount: if localStorage has a locale set during signup/previous visit,
+  // load it (overrides the server-rendered default if different).
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("locale");
+      if (saved && saved !== locale && LOCALES.some((l) => l.code === saved)) {
+        setLocale(saved); // loads messages + persists to Supabase
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const t = useCallback((key, vars) => getMessage(messages, key, vars), [messages]);
 
