@@ -164,7 +164,7 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
         <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
           主題色 {themeSaving && <span className="text-milktea">· 儲存中…</span>}
         </label>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {THEMES.map((t) => (
             <ThemeCard
               key={t.key}
