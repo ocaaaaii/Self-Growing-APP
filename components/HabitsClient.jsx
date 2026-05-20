@@ -207,7 +207,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
                   : "border-line bg-cream-card text-cocoa"
               }`}
             >
-              {f === "全部" ? t("habits.filterAll") : f === "已封存" ? t("habits.archived") : f}
+              {f === "全部" ? t("habits.filterAll") : f === "已封存" ? t("habits.archived") : (t(`categories.${f}`) || f)}
             </button>
           ))}
         </div>

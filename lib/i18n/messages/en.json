@@ -28,22 +28,39 @@
     "greeting_morning": "Good morning",
     "greeting_noon": "Good afternoon",
     "greeting_evening": "Good evening",
+    "tagline": "Slowly getting better 🌱",
     "todayHabits": "Today's little things",
     "allDone": "All done for today 🎉",
     "restDay": "Rest day today 🛁",
     "noHabits": "No habits yet",
     "noHabitsHint": "Tap + to add your first habit for today",
+    "noHabitsRestHint": "Rest is important too 🛁 Want to create a new habit?",
+    "addHabitBtn": "Add a new habit ✨",
     "todayEarned": "Earned today",
+    "counter": "{done} / {total} done",
     "gratitudeSection": "Today's gratitude",
+    "gratitudeViewHistory": "History →",
+    "gratitudeHistoryTitle": "Gratitude history",
+    "gratitudeHistorySubtitle": "Small moments worth remembering",
     "reflectionSection": "Reflection journal",
     "reflectionDone": "Today's reflection done ✓",
+    "reflectionReminder": "You'll be reminded to reflect after 11:55pm +10pt",
     "viewReflection": "View →",
     "doReflection": "Write today's reflection",
     "yesterdayReflection": "Catch up on yesterday's reflection",
+    "yesterdayBannerTitle": "Yesterday's reflection not done",
+    "yesterdayBannerBody": "{n} habits incomplete yesterday — still not too late +10pt",
+    "reflectionBannerTitle": "Today's reflection",
+    "reflectionBannerBody": "{n} habits incomplete — be honest with yourself +10pt",
     "weeklyReview": "Weekly review",
+    "weeklyReviewHint": "Look at this week's progress, write your proudest moment +15pt",
     "weeklyReviewDone": "Weekly review done ✓",
     "doWeeklyReview": "Start weekly review 🌸",
     "restDayBtn": "Take a rest day",
+    "mochiSays": "mochi wants to say ✨",
+    "mochiEmpty": "Today is your free day — rest well 🛁",
+    "mochiAllDone": "All done for today! You're amazing 🎀",
+    "mochiRemaining": "Just {n} more to reach today's goal — you're awesome!",
     "error_toggle": "Something went wrong, try again:",
     "error_save": "Couldn't save, try again:",
     "error_delete": "Couldn't delete, try again:",
@@ -77,6 +94,12 @@
     "frequency": "Frequency",
     "scheduleDays": "Choose your days",
     "scheduleDaysHint": "Any days work. If none selected, it won't show on the home screen.",
+    "scheduleAppearNote": "Will appear on {days} each week ✓",
+    "freq_daily_hint": "Shows up in your daily list every day 🌱",
+    "freq_weekday_hint": "Shown Mon–Fri, weekends are for resting 🛁",
+    "freq_custom_hint_nodays": "Select your days and it'll appear on the home screen",
+    "freq_custom_hint_days": "Only appears on your chosen {n} days — relax the rest 🌸",
+    "freq_free_hint": "No fixed schedule — you decide when to do it ☁️",
     "saveAdd": "Create this habit 🌱",
     "saveEdit": "Save changes 💫",
     "deleteHabit": "Delete this habit",
@@ -88,6 +111,30 @@
     "days_thu": "Thu",
     "days_fri": "Fri",
     "days_sat": "Sat"
+  },
+  "categories": {
+    "健康": "Health",
+    "學習": "Learning",
+    "生活": "Lifestyle",
+    "心靈": "Mindfulness",
+    "不要做": "Stop doing"
+  },
+  "difficulty": {
+    "簡單": "Easy",
+    "中等": "Medium",
+    "困難": "Hard"
+  },
+  "frequency": {
+    "每日": "Daily",
+    "平日": "Weekdays",
+    "每週自訂": "Custom days",
+    "自由": "Freestyle"
+  },
+  "rewardCategories": {
+    "小確幸": "Small treat",
+    "物品": "Items",
+    "體驗": "Experience",
+    "大獎勵": "Big reward"
   },
   "rewards": {
     "title": "Treat yourself",
@@ -117,7 +164,9 @@
     "stockPlaceholder": "e.g. 3",
     "saveAdd": "Create this reward 🎀",
     "saveEdit": "Save changes 💫",
-    "deleteReward": "Delete this reward"
+    "deleteReward": "Delete this reward",
+    "stock_unlimited": "Unlimited",
+    "stockHint": "Each redemption uses one — when it runs out, the reward goes on pause"
   },
   "rewardConfirm": {
     "soldOut_title": "This reward is all used up",
@@ -167,14 +216,23 @@
     "handwriting": "growth log",
     "totalPoints": "Total points",
     "longestStreak": "Longest streak",
+    "monthlyRate": "Monthly activity",
     "growthDays": "Growth days",
     "days": "days",
     "achievements": "Achievements",
     "pointsTrend": "Points trend",
     "last7days": "Last 7 days",
+    "maxPointsDay": "Max {n} pt / day",
+    "unlockCount": "{n} / {total} unlocked",
     "noAchievements": "Working on unlocking achievements…",
     "unlocked": "Unlocked",
-    "locked": "Locked"
+    "locked": "Locked",
+    "legend_great": "Amazing day",
+    "legend_most": "Mostly done",
+    "legend_some": "Got some done",
+    "legend_no_record": "No record",
+    "footerEmpty": "Complete your first habit and it'll be recorded here",
+    "footerHas": "Every dot is proof you took care of yourself"
   },
   "profile": {
     "title": "My space",
@@ -266,8 +324,10 @@
     "keepGoing": "Keep going!"
   },
   "reflectionList": {
-    "title": "My reflection journal",
+    "title": "Reflection journal",
+    "subtitle": "Every honest moment is the gentlest care you give yourself",
+    "loading": "Loading…",
     "empty": "No reflections yet",
-    "emptyHint": "Complete today's reflection and it'll appear here"
+    "emptyHint": "Be honest with yourself each day and they'll slowly appear here"
   }
 }

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { greetingFor, ENCOURAGEMENTS, GRATITUDE_QUOTES } from "@/lib/constants";
+import { ENCOURAGEMENTS, GRATITUDE_QUOTES } from "@/lib/constants";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
 import PointsCard from "./PointsCard";
@@ -531,12 +531,17 @@ export default function HomeClient({
             })}
           </div>
           <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
-            {greetingFor()} {username}
+            {(() => {
+              const h = new Date().getHours();
+              if (h < 5 || h >= 18) return t("home.greeting_evening");
+              if (h < 11) return t("home.greeting_morning");
+              return t("home.greeting_noon");
+            })()} {username}
             <span className="ml-1.5 inline-block animate-peek align-middle">
               <Mochi mood="happy" size={30} />
             </span>
             <br />
-            今天也<span className="underline-cute">慢慢來</span> 🌱
+            {t("home.tagline")}
           </h1>
         </div>
 
@@ -555,7 +560,7 @@ export default function HomeClient({
                   🌸 {t("home.weeklyReview")}
                 </p>
                 <p className="mt-0.5 text-[11px] text-milktea">
-                  看看這週的進步，寫下最驕傲的事 +15pt
+                  {t("home.weeklyReviewHint")}
                 </p>
               </div>
               <span className="text-cocoa-soft">→</span>
@@ -572,10 +577,10 @@ export default function HomeClient({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[13px] font-semibold text-cocoa-deep">
-                  🌙 昨天的復盤還沒做
+                  🌙 {t("home.yesterdayBannerTitle")}
                 </p>
                 <p className="mt-0.5 text-[11px] text-milktea">
-                  昨天有 {yesterdayIncompleteHabits?.length} 件沒完成，補一下也不晚 +10pt
+                  {t("home.yesterdayBannerBody", { n: yesterdayIncompleteHabits?.length })}
                 </p>
               </div>
               <span className="text-cocoa-soft">→</span>
@@ -602,7 +607,7 @@ export default function HomeClient({
               </button>
             )}
             <span className="text-xs text-milktea">
-              {doneCount} / {totalCount} 完成
+              {t("home.counter", { done: doneCount, total: totalCount })}
             </span>
           </div>
         </div>
@@ -614,14 +619,14 @@ export default function HomeClient({
               {t("home.noHabits")}
             </p>
             <p className="mt-1 text-xs text-milktea">
-              休息也很重要 🛁 要不要建立新的習慣？
+              {t("home.noHabitsRestHint")}
             </p>
             <button
               onClick={() => setShowAdd(true)}
               className="mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold text-cream-card shadow-soft"
               style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
             >
-              建立新習慣 ✨
+              {t("home.addHabitBtn")}
             </button>
           </div>
         ) : (
@@ -648,10 +653,10 @@ export default function HomeClient({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[13px] font-semibold text-cocoa-deep">
-                  🌙 今日復盤
+                  🌙 {t("home.reflectionBannerTitle")}
                 </p>
                 <p className="mt-0.5 text-[11px] text-milktea">
-                  有 {incompleteHabits.length} 件沒完成，對自己誠實一下 +10pt
+                  {t("home.reflectionBannerBody", { n: incompleteHabits.length })}
                 </p>
               </div>
               <span className="text-cocoa-soft">→</span>
@@ -680,7 +685,7 @@ export default function HomeClient({
           </div>
         ) : totalCount > 0 && !isRestDay ? (
           <div className="mb-[22px] flex items-center gap-2 rounded-[12px] bg-beige/50 px-3.5 py-2.5 text-[12px] text-milktea">
-            <span>🌙</span> 晚上 23:55 後會提醒你做今日復盤 +10pt
+            <span>🌙</span> {t("home.reflectionReminder")}
           </div>
         ) : null}
 
@@ -695,7 +700,7 @@ export default function HomeClient({
               onClick={() => setShowGratHistory(true)}
               className="text-xs text-milktea"
             >
-              回顧 →
+              {t("home.gratitudeViewHistory")}
             </button>
           )}
         </div>
@@ -715,15 +720,15 @@ export default function HomeClient({
             <Mochi mood={mood} size={64} />
           </div>
           <div>
-            <div className="font-hand text-sm text-cocoa">mochi 想跟你說 ✨</div>
+            <div className="font-hand text-sm text-cocoa">{t("home.mochiSays")}</div>
             <div className="mt-0.5 text-[13px] font-medium leading-relaxed text-cocoa-deep">
               {aiMessage
                 ? `「${aiMessage}」`
                 : totalCount === 0
-                ? "「今天是你的自由日，好好休息 🛁」"
+                ? `「${t("home.mochiEmpty")}」`
                 : doneCount >= totalCount
-                ? "「今天的小事全部完成了！你好棒好棒 🎀」"
-                : `「再做 ${totalCount - doneCount} 件就達成今日目標啦～你超棒的！」`}
+                ? `「${t("home.mochiAllDone")}」`
+                : `「${t("home.mochiRemaining", { n: totalCount - doneCount })}」`}
             </div>
           </div>
         </div>
@@ -807,10 +812,10 @@ export default function HomeClient({
           ✕
         </button>
         <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
-          <span className="text-lg">🌿</span> 感恩回顧
+          <span className="text-lg">🌿</span> {t("home.gratitudeHistoryTitle")}
         </h2>
         <p className="mb-[18px] text-xs text-milktea">
-          過去那些值得被看見的小事
+          {t("home.gratitudeHistorySubtitle")}
         </p>
         <div className="flex flex-col gap-2.5">
           {gratitudeHistory.map((g) => (

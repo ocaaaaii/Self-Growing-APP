@@ -160,7 +160,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
         <div className="flex flex-wrap gap-1.5">
           {CATEGORIES.map((c) => (
             <Pill key={c} active={category === c} onClick={() => setCategory(c)}>
-              {c}
+              {t(`categories.${c}`) || c}
             </Pill>
           ))}
         </div>
@@ -174,7 +174,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
         <div className="flex flex-wrap gap-1.5">
           {DIFFICULTY.map((d, i) => (
             <Pill key={d.label} active={diffIdx === i} onClick={() => setDiffIdx(i)}>
-              {d.label} · {d.points}pt
+              {t(`difficulty.${d.label}`) || d.label} · {d.points}pt
             </Pill>
           ))}
         </div>
@@ -195,7 +195,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
                 if (f !== "每週自訂") setScheduleDays([]);
               }}
             >
-              {f}
+              {t(`frequency.${f}`) || f}
             </Pill>
           ))}
         </div>
@@ -221,7 +221,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
           </div>
           {scheduleDays.length > 0 && (
             <p className="mt-2 text-[11px] text-cocoa-soft">
-              每週{scheduleDays.sort((a,b)=>a-b).map((d) => DAY_LABELS[d]).join("、")}會出現在首頁 ✓
+              {t("addHabit.scheduleAppearNote", { days: scheduleDays.sort((a,b)=>a-b).map((d) => DAY_LABELS[d]).join("、") })}
             </p>
           )}
         </div>
@@ -229,13 +229,13 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
 
       {/* 頻率說明 */}
       <div className="mb-4 rounded-[12px] bg-beige/60 px-3 py-2.5 text-[11px] leading-relaxed text-milktea">
-        {frequency === "每日" && "每天都會出現在首頁的當日清單 🌱"}
-        {frequency === "平日" && "週一到週五顯示，週末讓自己休息 🛁"}
+        {frequency === "每日" && t("addHabit.freq_daily_hint")}
+        {frequency === "平日" && t("addHabit.freq_weekday_hint")}
         {frequency === "每週自訂" &&
           (scheduleDays.length > 0
-            ? `只在你選的 ${scheduleDays.length} 天出現，其他天就放鬆 🌸`
-            : "選好日子之後才會出現在首頁")}
-        {frequency === "自由" && "不固定出現在首頁，自己決定什麼時候做 ☁️"}
+            ? t("addHabit.freq_custom_hint_days", { n: scheduleDays.length })
+            : t("addHabit.freq_custom_hint_nodays"))}
+        {frequency === "自由" && t("addHabit.freq_free_hint")}
       </div>
 
       <button

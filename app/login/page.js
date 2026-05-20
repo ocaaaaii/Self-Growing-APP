@@ -195,29 +195,23 @@ export default function LoginPage() {
 
               {/* language picker */}
               <div>
-                <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
+                <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
                   語言 / Language
                 </label>
-                <div className="grid grid-cols-2 gap-1.5">
+                <select
+                  value={selectedLocale}
+                  onChange={(e) => {
+                    setSelectedLocale(e.target.value);
+                    try { localStorage.setItem("locale", e.target.value); } catch {}
+                  }}
+                  className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
+                >
                   {LOCALES.map((loc) => (
-                    <button
-                      key={loc.code}
-                      type="button"
-                      onClick={() => {
-                        setSelectedLocale(loc.code);
-                        try { localStorage.setItem("locale", loc.code); } catch {}
-                      }}
-                      className={`flex items-center gap-2 rounded-[14px] border px-3 py-2 text-xs font-medium transition active:scale-[0.97] ${
-                        selectedLocale === loc.code
-                          ? "border-cocoa bg-cocoa text-cream-card"
-                          : "border-line bg-cream-card text-cocoa"
-                      }`}
-                    >
-                      <span className="text-sm">{loc.flag}</span>
-                      <span>{loc.label}</span>
-                    </button>
+                    <option key={loc.code} value={loc.code}>
+                      {loc.flag} {loc.label}
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
             </>
           )}

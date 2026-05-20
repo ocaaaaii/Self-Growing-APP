@@ -51,7 +51,24 @@
     "habitAdded_scheduled": "Criado! Vai aparecer nos dias programados 🌱",
     "habitAdded_title": "Adicionado!",
     "habitAdded_badge": "🌱 + 1 hábito",
-    "confirmDelete": "Excluir «{title}»?"
+    "confirmDelete": "Excluir «{title}»?",
+    "tagline": "Hoje também vou melhorando aos poucos 🌱",
+    "noHabitsRestHint": "O descanso também é importante 🛁 Quer criar um hábito?",
+    "addHabitBtn": "Criar novo hábito ✨",
+    "counter": "{done} / {total} concluído",
+    "gratitudeViewHistory": "Histórico →",
+    "gratitudeHistoryTitle": "Histórico de gratidão",
+    "gratitudeHistorySubtitle": "Pequenos momentos que merecem ser lembrados",
+    "reflectionReminder": "Você será lembrado para refletir após as 23:55 +10pt",
+    "yesterdayBannerTitle": "Reflexão de ontem não feita",
+    "yesterdayBannerBody": "{n} hábitos incompletos ontem — ainda não é tarde +10pt",
+    "reflectionBannerTitle": "Reflexão de hoje",
+    "reflectionBannerBody": "{n} hábitos incompletos — seja honesto consigo mesmo +10pt",
+    "weeklyReviewHint": "Veja seu progresso desta semana e escreva o momento mais orgulhoso +15pt",
+    "mochiSays": "mochi quer te dizer ✨",
+    "mochiEmpty": "Hoje é seu dia livre — descanse bem 🛁",
+    "mochiAllDone": "Tudo feito hoje! Você é incrível 🎀",
+    "mochiRemaining": "Só mais {n} para atingir a meta de hoje — você é demais!"
   },
   "habits": {
     "title": "Meus hábitos",
@@ -87,7 +104,13 @@
     "days_wed": "Qua",
     "days_thu": "Qui",
     "days_fri": "Sex",
-    "days_sat": "Sáb"
+    "days_sat": "Sáb",
+    "scheduleAppearNote": "Aparecerá em {days} toda semana ✓",
+    "freq_daily_hint": "Aparece na sua lista diária todos os dias 🌱",
+    "freq_weekday_hint": "Mostrado de segunda a sexta, descanse nos fins de semana 🛁",
+    "freq_custom_hint_nodays": "Selecione seus dias e aparecerá na tela inicial",
+    "freq_custom_hint_days": "Aparece apenas nos {n} dias escolhidos — relaxe o resto 🌸",
+    "freq_free_hint": "Sem horário fixo — você decide quando fazer ☁️"
   },
   "rewards": {
     "title": "Se mime",
@@ -117,7 +140,9 @@
     "stockPlaceholder": "Ex: 3",
     "saveAdd": "Criar essa recompensa 🎀",
     "saveEdit": "Salvar alterações 💫",
-    "deleteReward": "Excluir essa recompensa"
+    "deleteReward": "Excluir essa recompensa",
+    "stock_unlimited": "Ilimitado",
+    "stockHint": "Cada resgate usa um. Quando acabar, a recompensa fica em pausa"
   },
   "rewardConfirm": {
     "soldOut_title": "Essa recompensa acabou",
@@ -174,7 +199,16 @@
     "last7days": "Últimos 7 dias",
     "noAchievements": "Desbloqueando conquistas…",
     "unlocked": "Desbloqueado",
-    "locked": "Bloqueado"
+    "locked": "Bloqueado",
+    "monthlyRate": "Atividade mensal",
+    "maxPointsDay": "Máx {n} pt / dia",
+    "unlockCount": "{n} / {total} desbloqueados",
+    "legend_great": "Dia incrível",
+    "legend_most": "Quase tudo feito",
+    "legend_some": "Algo feito",
+    "legend_no_record": "Sem registro",
+    "footerEmpty": "Complete seu primeiro hábito e será registrado aqui",
+    "footerHas": "Cada ponto é prova de que você cuidou de si mesmo"
   },
   "profile": {
     "title": "Meu cantinho",
@@ -266,8 +300,34 @@
     "keepGoing": "Continue assim!"
   },
   "reflectionList": {
-    "title": "Meu diário de reflexão",
-    "empty": "Ainda não tem reflexões",
-    "emptyHint": "Conclua a reflexão de hoje e ela vai aparecer aqui"
+    "title": "Diário de reflexões",
+    "subtitle": "Cada momento honesto é o cuidado mais gentil que você dá a si mesmo",
+    "loading": "Carregando…",
+    "empty": "Ainda não há reflexões",
+    "emptyHint": "Seja honesto a cada dia e elas aparecerão aos poucos aqui"
+  },
+  "categories": {
+    "健康": "Saúde",
+    "學習": "Aprendizado",
+    "生活": "Estilo de vida",
+    "心靈": "Mindfulness",
+    "不要做": "Parar de fazer"
+  },
+  "difficulty": {
+    "簡單": "Fácil",
+    "中等": "Médio",
+    "困難": "Difícil"
+  },
+  "frequency": {
+    "每日": "Diário",
+    "平日": "Dias úteis",
+    "每週自訂": "Dias personalizados",
+    "自由": "Livre"
+  },
+  "rewardCategories": {
+    "小確幸": "Pequeno prazer",
+    "物品": "Itens",
+    "體驗": "Experiência",
+    "大獎勵": "Grande recompensa"
   }
 }

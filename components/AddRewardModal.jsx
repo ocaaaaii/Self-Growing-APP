@@ -134,7 +134,7 @@ export default function AddRewardModal({
         <div className="flex flex-wrap gap-1.5">
           {REWARD_CATEGORIES.map((c) => (
             <Pill key={c} active={category === c} onClick={() => setCategory(c)}>
-              {c}
+              {t(`rewardCategories.${c}`) || c}
             </Pill>
           ))}
         </div>
@@ -171,12 +171,12 @@ export default function AddRewardModal({
               active={stock === s}
               onClick={() => setStock(s)}
             >
-              {s === null ? "無限" : `${s} 次`}
+              {s === null ? t("addReward.stock_unlimited") : `${s} ${t("common.times")}`}
             </Pill>
           ))}
         </div>
         <p className="mt-1.5 text-[11px] text-milktea">
-          設定後，每兌換一次就會少一個，換完就會休息
+          {t("addReward.stockHint")}
         </p>
       </div>
 

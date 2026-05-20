@@ -28,22 +28,39 @@
     "greeting_morning": "早安",
     "greeting_noon": "午安",
     "greeting_evening": "晚安",
+    "tagline": "今天也慢慢來 🌱",
     "todayHabits": "今天的小事",
     "allDone": "今天全部完成了 🎉",
     "restDay": "今天請假中 🛁",
     "noHabits": "還沒有習慣",
     "noHabitsHint": "點擊 + 新增今天的第一件小事",
+    "noHabitsRestHint": "休息也很重要 🛁 要不要建立新的習慣？",
+    "addHabitBtn": "建立新習慣 ✨",
     "todayEarned": "今天賺到的",
+    "counter": "{done} / {total} 完成",
     "gratitudeSection": "今日感恩",
+    "gratitudeViewHistory": "回顧 →",
+    "gratitudeHistoryTitle": "感恩回顧",
+    "gratitudeHistorySubtitle": "過去那些值得被看見的小事",
     "reflectionSection": "復盤日誌",
     "reflectionDone": "今天已完成復盤 ✓",
+    "reflectionReminder": "晚上 23:55 後會提醒你做今日復盤 +10pt",
     "viewReflection": "查看→",
     "doReflection": "寫今天的復盤",
     "yesterdayReflection": "補昨天的復盤",
+    "yesterdayBannerTitle": "昨天的復盤還沒做",
+    "yesterdayBannerBody": "昨天有 {n} 件沒完成，補一下也不晚 +10pt",
+    "reflectionBannerTitle": "今日復盤",
+    "reflectionBannerBody": "有 {n} 件沒完成，對自己誠實一下 +10pt",
     "weeklyReview": "本週回顧",
+    "weeklyReviewHint": "看看這週的進步，寫下最驕傲的事 +15pt",
     "weeklyReviewDone": "本週回顧已完成 ✓",
     "doWeeklyReview": "開始本週回顧 🌸",
     "restDayBtn": "今天請假",
+    "mochiSays": "mochi 想跟你說 ✨",
+    "mochiEmpty": "今天是你的自由日，好好休息 🛁",
+    "mochiAllDone": "今天的小事全部完成了！你好棒好棒 🎀",
+    "mochiRemaining": "再做 {n} 件就達成今日目標啦～你超棒的！",
     "error_toggle": "有點小狀況，再試一次看看：",
     "error_save": "沒能儲存，再試一次：",
     "error_delete": "沒能刪除，再試一次：",
@@ -77,6 +94,12 @@
     "frequency": "頻率",
     "scheduleDays": "選想做的日子",
     "scheduleDaysHint": "幾天都行，不選的話不顯示在首頁",
+    "scheduleAppearNote": "每週{days}會出現在首頁 ✓",
+    "freq_daily_hint": "每天都會出現在首頁的當日清單 🌱",
+    "freq_weekday_hint": "週一到週五顯示，週末讓自己休息 🛁",
+    "freq_custom_hint_nodays": "選好日子之後才會出現在首頁",
+    "freq_custom_hint_days": "只在你選的 {n} 天出現，其他天就放鬆 🌸",
+    "freq_free_hint": "不固定出現在首頁，自己決定什麼時候做 ☁️",
     "saveAdd": "建立這個習慣 🌱",
     "saveEdit": "儲存修改 💫",
     "deleteHabit": "刪除這個習慣",
@@ -88,6 +111,30 @@
     "days_thu": "四",
     "days_fri": "五",
     "days_sat": "六"
+  },
+  "categories": {
+    "健康": "健康",
+    "學習": "學習",
+    "生活": "生活",
+    "心靈": "心靈",
+    "不要做": "不要做"
+  },
+  "difficulty": {
+    "簡單": "簡單",
+    "中等": "中等",
+    "困難": "困難"
+  },
+  "frequency": {
+    "每日": "每日",
+    "平日": "平日",
+    "每週自訂": "每週自訂",
+    "自由": "自由"
+  },
+  "rewardCategories": {
+    "小確幸": "小確幸",
+    "物品": "物品",
+    "體驗": "體驗",
+    "大獎勵": "大獎勵"
   },
   "rewards": {
     "title": "寵愛自己",
@@ -117,7 +164,9 @@
     "stockPlaceholder": "例如：3",
     "saveAdd": "建立這個獎勵 🎀",
     "saveEdit": "儲存修改 💫",
-    "deleteReward": "刪除這個獎勵"
+    "deleteReward": "刪除這個獎勵",
+    "stock_unlimited": "無限",
+    "stockHint": "設定後，每兌換一次就會少一個，換完就會休息"
   },
   "rewardConfirm": {
     "soldOut_title": "這個獎勵換完囉",
@@ -167,14 +216,23 @@
     "handwriting": "growth log",
     "totalPoints": "累積點數",
     "longestStreak": "最長連續",
+    "monthlyRate": "本月活躍率",
     "growthDays": "成長天數",
     "days": "天",
     "achievements": "成就徽章",
     "pointsTrend": "點數趨勢",
     "last7days": "近 7 天",
+    "maxPointsDay": "最高 {n} pt / 天",
+    "unlockCount": "{n} / {total} 解鎖",
     "noAchievements": "努力解鎖成就中…",
     "unlocked": "已解鎖",
-    "locked": "未解鎖"
+    "locked": "未解鎖",
+    "legend_great": "超棒的一天",
+    "legend_most": "完成大部分",
+    "legend_some": "有完成一些",
+    "legend_no_record": "還沒紀錄",
+    "footerEmpty": "完成第一個習慣，就會在這裡留下紀錄",
+    "footerHas": "每一個圓點，都是你照顧自己的證明"
   },
   "profile": {
     "title": "我的小空間",
@@ -266,8 +324,10 @@
     "keepGoing": "繼續加油！"
   },
   "reflectionList": {
-    "title": "我的復盤日誌",
-    "empty": "還沒有任何復盤記錄",
-    "emptyHint": "完成今天的復盤後就會出現在這裡"
+    "title": "復盤日誌",
+    "subtitle": "每一次誠實，都是對自己最溫柔的照顧",
+    "loading": "載入中…",
+    "empty": "還沒有復盤紀錄",
+    "emptyHint": "每天誠實面對自己，就會慢慢出現在這裡"
   }
 }

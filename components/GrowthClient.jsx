@@ -212,17 +212,17 @@ export default function GrowthClient({
       {/* legend */}
       <div className="mt-3.5 flex flex-wrap gap-x-3.5 gap-y-2 rounded-2xl border border-line/40 bg-cream-card px-4 py-3.5 shadow-soft">
         {[
-          { c: "bg-sage", label: "超棒的一天" },
-          { c: "bg-butter", label: "完成大部分" },
-          { c: "bg-dusty", label: "有完成一些" },
-          { c: "bg-milktea-soft", label: "還沒紀錄" },
+          { c: "bg-sage", key: "legend_great" },
+          { c: "bg-butter", key: "legend_most" },
+          { c: "bg-dusty", key: "legend_some" },
+          { c: "bg-milktea-soft", key: "legend_no_record" },
         ].map((item) => (
           <div
-            key={item.label}
+            key={item.key}
             className="flex items-center gap-1.5 text-[11px] text-milktea"
           >
             <span className={`h-3 w-3 rounded-full ${item.c}`} />
-            {item.label}
+            {t(`growth.${item.key}`)}
           </div>
         ))}
       </div>
@@ -230,7 +230,7 @@ export default function GrowthClient({
       {/* stats */}
       <div className="mt-3.5 grid grid-cols-3 gap-2.5">
         {[
-          { emoji: "📈", num: `${completionRate}%`, label: "本月活躍率" },
+          { emoji: "📈", num: `${completionRate}%`, label: t("growth.monthlyRate") },
           { emoji: "⭐", num: totalPoints.toLocaleString(), label: t("growth.totalPoints") },
           { emoji: "🔥", num: longestStreak, label: t("growth.longestStreak") },
         ].map((s) => (
@@ -263,7 +263,7 @@ export default function GrowthClient({
               <span className="font-hand text-lg text-cocoa-soft">{t("growth.last7days")}</span>
             </h2>
             <span className="text-xs text-milktea">
-              最高 {Math.max(...dailyPoints.map((d) => d.pts))} pt / 天
+              {t("growth.maxPointsDay", { n: Math.max(...dailyPoints.map((d) => d.pts)) })}
             </span>
           </div>
           <div className="rounded-xl2 border border-line/40 bg-cream-card px-3 pb-2 pt-3 shadow-soft">
@@ -279,7 +279,7 @@ export default function GrowthClient({
           <span className="font-hand text-lg text-cocoa-soft">badges</span>
         </h2>
         <span className="text-xs text-milktea">
-          {unlockedCount} / {badges.length} 解鎖
+          {t("growth.unlockCount", { n: unlockedCount, total: badges.length })}
         </span>
       </div>
       <div className="grid grid-cols-3 gap-2.5">
@@ -318,9 +318,7 @@ export default function GrowthClient({
 
       <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-milktea">
         <Bow size={14} />
-        {growthDays === 0
-          ? "完成第一個習慣，就會在這裡留下紀錄"
-          : "每一個圓點，都是你照顧自己的證明"}
+        {growthDays === 0 ? t("growth.footerEmpty") : t("growth.footerHas")}
       </div>
     </div>
   );

@@ -51,7 +51,24 @@
     "habitAdded_scheduled": "已创建，会在设定的日子出现 🌱",
     "habitAdded_title": "加入啦！",
     "habitAdded_badge": "🌱 + 1 小事",
-    "confirmDelete": "确定要删除「{title}」吗？"
+    "confirmDelete": "确定要删除「{title}」吗？",
+    "tagline": "今天也慢慢来 🌱",
+    "noHabitsRestHint": "休息也很重要 🛁 要不要建立新的习惯？",
+    "addHabitBtn": "建立新习惯 ✨",
+    "counter": "{done} / {total} 完成",
+    "gratitudeViewHistory": "回顾 →",
+    "gratitudeHistoryTitle": "感恩回顾",
+    "gratitudeHistorySubtitle": "过去那些值得被看见的小事",
+    "reflectionReminder": "晚上 23:55 后会提醒你做今日复盘 +10pt",
+    "yesterdayBannerTitle": "昨天的复盘还没做",
+    "yesterdayBannerBody": "昨天有 {n} 件没完成，补一下也不晚 +10pt",
+    "reflectionBannerTitle": "今日复盘",
+    "reflectionBannerBody": "有 {n} 件没完成，对自己诚实一下 +10pt",
+    "weeklyReviewHint": "看看这周的进步，写下最骄傲的事 +15pt",
+    "mochiSays": "mochi 想跟你说 ✨",
+    "mochiEmpty": "今天是你的自由日，好好休息 🛁",
+    "mochiAllDone": "今天的小事全部完成了！你好棒好棒 🎀",
+    "mochiRemaining": "再做 {n} 件就达成今日目标啦～你超棒的！"
   },
   "habits": {
     "title": "我的习惯清单",
@@ -87,7 +104,13 @@
     "days_wed": "三",
     "days_thu": "四",
     "days_fri": "五",
-    "days_sat": "六"
+    "days_sat": "六",
+    "scheduleAppearNote": "每周{days}会出现在首页 ✓",
+    "freq_daily_hint": "每天都会出现在首页的当日清单 🌱",
+    "freq_weekday_hint": "周一到周五显示，周末让自己休息 🛁",
+    "freq_custom_hint_nodays": "选好日子之后才会出现在首页",
+    "freq_custom_hint_days": "只在你选的 {n} 天出现，其他天就放松 🌸",
+    "freq_free_hint": "不固定出现在首页，自己决定什么时候做 ☁️"
   },
   "rewards": {
     "title": "宠爱自己",
@@ -117,7 +140,9 @@
     "stockPlaceholder": "例如：3",
     "saveAdd": "创建这个奖励 🎀",
     "saveEdit": "保存修改 💫",
-    "deleteReward": "删除这个奖励"
+    "deleteReward": "删除这个奖励",
+    "stock_unlimited": "无限",
+    "stockHint": "设定后，每兑换一次就会少一个，换完就会休息"
   },
   "rewardConfirm": {
     "soldOut_title": "这个奖励兑完啦",
@@ -174,7 +199,16 @@
     "last7days": "近 7 天",
     "noAchievements": "努力解锁成就中…",
     "unlocked": "已解锁",
-    "locked": "未解锁"
+    "locked": "未解锁",
+    "monthlyRate": "本月活跃率",
+    "maxPointsDay": "最高 {n} pt / 天",
+    "unlockCount": "{n} / {total} 解锁",
+    "legend_great": "超棒的一天",
+    "legend_most": "完成大部分",
+    "legend_some": "有完成一些",
+    "legend_no_record": "还没记录",
+    "footerEmpty": "完成第一个习惯，就会在这里留下记录",
+    "footerHas": "每一个圆点，都是你照顾自己的证明"
   },
   "profile": {
     "title": "我的小空间",
@@ -266,8 +300,34 @@
     "keepGoing": "继续加油！"
   },
   "reflectionList": {
-    "title": "我的复盘日志",
-    "empty": "还没有任何复盘记录",
-    "emptyHint": "完成今天的复盘后就会出现在这里"
+    "title": "复盘日志",
+    "subtitle": "每一次诚实，都是对自己最温柔的照顾",
+    "loading": "加载中…",
+    "empty": "还没有复盘记录",
+    "emptyHint": "每天诚实面对自己，就会慢慢出现在这里"
+  },
+  "categories": {
+    "健康": "健康",
+    "學習": "学习",
+    "生活": "生活",
+    "心靈": "心灵",
+    "不要做": "不要做"
+  },
+  "difficulty": {
+    "簡單": "简单",
+    "中等": "中等",
+    "困難": "困难"
+  },
+  "frequency": {
+    "每日": "每日",
+    "平日": "平日",
+    "每週自訂": "每周自定",
+    "自由": "自由"
+  },
+  "rewardCategories": {
+    "小確幸": "小确幸",
+    "物品": "物品",
+    "體驗": "体验",
+    "大獎勵": "大奖励"
   }
 }

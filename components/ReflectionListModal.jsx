@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Modal from "./Modal";
 import Bow from "./Bow";
+import { useLocale } from "@/components/LocaleProvider";
 
 export default function ReflectionListModal({ open, onClose }) {
   const supabase = createClient();
+  const { t, locale } = useLocale();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +33,7 @@ export default function ReflectionListModal({ open, onClose }) {
 
   function formatDate(str) {
     const d = new Date(str + "T00:00:00");
-    return d.toLocaleDateString("zh-TW", {
+    return d.toLocaleDateString(locale, {
       month: "long",
       day: "numeric",
       weekday: "short",
@@ -49,22 +51,22 @@ export default function ReflectionListModal({ open, onClose }) {
       </button>
 
       <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
-        <Bow size={20} /> 復盤日誌
+        <Bow size={20} /> {t("reflectionList.title")}
       </h2>
       <p className="mb-[18px] text-xs text-milktea">
-        每一次誠實，都是對自己最溫柔的照顧
+        {t("reflectionList.subtitle")}
       </p>
 
       {loading ? (
         <div className="flex items-center justify-center py-10 text-sm text-milktea">
-          載入中…
+          {t("reflectionList.loading")}
         </div>
       ) : entries.length === 0 ? (
         <div className="flex flex-col items-center py-10 text-center">
           <span className="mb-2 text-3xl">🌙</span>
-          <p className="text-sm font-medium text-cocoa-deep">還沒有復盤紀錄</p>
+          <p className="text-sm font-medium text-cocoa-deep">{t("reflectionList.empty")}</p>
           <p className="mt-1 text-xs text-milktea">
-            每天誠實面對自己，就會慢慢出現在這裡
+            {t("reflectionList.emptyHint")}
           </p>
         </div>
       ) : (

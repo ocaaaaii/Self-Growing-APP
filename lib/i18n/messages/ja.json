@@ -51,7 +51,24 @@
     "habitAdded_scheduled": "作成完了！設定した日に表示されるよ 🌱",
     "habitAdded_title": "追加したよ！",
     "habitAdded_badge": "🌱 + 1 やること",
-    "confirmDelete": "「{title}」を削除する？"
+    "confirmDelete": "「{title}」を削除する？",
+    "tagline": "今日もゆっくり進もう 🌱",
+    "noHabitsRestHint": "休息も大切です 🛁 新しい習慣を作りますか？",
+    "addHabitBtn": "新しい習慣を追加 ✨",
+    "counter": "{done} / {total} 完了",
+    "gratitudeViewHistory": "履歴 →",
+    "gratitudeHistoryTitle": "感謝の履歴",
+    "gratitudeHistorySubtitle": "心に留めておきたい小さな出来事",
+    "reflectionReminder": "23:55以降に今日の振り返りを促します +10pt",
+    "yesterdayBannerTitle": "昨日の振り返りが未完了",
+    "yesterdayBannerBody": "昨日 {n} 件が未完了。今からでも遅くない +10pt",
+    "reflectionBannerTitle": "今日の振り返り",
+    "reflectionBannerBody": "{n} 件が未完了 — 自分に正直になろう +10pt",
+    "weeklyReviewHint": "今週の進歩を振り返り、一番誇りに思ったことを書こう +15pt",
+    "mochiSays": "mochi からひとこと ✨",
+    "mochiEmpty": "今日は自由な日。ゆっくり休もう 🛁",
+    "mochiAllDone": "今日のこと全部できた！すごいね 🎀",
+    "mochiRemaining": "あと {n} 件で今日の目標達成！君ならできる！"
   },
   "habits": {
     "title": "マイ習慣リスト",
@@ -87,7 +104,13 @@
     "days_wed": "水",
     "days_thu": "木",
     "days_fri": "金",
-    "days_sat": "土"
+    "days_sat": "土",
+    "scheduleAppearNote": "毎週{days}にホーム画面に表示されます ✓",
+    "freq_daily_hint": "毎日のリストに表示されます 🌱",
+    "freq_weekday_hint": "月〜金に表示、週末はお休み 🛁",
+    "freq_custom_hint_nodays": "日にちを選ぶとホーム画面に表示されます",
+    "freq_custom_hint_days": "選んだ {n} 日だけ表示、他の日はリラックス 🌸",
+    "freq_free_hint": "固定スケジュールなし、自分で決める ☁️"
   },
   "rewards": {
     "title": "自分へのご褒美",
@@ -117,7 +140,9 @@
     "stockPlaceholder": "例：3",
     "saveAdd": "このご褒美を作る 🎀",
     "saveEdit": "変更を保存 💫",
-    "deleteReward": "このご褒美を削除"
+    "deleteReward": "このご褒美を削除",
+    "stock_unlimited": "無制限",
+    "stockHint": "交換するたびに1つ減ります。なくなるとお休みになります"
   },
   "rewardConfirm": {
     "soldOut_title": "このご褒美はもう全部使い切ったよ",
@@ -174,7 +199,16 @@
     "last7days": "直近7日間",
     "noAchievements": "実績を解放中…",
     "unlocked": "解放済み",
-    "locked": "未解放"
+    "locked": "未解放",
+    "monthlyRate": "今月の活動率",
+    "maxPointsDay": "最高 {n} pt / 日",
+    "unlockCount": "{n} / {total} 解除済み",
+    "legend_great": "素晴らしい日",
+    "legend_most": "ほぼ完了",
+    "legend_some": "少し完了",
+    "legend_no_record": "記録なし",
+    "footerEmpty": "最初の習慣を完了すると、ここに記録が残ります",
+    "footerHas": "すべての点は、自分を大切にした証です"
   },
   "profile": {
     "title": "マイスペース",
@@ -266,8 +300,34 @@
     "keepGoing": "引き続きがんばろう！"
   },
   "reflectionList": {
-    "title": "振り返りノート",
-    "empty": "まだ振り返りがないよ",
-    "emptyHint": "今日の振り返りを完了するとここに表示されるよ"
+    "title": "振り返り日記",
+    "subtitle": "正直な一瞬一瞬が、自分への最優しいケア",
+    "loading": "読み込み中…",
+    "empty": "振り返りの記録がまだありません",
+    "emptyHint": "毎日正直に向き合うと、ここに少しずつ現れます"
+  },
+  "categories": {
+    "健康": "健康",
+    "學習": "学習",
+    "生活": "ライフスタイル",
+    "心靈": "マインドフルネス",
+    "不要做": "やめること"
+  },
+  "difficulty": {
+    "簡單": "簡単",
+    "中等": "普通",
+    "困難": "難しい"
+  },
+  "frequency": {
+    "每日": "毎日",
+    "平日": "平日",
+    "每週自訂": "カスタム曜日",
+    "自由": "自由"
+  },
+  "rewardCategories": {
+    "小確幸": "小さな喜び",
+    "物品": "物品",
+    "體驗": "体験",
+    "大獎勵": "大きなご褒美"
   }
 }

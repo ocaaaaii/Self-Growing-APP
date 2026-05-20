@@ -219,7 +219,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                   : "border-line bg-cream-card text-cocoa"
               }`}
             >
-              {f === "全部" ? t("rewards.filterAll") : f}
+              {f === "全部" ? t("rewards.filterAll") : (t(`rewardCategories.${f}`) || f)}
             </button>
           ))}
         </div>

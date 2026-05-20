@@ -187,22 +187,17 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
         <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
           {t("profile.language")}
         </label>
-        <div className="grid grid-cols-2 gap-2">
+        <select
+          value={locale}
+          onChange={(e) => setLocale(e.target.value)}
+          className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
+        >
           {locales.map((loc) => (
-            <button
-              key={loc.code}
-              onClick={() => setLocale(loc.code)}
-              className={`flex items-center gap-2 rounded-[14px] border px-3 py-2.5 text-xs font-medium transition active:scale-[0.98] ${
-                locale === loc.code
-                  ? "border-cocoa bg-cocoa text-cream-card"
-                  : "border-line bg-cream-card text-cocoa"
-              }`}
-            >
-              <span className="text-base">{loc.flag}</span>
-              <span>{loc.label}</span>
-            </button>
+            <option key={loc.code} value={loc.code}>
+              {loc.flag} {loc.label}
+            </option>
           ))}
-        </div>
+        </select>
       </div>
 
       <form action="/auth/signout" method="post" className="mt-2.5">
