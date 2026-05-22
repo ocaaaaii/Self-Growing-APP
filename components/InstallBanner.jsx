@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale } from "@/components/LocaleProvider";
 
 /**
  * PWA install / share-to-homescreen banner.
  *
- * - On Chrome/Edge/Android: listens for `beforeinstallprompt`, saves the event,
- *   and shows a "安裝 App" banner. Clicking it triggers the native install dialog.
- * - On iOS Safari: `beforeinstallprompt` never fires, so we detect iOS + not-standalone
- *   and show a "加入主畫面" guide with the share icon instruction.
- * - Auto-shows once after the user first lands on /home (checked via localStorage).
- * - Users can permanently dismiss by clicking ✕.
+ * - Chrome/Edge/Android: listens for `beforeinstallprompt`, shows "安裝 App" button.
+ * - iOS Safari: detects iOS + not-standalone, shows share-icon guide.
+ * - Auto-shows once after first home visit (checked via localStorage).
+ * - Dismissable with ✕ (stored in localStorage).
  */
 
 function isIos() {
@@ -29,23 +28,20 @@ function isInStandaloneMode() {
 const DISMISSED_KEY = "pwa-install-dismissed";
 
 export default function InstallBanner() {
+  const { t } = useLocale();
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showIosGuide, setShowIosGuide] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Already dismissed or already installed — don't show
     try {
       if (localStorage.getItem(DISMISSED_KEY)) return;
     } catch (_) {}
 
-    // Already running as standalone PWA — no need
     if (isInStandaloneMode()) return;
 
     const ios = isIos();
-
     if (ios) {
-      // iOS Safari: show guide immediately (small delay for polish)
       setTimeout(() => {
         setShowIosGuide(true);
         setVisible(true);
@@ -53,7 +49,6 @@ export default function InstallBanner() {
       return;
     }
 
-    // Chrome/Edge/Android: wait for the browser install prompt
     const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -87,7 +82,7 @@ export default function InstallBanner() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="mx-auto max-w-[390px] rounded-t-[24px] border-t border-line/50 bg-cream-paper px-5 py-4 shadow-[0_-4px_24px_rgba(40,30,22,0.15)]">
-        {/* dismiss button */}
+        {/* dismiss */}
         <button
           onClick={dismiss}
           className="absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-beige text-[11px] text-cocoa"
@@ -96,7 +91,6 @@ export default function InstallBanner() {
         </button>
 
         <div className="flex items-start gap-3">
-          {/* app icon */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/icon.png"
@@ -112,24 +106,22 @@ export default function InstallBanner() {
             {showIosGuide ? (
               <>
                 <p className="mt-0.5 text-[12px] leading-relaxed text-milktea">
-                  加到主畫面，隨時快速開啟 🌱
+                  {t("installBanner.iosDesc")}
                 </p>
                 <p className="mt-2 flex items-center gap-1 rounded-xl bg-beige px-3 py-2 text-[11px] text-cocoa">
-                  <span>點下方</span>
-                  <span className="text-base">⬆️</span>
-                  <span>分享圖示，再選「加入主畫面」</span>
+                  {t("installBanner.iosInstruction")}
                 </p>
               </>
             ) : (
               <>
                 <p className="mt-0.5 text-[12px] leading-relaxed text-milktea">
-                  安裝到桌面，隨時快速開啟 🌱
+                  {t("installBanner.installDesc")}
                 </p>
                 <button
                   onClick={handleInstall}
                   className="btn-cocoa mt-2.5 rounded-2xl px-5 py-2 text-[13px] font-semibold shadow-soft"
                 >
-                  安裝 App ✨
+                  {t("installBanner.installBtn")}
                 </button>
               </>
             )}
