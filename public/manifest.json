@@ -1,0 +1,26 @@
+{
+  "name": "慢慢變好 · Self Growing",
+  "short_name": "慢慢變好",
+  "description": "用溫柔的獎勵機制，慢慢把自己養成喜歡的樣子 🌱",
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#E8DCC8",
+  "theme_color": "#E8DCC8",
+  "orientation": "portrait",
+  "categories": ["lifestyle", "productivity"],
+  "lang": "zh-Hant",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -16,6 +16,7 @@ import ReflectionListModal from "./ReflectionListModal";
 import RestDayModal from "./RestDayModal";
 import WeeklyReviewModal from "./WeeklyReviewModal";
 import Modal from "./Modal";
+import InstallBanner from "./InstallBanner";
 import { useLocale } from "@/components/LocaleProvider";
 
 // 判斷某個習慣今天是否應該顯示（client-side 版本，供新增/編輯後使用）
@@ -841,6 +842,9 @@ export default function HomeClient({
           ))}
         </div>
       </Modal>
+
+      {/* PWA install banner — shows once after first home visit */}
+      <InstallBanner />
     </div>
   );
 }

@@ -83,7 +83,10 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="grid flex-shrink-0 grid-cols-5 gap-1 border-t border-line/60 bg-cream-paper/95 px-4 pb-5 pt-3 backdrop-blur">
+    <nav
+      className="grid flex-shrink-0 grid-cols-5 gap-1 border-t border-line/60 bg-cream-paper/95 px-4 pt-3 backdrop-blur"
+      style={{ paddingBottom: "max(20px, env(safe-area-inset-bottom))" }}
+    >
       {ITEMS.map((it) => {
         const active = pathname === it.href;
         return (

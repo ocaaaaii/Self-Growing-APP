@@ -9,7 +9,7 @@ export default function Modal({ open, onClose, children, className = "" }) {
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="absolute inset-0 z-50 flex items-end justify-center bg-cocoa-deep/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-cocoa-deep/40 backdrop-blur-sm sm:absolute"
       style={{ animation: "fadeIn 0.25s ease" }}
     >
       <div
