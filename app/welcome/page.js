@@ -254,7 +254,7 @@ export default function WelcomePage() {
       >
         {/* skip */}
         <button
-          onClick={() => router.push("/login")}
+          onClick={() => router.push("/home")}
           className="absolute right-6 z-10 text-xs font-medium text-milktea"
           style={{ top: "calc(24px + env(safe-area-inset-top))" }}
         >
@@ -310,7 +310,7 @@ export default function WelcomePage() {
               </button>
             )}
             <button
-              onClick={() => (isLast ? router.push("/login") : goTo(step + 1))}
+              onClick={() => (isLast ? router.push("/home") : goTo(step + 1))}
               className="flex-1 rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px active:scale-95"
               style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
             >

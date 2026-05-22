@@ -3,6 +3,7 @@ import BottomNav from "@/components/BottomNav";
 import Clock from "@/components/Clock";
 import Fab from "@/components/Fab";
 import ThemeApplier from "@/components/ThemeApplier";
+import GuideButton from "@/components/GuideButton";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { loadMessages, DEFAULT_LOCALE } from "@/lib/i18n";
 
@@ -39,12 +40,18 @@ export default async function AppLayout({ children }) {
           {/* status bar — desktop (phone frame) only */}
           <div className="hidden flex-shrink-0 items-center justify-between px-6 pb-1.5 pt-3.5 text-[13px] font-semibold text-cocoa sm:flex">
             <Clock />
-            <div className="flex items-center gap-1">
-              <span className="h-1 w-1 rounded-full bg-cocoa" />
-              <span className="h-1 w-1 rounded-full bg-cocoa" />
-              <span className="ml-1 text-[11px]">📶</span>
+            <div className="flex items-center gap-2">
+              {/* guide button lives here on desktop */}
+              <GuideButton />
+              <div className="flex items-center gap-1">
+                <span className="h-1 w-1 rounded-full bg-cocoa" />
+                <span className="h-1 w-1 rounded-full bg-cocoa" />
+                <span className="ml-1 text-[11px]">📶</span>
+              </div>
             </div>
           </div>
+
+          {/* GuideButton also renders its mobile variant (absolute, safe-area aware) */}
 
           {/* page content — scrolls independently; top padding handles iOS notch on real phones */}
           <div

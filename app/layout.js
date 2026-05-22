@@ -10,8 +10,9 @@ export const metadata = {
     title: "慢慢變好",
   },
   icons: {
-    apple: "/icon.png",
-    icon: "/icon.png",
+    icon: [{ url: "/icon.png", type: "image/png", sizes: "any" }],
+    apple: [{ url: "/icon.png", type: "image/png" }],
+    shortcut: "/icon.png",
   },
 };
 

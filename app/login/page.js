@@ -287,12 +287,20 @@ export default function LoginPage() {
         ) : (
           <>
             {mode === "login" && (
-              <button
-                onClick={() => switchMode("reset")}
-                className="mt-4 w-full text-center text-xs font-medium text-cocoa-soft"
-              >
-                忘記密碼？
-              </button>
+              <>
+                <button
+                  onClick={() => switchMode("reset")}
+                  className="mt-4 w-full text-center text-xs font-medium text-cocoa-soft"
+                >
+                  忘記密碼？
+                </button>
+                <button
+                  onClick={() => router.push("/welcome")}
+                  className="mt-2 w-full text-center text-xs font-medium text-milktea hover:text-cocoa transition"
+                >
+                  ✨ 先看看 App 功能介紹
+                </button>
+              </>
             )}
             <p className="mt-3 text-center text-[11px] leading-relaxed text-milktea">
               {mode === "signup"
