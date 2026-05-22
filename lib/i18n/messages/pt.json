@@ -401,5 +401,9 @@
     "s8_tag": "Vamos lá! 🌱",
     "s8_title": "Pronto/a?",
     "s8_body": "Lembre-se — você não está se forçando a crescer. Está aos poucos se tornando a pessoa que quer ser. Uma coisa pequena, um registro — esse é o melhor começo."
+  },
+  "guideHint": {
+    "text": "Toque aqui para ver o guia ✨",
+    "dismiss": "Entendido!"
   }
 }

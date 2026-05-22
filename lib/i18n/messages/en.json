@@ -401,5 +401,9 @@
     "s8_tag": "Let's go 🌱",
     "s8_title": "Ready?",
     "s8_body": "Remember — you're not being forced to grow. You're slowly becoming the person you want to be. One small thing, one check-in — that's the best start."
+  },
+  "guideHint": {
+    "text": "Tap here to see the feature guide ✨",
+    "dismiss": "Got it!"
   }
 }
