@@ -4,7 +4,17 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Mochi from "@/components/Mochi";
 import Bow from "@/components/Bow";
-import { loadMessages, getMessage, DEFAULT_LOCALE, LOCALES } from "@/lib/i18n";
+import { loadMessages, getMessage, DEFAULT_LOCALE } from "@/lib/i18n";
+
+const LOCALES = [
+  { code: "zh-TW", label: "繁體中文", flag: "🇹🇼" },
+  { code: "zh-CN", label: "简体中文", flag: "🇨🇳" },
+  { code: "en",    label: "English",  flag: "🇺🇸" },
+  { code: "ja",    label: "日本語",   flag: "🇯🇵" },
+  { code: "ko",    label: "한국어",   flag: "🇰🇷" },
+  { code: "es",    label: "Español",  flag: "🇪🇸" },
+  { code: "pt",    label: "Português",flag: "🇧🇷" },
+];
 
 // ─────────────────────────────────────────────
 // Locale hook — reads localStorage (same key as the app),
@@ -12,34 +22,42 @@ import { loadMessages, getMessage, DEFAULT_LOCALE, LOCALES } from "@/lib/i18n";
 // ─────────────────────────────────────────────
 function useWelcomeLocale() {
   const [messages, setMessages] = useState(null);
+  const [locale, setLocaleState] = useState(DEFAULT_LOCALE);
 
   useEffect(() => {
-    let locale = DEFAULT_LOCALE;
+    let detected = DEFAULT_LOCALE;
     try {
       const stored = localStorage.getItem("locale");
       if (stored && LOCALES.find((l) => l.code === stored)) {
-        locale = stored;
+        detected = stored;
       } else {
         // auto-detect from browser
         const nav = navigator.language || "";
-        if (nav.startsWith("zh-TW") || nav.startsWith("zh-Hant")) locale = "zh-TW";
-        else if (nav.startsWith("zh")) locale = "zh-CN";
-        else if (nav.startsWith("ja")) locale = "ja";
-        else if (nav.startsWith("ko")) locale = "ko";
-        else if (nav.startsWith("es")) locale = "es";
-        else if (nav.startsWith("pt")) locale = "pt";
-        else if (nav.startsWith("en")) locale = "en";
+        if (nav.startsWith("zh-TW") || nav.startsWith("zh-Hant")) detected = "zh-TW";
+        else if (nav.startsWith("zh")) detected = "zh-CN";
+        else if (nav.startsWith("ja")) detected = "ja";
+        else if (nav.startsWith("ko")) detected = "ko";
+        else if (nav.startsWith("es")) detected = "es";
+        else if (nav.startsWith("pt")) detected = "pt";
+        else if (nav.startsWith("en")) detected = "en";
       }
     } catch (_) {}
-    loadMessages(locale).then(setMessages);
+    setLocaleState(detected);
+    loadMessages(detected).then(setMessages);
   }, []);
+
+  function changeLocale(code) {
+    setLocaleState(code);
+    try { localStorage.setItem("locale", code); } catch (_) {}
+    loadMessages(code).then(setMessages);
+  }
 
   function t(key, vars) {
     if (!messages) return "";
     return getMessage(messages, key, vars);
   }
 
-  return t;
+  return { t, locale, changeLocale };
 }
 
 // ─────────────────────────────────────────────
@@ -220,7 +238,7 @@ function buildSlides(t) {
 // ─────────────────────────────────────────────
 export default function WelcomePage() {
   const router = useRouter();
-  const t = useWelcomeLocale();
+  const { t, locale, changeLocale } = useWelcomeLocale();
   const [step, setStep] = useState(0);
   const [ready, setReady] = useState(false);
 
@@ -252,14 +270,32 @@ export default function WelcomePage() {
         className="paper relative flex h-full w-full flex-col overflow-hidden sm:h-auto sm:min-h-[780px] sm:max-w-[390px] sm:rounded-[36px] sm:shadow-[0_8px_32px_rgba(92,67,50,0.18)]"
         style={{ paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        {/* skip */}
-        <button
-          onClick={() => router.push("/home")}
-          className="absolute right-6 z-10 text-xs font-medium text-milktea"
-          style={{ top: "calc(24px + env(safe-area-inset-top))" }}
+        {/* top bar: language picker (left) + skip (right) */}
+        <div
+          className="absolute left-0 right-0 z-10 flex items-center justify-between px-6"
+          style={{ top: "calc(20px + env(safe-area-inset-top))" }}
         >
-          {t("welcome.skip")}
-        </button>
+          {/* language picker */}
+          <select
+            value={locale}
+            onChange={(e) => changeLocale(e.target.value)}
+            className="rounded-xl border border-line bg-cream-card/80 px-2 py-1 text-[11px] font-semibold text-cocoa backdrop-blur-sm outline-none focus:border-cocoa-soft"
+          >
+            {LOCALES.map((l) => (
+              <option key={l.code} value={l.code}>
+                {l.flag} {l.label}
+              </option>
+            ))}
+          </select>
+
+          {/* skip */}
+          <button
+            onClick={() => router.push("/home")}
+            className="text-xs font-medium text-milktea"
+          >
+            {t("welcome.skip")}
+          </button>
+        </div>
 
         {/* scrollable slide area */}
         <div className="no-scrollbar flex flex-1 flex-col items-center justify-center overflow-y-auto px-7 pb-4 pt-10 text-center">

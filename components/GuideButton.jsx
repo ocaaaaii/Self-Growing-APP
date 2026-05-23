@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
 
@@ -22,16 +22,33 @@ function BookIcon() {
   );
 }
 
-/** Arrow + bubble tooltip shown once on first login */
-function HintBubble({ onDismiss, t }) {
+/**
+ * Hint bubble — uses fixed positioning to escape any overflow:hidden parent.
+ * Reads the button's bounding rect on mount to position itself below it.
+ */
+function HintBubble({ btnRef, onDismiss, t }) {
+  const [pos, setPos] = useState(null);
+
+  useEffect(() => {
+    const el = btnRef?.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    setPos({
+      top: rect.bottom + 10,
+      right: window.innerWidth - rect.right,
+    });
+  }, [btnRef]);
+
+  if (!pos) return null;
+
   return (
     <>
       {/* full-screen tap-away */}
       <div className="fixed inset-0 z-40" onClick={onDismiss} />
 
-      {/* bubble — positioned below + left of the trigger */}
-      <div className="absolute right-0 top-full z-50 mt-2.5 animate-fadeIn">
-        {/* upward arrow */}
+      {/* bubble — fixed so it is never clipped by overflow:hidden */}
+      <div className="fixed z-50 animate-fadeIn" style={{ top: pos.top, right: pos.right }}>
+        {/* upward arrow pointing to the button */}
         <div className="absolute -top-[7px] right-3 h-3.5 w-3.5 rotate-45 rounded-sm bg-cocoa-deep shadow-sm" />
 
         {/* card */}
@@ -55,11 +72,13 @@ export default function GuideButton() {
   const router = useRouter();
   const { t } = useLocale();
   const [showHint, setShowHint] = useState(false);
+  const desktopRef = useRef(null);
+  const mobileRef = useRef(null);
 
+  // Show hint once on first visit (after 800 ms delay)
   useEffect(() => {
     try {
       if (!localStorage.getItem(HINT_KEY)) {
-        // Small delay so the page fully renders first
         const show = setTimeout(() => setShowHint(true), 800);
         return () => clearTimeout(show);
       }
@@ -83,18 +102,30 @@ export default function GuideButton() {
     router.push("/welcome");
   }
 
+  // Pick whichever button is currently visible for the hint anchor
+  function visibleRef() {
+    // On desktop (sm+) the desktop button is visible; on mobile the mobile button is.
+    if (typeof window !== "undefined" && window.innerWidth >= 640) {
+      return desktopRef;
+    }
+    return mobileRef;
+  }
+
   return (
     <>
-      {/* ── Desktop (sm+): sits inside the status-bar flex row ── */}
-      <div className="relative hidden sm:block">
+      {/* ── Desktop (sm+): absolute, overlaid on the status bar area ── */}
+      <div
+        className="absolute right-[60px] z-30 hidden sm:block"
+        style={{ top: "14px" }}
+      >
         <button
+          ref={desktopRef}
           onClick={open}
           aria-label="功能導覽"
           className="flex h-6 w-6 items-center justify-center rounded-full bg-milktea-soft/60 text-cocoa transition hover:bg-beige hover:scale-110"
         >
           <BookIcon />
         </button>
-        {showHint && <HintBubble onDismiss={dismiss} t={t} />}
       </div>
 
       {/* ── Mobile: absolute top-right, safe-area aware ── */}
@@ -103,14 +134,19 @@ export default function GuideButton() {
         style={{ top: "calc(10px + env(safe-area-inset-top))" }}
       >
         <button
+          ref={mobileRef}
           onClick={open}
           aria-label="功能導覽"
           className="flex h-8 w-8 items-center justify-center rounded-full bg-cream-card/85 text-cocoa shadow-soft backdrop-blur-sm transition hover:scale-110"
         >
           <BookIcon />
         </button>
-        {showHint && <HintBubble onDismiss={dismiss} t={t} />}
       </div>
+
+      {/* Hint bubble — rendered once, anchored to the visible button */}
+      {showHint && (
+        <HintBubble btnRef={visibleRef()} onDismiss={dismiss} t={t} />
+      )}
     </>
   );
 }

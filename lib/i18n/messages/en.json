@@ -405,5 +405,57 @@
   "guideHint": {
     "text": "Tap here to see the feature guide ✨",
     "dismiss": "Got it!"
+  },
+  "gratitudeQuotes": [
+    "Practice noticing the good — warmth will slowly return",
+    "Even the smallest thing glows when it's remembered",
+    "What made you smile, even just a little, today?",
+    "Gratitude doesn't have to be grand, just honest"
+  ],
+  "achievements_i18n": {
+    "first_step": {
+      "title": "First Step",
+      "desc": "Complete your first habit"
+    },
+    "architect": {
+      "title": "Habit Architect",
+      "desc": "Build 5 habits"
+    },
+    "week_streak": {
+      "title": "Week Streak",
+      "desc": "Check in 7 days in a row"
+    },
+    "fortnight": {
+      "title": "Fortnight Strong",
+      "desc": "Check in 14 days in a row"
+    },
+    "points_100": {
+      "title": "Points Starter",
+      "desc": "Accumulate 100 points"
+    },
+    "points_500": {
+      "title": "Points Expert",
+      "desc": "Accumulate 500 points"
+    },
+    "points_1000": {
+      "title": "Points Master",
+      "desc": "Accumulate 1000 points"
+    },
+    "grow_7": {
+      "title": "Growing Week",
+      "desc": "Grow for 7 days"
+    },
+    "grow_30": {
+      "title": "Growing Month",
+      "desc": "Grow for 30 days"
+    },
+    "grateful": {
+      "title": "Grateful Heart",
+      "desc": "Log gratitude 7 times"
+    },
+    "self_love": {
+      "title": "Self Love",
+      "desc": "Redeem your first reward"
+    }
   }
 }

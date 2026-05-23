@@ -405,5 +405,57 @@
   "guideHint": {
     "text": "点这里查看功能教学 ✨",
     "dismiss": "知道了！"
+  },
+  "gratitudeQuotes": [
+    "练习看见生活里的好，温柔会慢慢回来",
+    "再小的事，被记得就会发光",
+    "今天有什么，让你嘴角微微上扬？",
+    "感谢不用伟大，诚实就好"
+  ],
+  "achievements_i18n": {
+    "first_step": {
+      "title": "第一步",
+      "desc": "完成你的第一个习惯"
+    },
+    "architect": {
+      "title": "习惯建筑师",
+      "desc": "建立 5 个习惯"
+    },
+    "week_streak": {
+      "title": "一周不断",
+      "desc": "连续打卡 7 天"
+    },
+    "fortnight": {
+      "title": "半月坚持",
+      "desc": "连续打卡 14 天"
+    },
+    "points_100": {
+      "title": "积分新手",
+      "desc": "累积 100 点"
+    },
+    "points_500": {
+      "title": "积分达人",
+      "desc": "累积 500 点"
+    },
+    "points_1000": {
+      "title": "积分大师",
+      "desc": "累积 1000 点"
+    },
+    "grow_7": {
+      "title": "成长一周",
+      "desc": "累积成长 7 天"
+    },
+    "grow_30": {
+      "title": "成长一个月",
+      "desc": "累积成长 30 天"
+    },
+    "grateful": {
+      "title": "感恩之心",
+      "desc": "记录 7 次感恩"
+    },
+    "self_love": {
+      "title": "宠爱自己",
+      "desc": "兑换你的第一个奖励"
+    }
   }
 }

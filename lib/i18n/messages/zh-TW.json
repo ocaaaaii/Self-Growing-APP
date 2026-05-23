@@ -405,5 +405,57 @@
   "guideHint": {
     "text": "點這裡查看功能教學 ✨",
     "dismiss": "知道了！"
+  },
+  "gratitudeQuotes": [
+    "練習看見生活裡的好，溫柔會慢慢回來",
+    "再小的事，被記得就會發光",
+    "今天有什麼，讓你嘴角微微上揚？",
+    "感謝不用偉大，誠實就好"
+  ],
+  "achievements_i18n": {
+    "first_step": {
+      "title": "第一步",
+      "desc": "完成你的第一個習慣"
+    },
+    "architect": {
+      "title": "習慣建築師",
+      "desc": "建立 5 個習慣"
+    },
+    "week_streak": {
+      "title": "一週不斷",
+      "desc": "連續打卡 7 天"
+    },
+    "fortnight": {
+      "title": "半月堅持",
+      "desc": "連續打卡 14 天"
+    },
+    "points_100": {
+      "title": "點數新手",
+      "desc": "累積 100 點"
+    },
+    "points_500": {
+      "title": "點數達人",
+      "desc": "累積 500 點"
+    },
+    "points_1000": {
+      "title": "點數大師",
+      "desc": "累積 1000 點"
+    },
+    "grow_7": {
+      "title": "成長一週",
+      "desc": "累積成長 7 天"
+    },
+    "grow_30": {
+      "title": "成長一個月",
+      "desc": "累積成長 30 天"
+    },
+    "grateful": {
+      "title": "感恩之心",
+      "desc": "記錄 7 次感恩"
+    },
+    "self_love": {
+      "title": "寵愛自己",
+      "desc": "兌換你的第一個獎勵"
+    }
   }
 }

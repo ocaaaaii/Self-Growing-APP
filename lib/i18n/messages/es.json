@@ -405,5 +405,57 @@
   "guideHint": {
     "text": "Toca aquí para ver la guía ✨",
     "dismiss": "¡Entendido!"
+  },
+  "gratitudeQuotes": [
+    "Practica ver lo bueno de la vida y la ternura volverá poco a poco",
+    "Hasta lo más pequeño brilla cuando alguien lo recuerda",
+    "¿Qué te hizo sonreír aunque sea un poco hoy?",
+    "La gratitud no tiene que ser grande, solo honesta"
+  ],
+  "achievements_i18n": {
+    "first_step": {
+      "title": "Primer Paso",
+      "desc": "Completa tu primer hábito"
+    },
+    "architect": {
+      "title": "Arquitecto de Hábitos",
+      "desc": "Crea 5 hábitos"
+    },
+    "week_streak": {
+      "title": "Racha Semanal",
+      "desc": "7 días seguidos de check-in"
+    },
+    "fortnight": {
+      "title": "Dos Semanas",
+      "desc": "14 días seguidos de check-in"
+    },
+    "points_100": {
+      "title": "Principiante",
+      "desc": "Acumula 100 puntos"
+    },
+    "points_500": {
+      "title": "Experto en Puntos",
+      "desc": "Acumula 500 puntos"
+    },
+    "points_1000": {
+      "title": "Maestro de Puntos",
+      "desc": "Acumula 1000 puntos"
+    },
+    "grow_7": {
+      "title": "Semana de Crecimiento",
+      "desc": "Crece durante 7 días"
+    },
+    "grow_30": {
+      "title": "Mes de Crecimiento",
+      "desc": "Crece durante 30 días"
+    },
+    "grateful": {
+      "title": "Corazón Agradecido",
+      "desc": "Registra 7 gratitudes"
+    },
+    "self_love": {
+      "title": "Amor Propio",
+      "desc": "Canjea tu primera recompensa"
+    }
   }
 }

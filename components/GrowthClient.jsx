@@ -304,10 +304,10 @@ export default function GrowthClient({
                 b.unlocked ? "text-cocoa-deep" : "text-milktea"
               }`}
             >
-              {b.title}
+              {(() => { const v = t(`achievements_i18n.${b.key}.title`); return v.startsWith("achievements_i18n.") ? b.title : v; })()}
             </div>
             <div className="mt-0.5 text-[9px] leading-tight text-milktea">
-              {b.desc}
+              {(() => { const v = t(`achievements_i18n.${b.key}.desc`); return v.startsWith("achievements_i18n.") ? b.desc : v; })()}
             </div>
             <div className={`mt-1 text-[8px] font-semibold ${b.unlocked ? "text-sage" : "text-milktea opacity-60"}`}>
               {b.unlocked ? t("growth.unlocked") : t("growth.locked")}

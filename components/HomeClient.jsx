@@ -1,23 +1,26 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { ENCOURAGEMENTS, GRATITUDE_QUOTES } from "@/lib/constants";
+import { ENCOURAGEMENTS } from "@/lib/constants";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
 import PointsCard from "./PointsCard";
 import HabitCard from "./HabitCard";
-import CelebrateModal from "./CelebrateModal";
-import AddHabitModal from "./AddHabitModal";
 import GratitudeCard from "./GratitudeCard";
-import ReflectionModal from "./ReflectionModal";
-import ReflectionListModal from "./ReflectionListModal";
-import RestDayModal from "./RestDayModal";
-import WeeklyReviewModal from "./WeeklyReviewModal";
 import Modal from "./Modal";
 import InstallBanner from "./InstallBanner";
 import { useLocale } from "@/components/LocaleProvider";
+
+// Lazy-load heavy modals — they're only needed when the user opens them
+const CelebrateModal     = dynamic(() => import("./CelebrateModal"));
+const AddHabitModal      = dynamic(() => import("./AddHabitModal"));
+const ReflectionModal    = dynamic(() => import("./ReflectionModal"));
+const ReflectionListModal= dynamic(() => import("./ReflectionListModal"));
+const RestDayModal       = dynamic(() => import("./RestDayModal"));
+const WeeklyReviewModal  = dynamic(() => import("./WeeklyReviewModal"));
 
 // 判斷某個習慣今天是否應該顯示（client-side 版本，供新增/編輯後使用）
 function shouldShowToday(habit) {
@@ -83,9 +86,13 @@ export default function HomeClient({
   const [gratitude, setGratitude] = useState(todayGratitude);
   const [savingGratitude, setSavingGratitude] = useState(false);
   const [showGratHistory, setShowGratHistory] = useState(false);
-  const [quote] = useState(
-    () => GRATITUDE_QUOTES[Math.floor(Math.random() * GRATITUDE_QUOTES.length)]
-  );
+  // Pick a random gratitude quote from i18n
+  const [quoteIdx] = useState(() => Math.floor(Math.random() * 4));
+  const rawQuote = t(`gratitudeQuotes.${quoteIdx}`);
+  // Fallback: if key not found yet, t() returns the key itself
+  const quote = rawQuote.startsWith("gratitudeQuotes.")
+    ? "練習看見生活裡的好，溫柔會慢慢回來"
+    : rawQuote;
 
   // reflection — today
   const [showReflection, setShowReflection] = useState(false);
