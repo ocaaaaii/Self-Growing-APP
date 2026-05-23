@@ -32,4 +32,7 @@ export default async function RewardsPage() {
     <RewardsClient
       initialPoints={profileRes.data?.total_points ?? 0}
       rewards={rewardsRes.data || []}
-      h
+      history={historyRes.data || []}
+    />
+  );
+}
