@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
-const REMEMBERED_EMAIL_KEY = "growing-app:lastEmail";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Mochi from "@/components/Mochi";
 import Bow from "@/components/Bow";
+import { loadMessages, getMessage, DEFAULT_LOCALE } from "@/lib/i18n";
+
+const REMEMBERED_EMAIL_KEY = "growing-app:lastEmail";
 
 const LOCALES = [
   { code: "zh-TW", label: "繁體中文", flag: "🇹🇼" },
@@ -18,27 +19,67 @@ const LOCALES = [
   { code: "pt",    label: "Português",flag: "🇧🇷" },
 ];
 
+// ── locale hook (same pattern as welcome page) ──────────────────────────────
+function useLoginLocale() {
+  const [messages, setMessages] = useState(null);
+  const [locale, setLocaleState] = useState(DEFAULT_LOCALE);
+
+  useEffect(() => {
+    let detected = DEFAULT_LOCALE;
+    try {
+      const stored = localStorage.getItem("locale");
+      if (stored && LOCALES.find((l) => l.code === stored)) {
+        detected = stored;
+      } else {
+        const nav = navigator.language || "";
+        if (nav.startsWith("zh-TW") || nav.startsWith("zh-Hant")) detected = "zh-TW";
+        else if (nav.startsWith("zh")) detected = "zh-CN";
+        else if (nav.startsWith("ja")) detected = "ja";
+        else if (nav.startsWith("ko")) detected = "ko";
+        else if (nav.startsWith("es")) detected = "es";
+        else if (nav.startsWith("pt")) detected = "pt";
+        else if (nav.startsWith("en")) detected = "en";
+      }
+    } catch (_) {}
+    setLocaleState(detected);
+    loadMessages(detected).then(setMessages);
+  }, []);
+
+  function changeLocale(code) {
+    setLocaleState(code);
+    try { localStorage.setItem("locale", code); } catch (_) {}
+    loadMessages(code).then(setMessages);
+  }
+
+  function t(key) {
+    if (!messages) return "";
+    return getMessage(messages, key) || key;
+  }
+
+  return { t, locale, changeLocale };
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
+  const { t, locale, changeLocale } = useLoginLocale();
 
   const [mode, setMode] = useState("login"); // "login" | "signup" | "reset"
   const [nickname, setNickname] = useState("");
-  const [selectedLocale, setSelectedLocale] = useState("zh-TW");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
-  // 載入上次用過的 email（瀏覽器密碼管理員也會記得密碼）
+  // 載入上次用過的 email
   useEffect(() => {
     try {
       const saved = localStorage.getItem(REMEMBERED_EMAIL_KEY);
       if (saved) setEmail(saved);
-    } catch {
-      // 隱私模式等情況可能沒有 localStorage，忽略
-    }
+    } catch {}
   }, []);
 
   function rememberEmail(addr) {
@@ -61,62 +102,55 @@ export default function LoginPage() {
 
     try {
       if (mode === "reset") {
-        // 寄送重設密碼信
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
         });
         if (error) throw error;
-        setNotice("重設密碼的信已寄到你的信箱囉～點開信裡的連結就能設定新密碼 💌");
+        setNotice(t("login.noticeResetSent"));
       } else if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            // 暱稱 + 語言會傳進 auth metadata，trigger 會用它建立 profile
             data: {
               username: nickname.trim() || email.split("@")[0],
-              locale: selectedLocale,
+              locale,
             },
           },
         });
         if (error) throw error;
         rememberEmail(email);
 
-        // 存進 localStorage，讓 LocaleProvider mount 時能立即套用
-        try { localStorage.setItem("locale", selectedLocale); } catch {}
+        try { localStorage.setItem("locale", locale); } catch {}
 
         if (data.session) {
-          // 有立即 session → 直接寫進 profile
           await supabase.from("profiles").upsert(
-            { id: data.session.user.id, locale: selectedLocale },
+            { id: data.session.user.id, locale },
             { onConflict: "id" }
           );
           router.push("/home");
           router.refresh();
         } else {
-          setNotice("確認信已寄到你的信箱～點開信裡的連結就完成註冊囉 💌");
+          setNotice(t("login.noticeSignupSent"));
           setMode("login");
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         rememberEmail(email);
         router.push("/home");
         router.refresh();
       }
     } catch (err) {
-      const msg = err?.message || "發生了一點問題，再試一次看看";
+      const msg = err?.message || "";
       if (msg.includes("Invalid login credentials")) {
-        setError("email 或密碼不太對喔，再檢查一下");
+        setError(t("login.errInvalidCredentials"));
       } else if (msg.includes("already registered")) {
-        setError("這個 email 已經註冊過了，直接登入吧");
+        setError(t("login.errAlreadyRegistered"));
       } else if (msg.includes("at least 6")) {
-        setError("密碼至少要 6 個字喔");
+        setError(t("login.errPasswordTooShort"));
       } else {
-        setError(msg);
+        setError(msg || t("login.errGeneric"));
       }
     } finally {
       setLoading(false);
@@ -134,30 +168,30 @@ export default function LoginPage() {
             <Mochi mood={isReset ? "calm" : "happy"} size={96} />
           </div>
           <h1 className="mt-3 flex items-center gap-1.5 text-2xl font-semibold text-cocoa-deep">
-            <Bow size={22} /> 慢慢變好
+            <Bow size={22} /> {t("login.title")}
           </h1>
           <p className="mt-1 font-hand text-lg text-cocoa-soft">
-            把自己養成喜歡的樣子
+            {t("login.subtitle")}
           </p>
         </div>
 
-        {/* mode toggle — hidden in reset mode */}
+        {/* mode toggle */}
         {!isReset && (
           <div className="mb-5 flex gap-1 rounded-2xl bg-beige/60 p-1">
             {[
-              { k: "login", label: "登入" },
-              { k: "signup", label: "註冊" },
-            ].map((t) => (
+              { k: "login",  label: t("login.tabLogin") },
+              { k: "signup", label: t("login.tabSignup") },
+            ].map((tab) => (
               <button
-                key={t.k}
-                onClick={() => switchMode(t.k)}
+                key={tab.k}
+                onClick={() => switchMode(tab.k)}
                 className={`flex-1 rounded-xl py-2 text-sm font-semibold transition ${
-                  mode === t.k
+                  mode === tab.k
                     ? "bg-cream-card text-cocoa-deep shadow-soft"
                     : "text-milktea"
                 }`}
               >
-                {t.label}
+                {tab.label}
               </button>
             ))}
           </div>
@@ -166,10 +200,10 @@ export default function LoginPage() {
         {isReset && (
           <div className="mb-4 text-center">
             <h2 className="text-base font-semibold text-cocoa-deep">
-              忘記密碼了嗎？
+              {t("login.resetTitle")}
             </h2>
             <p className="mt-1 text-xs text-milktea">
-              沒關係～輸入 email，我們寄一封重設信給你
+              {t("login.resetSubtitle")}
             </p>
           </div>
         )}
@@ -179,7 +213,7 @@ export default function LoginPage() {
             <>
               <div>
                 <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-                  暱稱
+                  {t("login.labelNickname")}
                 </label>
                 <input
                   type="text"
@@ -187,7 +221,7 @@ export default function LoginPage() {
                   maxLength={20}
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
-                  placeholder="想讓 mochi 怎麼稱呼你？"
+                  placeholder={t("login.placeholderNickname")}
                   autoComplete="nickname"
                   className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
                 />
@@ -196,14 +230,11 @@ export default function LoginPage() {
               {/* language picker */}
               <div>
                 <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-                  語言 / Language
+                  {t("login.labelLanguage")}
                 </label>
                 <select
-                  value={selectedLocale}
-                  onChange={(e) => {
-                    setSelectedLocale(e.target.value);
-                    try { localStorage.setItem("locale", e.target.value); } catch {}
-                  }}
+                  value={locale}
+                  onChange={(e) => changeLocale(e.target.value)}
                   className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
                 >
                   {LOCALES.map((loc) => (
@@ -215,9 +246,10 @@ export default function LoginPage() {
               </div>
             </>
           )}
+
           <div>
             <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-              EMAIL
+              {t("login.labelEmail")}
             </label>
             <input
               type="email"
@@ -233,7 +265,7 @@ export default function LoginPage() {
           {!isReset && (
             <div>
               <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
-                密碼
+                {t("login.labelPassword")}
               </label>
               <input
                 type="password"
@@ -241,10 +273,8 @@ export default function LoginPage() {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="至少 6 個字"
-                autoComplete={
-                  mode === "signup" ? "new-password" : "current-password"
-                }
+                placeholder={t("login.placeholderPassword")}
+                autoComplete={mode === "signup" ? "new-password" : "current-password"}
                 className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
               />
             </div>
@@ -267,12 +297,12 @@ export default function LoginPage() {
             className="btn-cocoa mt-1 w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
           >
             {loading
-              ? "請稍等…"
+              ? t("login.loading")
               : isReset
-              ? "寄送重設信 💌"
+              ? t("login.submitReset")
               : mode === "signup"
-              ? "建立我的帳號 🌱"
-              : "進來繼續成長 ✨"}
+              ? t("login.submitSignup")
+              : t("login.submitLogin")}
           </button>
         </form>
 
@@ -282,7 +312,7 @@ export default function LoginPage() {
             onClick={() => switchMode("login")}
             className="mt-4 w-full text-center text-xs font-medium text-cocoa-soft"
           >
-            ← 返回登入
+            {t("login.backToLogin")}
           </button>
         ) : (
           <>
@@ -292,20 +322,18 @@ export default function LoginPage() {
                   onClick={() => switchMode("reset")}
                   className="mt-4 w-full text-center text-xs font-medium text-cocoa-soft"
                 >
-                  忘記密碼？
+                  {t("login.forgotPassword")}
                 </button>
                 <button
                   onClick={() => router.push("/welcome")}
                   className="mt-2 w-full text-center text-xs font-medium text-milktea hover:text-cocoa transition"
                 >
-                  ✨ 先看看 App 功能介紹
+                  {t("login.seeIntro")}
                 </button>
               </>
             )}
             <p className="mt-3 text-center text-[11px] leading-relaxed text-milktea">
-              {mode === "signup"
-                ? "註冊就會有一個只屬於你的成長空間"
-                : "歡迎回來，mochi 一直在等你"}
+              {mode === "signup" ? t("login.signupHint") : t("login.welcomeBack")}
             </p>
           </>
         )}
