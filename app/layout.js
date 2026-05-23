@@ -1,13 +1,13 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "慢慢變好 · Self Growing",
+  title: "Mochi",
   description: "用溫柔的獎勵機制，慢慢把自己養成喜歡的樣子 🌱",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "慢慢變好",
+    title: "Mochi",
   },
   icons: {
     icon: [{ url: "/icon.png", type: "image/png", sizes: "any" }],
