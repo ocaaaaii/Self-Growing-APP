@@ -259,6 +259,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
         onDelete={handleDeleteHabit}
         habit={editingHabit}
         saving={savingHabit}
+        defaultCategory={!editingHabit && filter !== "全部" && filter !== "已封存" ? filter : undefined}
       />
       <CelebrateModal
         open={!!celebrate}

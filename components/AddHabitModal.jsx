@@ -39,7 +39,8 @@ function DayPill({ active, children, onClick }) {
 }
 
 // Add OR edit a habit. Pass `habit` to edit, omit to add.
-export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, saving }) {
+// Pass `defaultCategory` to pre-select a category when adding.
+export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, saving, defaultCategory }) {
   const editing = !!habit;
   const { t } = useLocale();
   const DAY_LABELS = [
@@ -74,12 +75,12 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
     } else {
       setName("");
       setEmoji(EMOJI_CHOICES[0]);
-      setCategory(CATEGORIES[0]);
+      setCategory(defaultCategory && CATEGORIES.includes(defaultCategory) ? defaultCategory : CATEGORIES[0]);
       setDiffIdx(0);
       setFrequency(FREQUENCIES[0]);
       setScheduleDays([]);
     }
-  }, [open, habit]);
+  }, [open, habit, defaultCategory]);
 
   function toggleDay(day) {
     setScheduleDays((prev) =>

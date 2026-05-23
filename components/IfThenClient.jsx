@@ -189,6 +189,7 @@ export default function IfThenClient({ rules: initialRules }) {
         onDelete={handleDelete}
         rule={editing}
         saving={saving}
+        defaultCategory={!editing && filter !== "全部" ? filter : undefined}
       />
     </div>
   );

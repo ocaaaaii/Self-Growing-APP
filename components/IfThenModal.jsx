@@ -7,7 +7,8 @@ import { IFTHEN_CATEGORIES } from "@/lib/constants";
 import { useLocale } from "@/components/LocaleProvider";
 
 // Add OR edit an If→Then rule. Pass `rule` to edit, omit to add.
-export default function IfThenModal({ open, onClose, onSave, onDelete, rule, saving }) {
+// Pass `defaultCategory` to pre-select a category when adding.
+export default function IfThenModal({ open, onClose, onSave, onDelete, rule, saving, defaultCategory }) {
   const { t } = useLocale();
   const editing = !!rule;
   const [ifText, setIfText] = useState("");
@@ -18,9 +19,13 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
     if (open) {
       setIfText(rule?.trigger_condition || "");
       setThenText(rule?.action_response || "");
-      setCategory(rule?.category || IFTHEN_CATEGORIES[0]);
+      if (rule) {
+        setCategory(rule.category || IFTHEN_CATEGORIES[0]);
+      } else {
+        setCategory(defaultCategory && IFTHEN_CATEGORIES.includes(defaultCategory) ? defaultCategory : IFTHEN_CATEGORIES[0]);
+      }
     }
-  }, [open, rule]);
+  }, [open, rule, defaultCategory]);
 
   function handleSave() {
     onSave({
