@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import IfThenClient from "@/components/IfThenClient";
 
@@ -6,6 +7,8 @@ export default async function IfThenPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
 
   const { data: rules } = await supabase
     .from("ifthen_rules")

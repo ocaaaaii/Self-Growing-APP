@@ -91,7 +91,7 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
                   : "border-line bg-cream-card text-cocoa"
               }`}
             >
-              {c}
+              {t(`ifthenCategories.${c}`) || c}
             </button>
           ))}
         </div>

@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { todayStr } from "@/lib/constants";
 import HomeClient from "@/components/HomeClient";
@@ -28,6 +29,10 @@ function getWeekStart(date) {
 export default async function HomePage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
+  // Belt-and-suspenders: if middleware didn't redirect (e.g. session race),
+  // handle it here so we never hit user.id on null.
+  if (!user) redirect("/login");
 
   const todayDate = new Date();
   const today = todayStr(todayDate);

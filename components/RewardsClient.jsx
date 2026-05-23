@@ -14,13 +14,21 @@ import JoyRecordModal from "./JoyRecordModal";
 import Modal from "./Modal";
 import { useLocale } from "@/components/LocaleProvider";
 
+// Locale code → BCP-47 tag for Intl.DateTimeFormat
+const LOCALE_TO_BCP47 = {
+  "zh-TW": "zh-TW", "zh-CN": "zh-CN",
+  "en": "en-US", "ja": "ja-JP",
+  "ko": "ko-KR", "es": "es-ES", "pt": "pt-BR",
+};
+
 const FILTERS = ["全部", ...REWARD_CATEGORIES];
 
 export default function RewardsClient({ initialPoints, rewards: initialRewards, history }) {
   const router = useRouter();
   const supabase = createClient();
   const frameRef = useRef(null);
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const bcp47 = LOCALE_TO_BCP47[locale] || "zh-TW";
 
   const [points, setPoints] = useState(initialPoints);
   const [rewards, setRewards] = useState(initialRewards);
@@ -197,14 +205,14 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
         >
           <span className="flex items-center gap-2 text-[13px] font-semibold text-cocoa-deep">
             <span className="text-base">🎀</span>
-            兌換紀錄
+            {t("rewardHistory.title")}
             {history.length > 0 && (
               <span className="rounded-full bg-beige px-2 py-0.5 text-[10px] font-bold text-cocoa">
                 {history.length}
               </span>
             )}
           </span>
-          <span className="text-xs text-milktea">看回憶 →</span>
+          <span className="text-xs text-milktea">{t("rewardHistory.viewMemories")}</span>
         </button>
 
         {/* category filter */}
@@ -315,14 +323,14 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
           ✕
         </button>
         <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
-          <Bow size={20} /> 兌換紀錄
+          <Bow size={20} /> {t("rewardHistory.title")}
         </h2>
         <p className="mb-[18px] text-xs text-milktea">
-          那些你給自己的、值得的禮物
+          {t("rewardHistory.subtitle")}
         </p>
         {history.length === 0 ? (
           <p className="py-6 text-center text-sm text-milktea">
-            還沒有兌換紀錄～完成習慣累積點數，然後好好寵愛自己 🎀
+            {t("rewardHistory.empty")}
           </p>
         ) : (
           <div className="flex flex-col gap-2.5">
@@ -335,10 +343,10 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                   <span className="text-2xl">{h.rewards?.emoji || "🎁"}</span>
                   <div className="flex-1">
                     <div className="text-[13px] font-semibold text-cocoa-deep">
-                      {h.rewards?.title || "獎勵"}
+                      {h.rewards?.title || t("rewardHistory.rewardFallback")}
                     </div>
                     <div className="text-[11px] text-milktea">
-                      {new Date(h.redeemed_at).toLocaleString("zh-TW", {
+                      {new Date(h.redeemed_at).toLocaleString(bcp47, {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
@@ -357,7 +365,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={h.photo_url}
-                    alt="兌換照片"
+                    alt={t("rewardHistory.photoAlt")}
                     className="mt-2.5 h-36 w-full rounded-xl object-cover"
                   />
                 )}

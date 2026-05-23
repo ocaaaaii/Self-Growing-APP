@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { todayStr } from "@/lib/constants";
 import HabitsClient from "@/components/HabitsClient";
@@ -7,6 +8,8 @@ export default async function HabitsPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
 
   const today = todayStr();
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Modal from "./Modal";
 import Mochi from "./Mochi";
+import { useLocale } from "@/components/LocaleProvider";
 
 // After redeeming a reward — let the user snap a photo + leave a note.
 // If a photo is uploaded, we ask Claude vision (via /api/reward-comment)
@@ -21,6 +22,7 @@ export default function JoyRecordModal({
   onSaved,
 }) {
   const supabase = createClient();
+  const { t } = useLocale();
   const [phase, setPhase] = useState("form");
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -102,7 +104,7 @@ export default function JoyRecordModal({
         // ignore — fall through to fallback
       }
       if (!comment) {
-        comment = `「${rewardTitle}」看起來很棒！你值得這份開心 🎀`;
+        comment = t("joyRecord.fallback", { title: rewardTitle });
       }
 
       // 4. save the AI comment back to reward_history
@@ -115,7 +117,7 @@ export default function JoyRecordModal({
       setPhase("reveal");
       onSaved?.();
     } catch (err) {
-      alert("沒能記下來，再試一次：" + (err?.message || ""));
+      alert(t("joyRecord.error") + (err?.message || ""));
       setPhase("form");
     }
   }
@@ -127,11 +129,11 @@ export default function JoyRecordModal({
           <div className="mx-auto mb-3 mt-2 animate-bounceIn" style={{ width: 96 }}>
             <Mochi mood="loving" size={96} />
           </div>
-          <h2 className="text-xl font-semibold text-cocoa-deep">兌換成功！🎀</h2>
+          <h2 className="text-xl font-semibold text-cocoa-deep">{t("joyRecord.success_title")}</h2>
           <p className="mt-1.5 text-[13px] leading-relaxed text-cocoa">
-            好好享受「{rewardTitle}」— 你值得 💕
+            {t("joyRecord.enjoy", { title: rewardTitle })}
             <br />
-            要不要拍張照、留句話，記住這份喜悅？
+            {t("joyRecord.enjoy_sub")}
           </p>
 
           {/* photo picker */}
@@ -147,13 +149,13 @@ export default function JoyRecordModal({
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={preview}
-                alt="兌換照片"
+                alt={t("rewardHistory.photoAlt")}
                 className="mx-auto h-40 w-full rounded-2xl object-cover"
               />
             ) : (
               <div className="flex h-32 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line bg-cream-card text-milktea">
                 <span className="text-3xl">📸</span>
-                <span className="mt-1 text-xs">點一下拍照 / 選一張照片</span>
+                <span className="mt-1 text-xs">{t("joyRecord.photoHint")}</span>
               </div>
             )}
           </label>
@@ -162,7 +164,7 @@ export default function JoyRecordModal({
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="想對這份喜悅說的話…"
+            placeholder={t("joyRecord.notePlaceholder")}
             className="mt-3 min-h-[60px] w-full resize-none rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
           />
 
@@ -171,13 +173,13 @@ export default function JoyRecordModal({
               onClick={skip}
               className="rounded-2xl bg-beige py-3.5 text-sm font-semibold text-cocoa"
             >
-              先跳過
+              {t("joyRecord.skip")}
             </button>
             <button
               onClick={save}
               className="btn-cocoa rounded-2xl py-3.5 text-sm font-semibold shadow-soft"
             >
-              記下來 📸
+              {t("joyRecord.save")}
             </button>
           </div>
         </>
@@ -189,9 +191,9 @@ export default function JoyRecordModal({
             <Mochi mood="happy" size={96} />
           </div>
           <p className="mt-4 animate-pulseSoft text-[14px] font-medium text-cocoa-deep">
-            mochi 正在看你的照片…
+            {t("joyRecord.thinking")}
           </p>
-          <p className="mt-1 text-[11px] text-milktea">幫你記下這份喜悅</p>
+          <p className="mt-1 text-[11px] text-milktea">{t("joyRecord.thinking_sub")}</p>
         </div>
       )}
 
@@ -215,7 +217,7 @@ export default function JoyRecordModal({
             onClick={onClose}
             className="btn-cocoa mt-4 w-full rounded-2xl py-3.5 text-sm font-semibold shadow-soft"
           >
-            謝謝 mochi 🎀
+            {t("joyRecord.thanksMochi")}
           </button>
         </>
       )}

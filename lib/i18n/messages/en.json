@@ -71,8 +71,8 @@
     "confirmDelete": "Delete \"{title}\"?"
   },
   "habits": {
-    "title": "My habits",
-    "subtitle": "Slowly becoming who you want to be",
+    "title": "All My Little Habits ✨",
+    "subtitle": "Growing into who you love",
     "filterAll": "All",
     "archived": "Archived",
     "noHabits": "No habits yet",
@@ -80,7 +80,9 @@
     "noFiltered": "No habits in this category yet~",
     "archiveConfirm": "Archive \"{title}\"?",
     "archiveHint": "Archived habits won't show on the home screen",
-    "buildSystem": "Build your own life system"
+    "buildSystem": "Build your own life system",
+    "handwriting": "my habits",
+    "profileAriaLabel": "My profile"
   },
   "addHabit": {
     "titleAdd": "Add a habit",
@@ -457,5 +459,35 @@
       "title": "Self Love",
       "desc": "Redeem your first reward"
     }
+  },
+  "ifthenCategories": {
+    "🌅 早晨流程": "🌅 Morning Routine",
+    "🏠 回家流程": "🏠 Coming Home",
+    "📱 數位戒斷": "📱 Digital Detox",
+    "💭 情緒對應": "💭 Emotional Reset",
+    "🎯 專注獎勵": "🎯 Focus Reward",
+    "🌙 睡前流程": "🌙 Bedtime Routine"
+  },
+  "rewardHistory": {
+    "title": "Redemption Log",
+    "subtitle": "Gifts you gave to yourself",
+    "viewMemories": "View memories →",
+    "empty": "No redemptions yet — earn points and treat yourself 🎀",
+    "photoAlt": "Redemption photo",
+    "rewardFallback": "Reward"
+  },
+  "joyRecord": {
+    "success_title": "Redeemed! 🎀",
+    "enjoy": "Enjoy 「{title}」— you deserve it 💕",
+    "enjoy_sub": "Want to snap a photo and capture this joy?",
+    "photoHint": "Tap to take / choose a photo",
+    "notePlaceholder": "Something you want to say about this moment…",
+    "skip": "Skip for now",
+    "save": "Save 📸",
+    "thinking": "mochi is looking at your photo…",
+    "thinking_sub": "Capturing this joy for you",
+    "thanksMochi": "Thanks mochi 🎀",
+    "fallback": "「{title}」looks wonderful! You deserve this joy 🎀",
+    "error": "Couldn't save, please try again: "
   }
 }

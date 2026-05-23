@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import Mochi from "@/components/Mochi";
 import Bow from "@/components/Bow";
 import { loadMessages, getMessage, DEFAULT_LOCALE } from "@/lib/i18n";
@@ -242,6 +243,17 @@ export default function WelcomePage() {
   const [step, setStep] = useState(0);
   const [ready, setReady] = useState(false);
 
+  // When user finishes the guide, send to /home if logged in, /login if not
+  const handleStart = useCallback(async () => {
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      router.push(user ? "/home" : "/login");
+    } catch {
+      router.push("/login");
+    }
+  }, [router]);
+
   // wait for messages to load so slides don't flash empty
   useEffect(() => {
     const timer = setTimeout(() => setReady(true), 50);
@@ -290,7 +302,7 @@ export default function WelcomePage() {
 
           {/* skip */}
           <button
-            onClick={() => router.push("/home")}
+            onClick={handleStart}
             className="text-xs font-medium text-milktea"
           >
             {t("welcome.skip")}
@@ -346,7 +358,7 @@ export default function WelcomePage() {
               </button>
             )}
             <button
-              onClick={() => (isLast ? router.push("/home") : goTo(step + 1))}
+              onClick={() => (isLast ? handleStart() : goTo(step + 1))}
               className="flex-1 rounded-2xl py-3.5 text-[15px] font-semibold text-cream-card shadow-soft transition hover:-translate-y-px active:scale-95"
               style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
             >

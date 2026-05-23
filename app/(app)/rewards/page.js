@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import RewardsClient from "@/components/RewardsClient";
 
@@ -6,6 +7,8 @@ export default async function RewardsPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
 
   const [profileRes, rewardsRes, historyRes] = await Promise.all([
     supabase.from("profiles").select("total_points").eq("id", user.id).maybeSingle(),
@@ -29,7 +32,4 @@ export default async function RewardsPage() {
     <RewardsClient
       initialPoints={profileRes.data?.total_points ?? 0}
       rewards={rewardsRes.data || []}
-      history={historyRes.data || []}
-    />
-  );
-}
+      h

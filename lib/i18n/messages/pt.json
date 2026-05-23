@@ -71,8 +71,8 @@
     "mochiRemaining": "Só mais {n} para atingir a meta de hoje — você é demais!"
   },
   "habits": {
-    "title": "Meus hábitos",
-    "subtitle": "Aos poucos, se tornando quem você quer ser",
+    "title": "Todos os meus pequenos hábitos ✨",
+    "subtitle": "Crescendo aos poucos para quem você quer ser",
     "filterAll": "Todos",
     "archived": "Arquivados",
     "noHabits": "Ainda não tem hábitos",
@@ -80,7 +80,9 @@
     "noFiltered": "Ainda não tem hábitos nessa categoria~",
     "archiveConfirm": "Arquivar «{title}»?",
     "archiveHint": "Hábitos arquivados não vão aparecer na tela inicial",
-    "buildSystem": "Crie seu próprio sistema de vida"
+    "buildSystem": "Crie seu próprio sistema de vida",
+    "handwriting": "my habits",
+    "profileAriaLabel": "Meu perfil"
   },
   "addHabit": {
     "titleAdd": "Adicionar hábito",
@@ -457,5 +459,35 @@
       "title": "Amor Próprio",
       "desc": "Resgate sua primeira recompensa"
     }
+  },
+  "ifthenCategories": {
+    "🌅 早晨流程": "🌅 Rotina Matinal",
+    "🏠 回家流程": "🏠 Chegando em Casa",
+    "📱 數位戒斷": "📱 Detox Digital",
+    "💭 情緒對應": "💭 Reset Emocional",
+    "🎯 專注獎勵": "🎯 Recompensa de Foco",
+    "🌙 睡前流程": "🌙 Rotina Noturna"
+  },
+  "rewardHistory": {
+    "title": "Histórico de Resgates",
+    "subtitle": "Presentes que você deu a si mesmo",
+    "viewMemories": "Ver memórias →",
+    "empty": "Ainda sem resgates — complete hábitos, acumule pontos e se cuide 🎀",
+    "photoAlt": "Foto do resgate",
+    "rewardFallback": "Recompensa"
+  },
+  "joyRecord": {
+    "success_title": "Resgatado！🎀",
+    "enjoy": "Aproveite 「{title}」— você merece 💕",
+    "enjoy_sub": "Quer tirar uma foto e guardar este momento?",
+    "photoHint": "Toque para tirar / escolher uma foto",
+    "notePlaceholder": "Algo que queira dizer sobre este momento…",
+    "skip": "Pular por agora",
+    "save": "Guardar 📸",
+    "thinking": "mochi está olhando sua foto…",
+    "thinking_sub": "Capturando esta alegria para você",
+    "thanksMochi": "Obrigado mochi 🎀",
+    "fallback": "「{title}」parece incrível! Você merece esta alegria 🎀",
+    "error": "Não foi possível salvar, tente novamente: "
   }
 }

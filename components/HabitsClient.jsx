@@ -173,15 +173,15 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
         {/* header */}
         <div className="mb-[18px] mt-1.5 flex items-start justify-between">
           <div>
-            <div className="font-hand text-lg text-milktea">my habits</div>
+            <div className="font-hand text-lg text-milktea">{t("habits.handwriting")}</div>
             <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
-              所有的<span className="underline-cute">小小堅持</span> ✨
+              {t("habits.title")}
             </h1>
           </div>
           <button
             onClick={() => setShowProfile(true)}
             className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-cream-card text-cocoa"
-            aria-label="我的小空間"
+            aria-label={t("habits.profileAriaLabel")}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.8" />

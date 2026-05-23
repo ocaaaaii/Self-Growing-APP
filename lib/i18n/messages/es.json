@@ -71,8 +71,8 @@
     "mochiRemaining": "¡Solo {n} más para alcanzar tu meta de hoy!"
   },
   "habits": {
-    "title": "Mis hábitos",
-    "subtitle": "Poco a poco, convirtiéndote en quien quieres ser",
+    "title": "Todos mis pequeños hábitos ✨",
+    "subtitle": "Creciendo poco a poco hacia quien quieres ser",
     "filterAll": "Todos",
     "archived": "Archivados",
     "noHabits": "Todavía no tienes hábitos",
@@ -80,7 +80,9 @@
     "noFiltered": "Todavía no hay hábitos en esta categoría~",
     "archiveConfirm": "¿Archivar «{title}»?",
     "archiveHint": "Los hábitos archivados no se mostrarán en la pantalla de inicio",
-    "buildSystem": "Crea tu propio sistema de vida"
+    "buildSystem": "Crea tu propio sistema de vida",
+    "handwriting": "my habits",
+    "profileAriaLabel": "Mi perfil"
   },
   "addHabit": {
     "titleAdd": "Añadir hábito",
@@ -457,5 +459,35 @@
       "title": "Amor Propio",
       "desc": "Canjea tu primera recompensa"
     }
+  },
+  "ifthenCategories": {
+    "🌅 早晨流程": "🌅 Rutina Matutina",
+    "🏠 回家流程": "🏠 Al Llegar a Casa",
+    "📱 數位戒斷": "📱 Desintoxicación Digital",
+    "💭 情緒對應": "💭 Gestión Emocional",
+    "🎯 專注獎勵": "🎯 Recompensa de Enfoque",
+    "🌙 睡前流程": "🌙 Rutina Nocturna"
+  },
+  "rewardHistory": {
+    "title": "Historial de Canjes",
+    "subtitle": "Los regalos que te has dado",
+    "viewMemories": "Ver recuerdos →",
+    "empty": "Aún no hay canjes — completa hábitos, acumula puntos y mímarte 🎀",
+    "photoAlt": "Foto del canje",
+    "rewardFallback": "Recompensa"
+  },
+  "joyRecord": {
+    "success_title": "¡Canjeado！🎀",
+    "enjoy": "Disfruta 「{title}」— te lo mereces 💕",
+    "enjoy_sub": "¿Quieres tomar una foto y recordar este momento?",
+    "photoHint": "Toca para tomar / elegir una foto",
+    "notePlaceholder": "Algo que quieras decir sobre este momento…",
+    "skip": "Saltar por ahora",
+    "save": "Guardar 📸",
+    "thinking": "mochi está mirando tu foto…",
+    "thinking_sub": "Capturando esta alegría para ti",
+    "thanksMochi": "Gracias mochi 🎀",
+    "fallback": "¡「{title}」se ve genial! Te mereces esta alegría 🎀",
+    "error": "No se pudo guardar, inténtalo de nuevo: "
   }
 }

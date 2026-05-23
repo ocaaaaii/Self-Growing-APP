@@ -28,7 +28,7 @@ export default function IfThenCard({ rule, onEdit, onToggle, busy }) {
       </div>
 
       <div className="mt-2.5 flex items-center justify-between border-t border-dashed border-line pt-2.5">
-        <span className="text-[10px] text-milktea">{rule.category}</span>
+        <span className="text-[10px] text-milktea">{t(`ifthenCategories.${rule.category}`) || rule.category}</span>
         <button
           onClick={() => !busy && onToggle(rule)}
           className={`flex items-center gap-1.5 text-[10px] font-semibold ${

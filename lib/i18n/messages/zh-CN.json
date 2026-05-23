@@ -71,7 +71,7 @@
     "mochiRemaining": "再做 {n} 件就达成今日目标啦～你超棒的！"
   },
   "habits": {
-    "title": "我的习惯清单",
+    "title": "所有的小小坚持 ✨",
     "subtitle": "慢慢养成喜欢的自己",
     "filterAll": "全部",
     "archived": "已归档",
@@ -80,7 +80,9 @@
     "noFiltered": "这个分类还没有习惯～",
     "archiveConfirm": "确定要归档「{title}」吗？",
     "archiveHint": "归档后不会再显示在首页",
-    "buildSystem": "建立你自己的生活系统"
+    "buildSystem": "建立你自己的生活系统",
+    "handwriting": "my habits",
+    "profileAriaLabel": "我的小空间"
   },
   "addHabit": {
     "titleAdd": "添加一件小事",
@@ -457,5 +459,35 @@
       "title": "宠爱自己",
       "desc": "兑换你的第一个奖励"
     }
+  },
+  "ifthenCategories": {
+    "🌅 早晨流程": "🌅 早晨流程",
+    "🏠 回家流程": "🏠 回家流程",
+    "📱 數位戒斷": "📱 数字戒断",
+    "💭 情緒對應": "💭 情绪应对",
+    "🎯 專注獎勵": "🎯 专注奖励",
+    "🌙 睡前流程": "🌙 睡前流程"
+  },
+  "rewardHistory": {
+    "title": "兑换记录",
+    "subtitle": "那些你给自己的、值得的礼物",
+    "viewMemories": "看回忆 →",
+    "empty": "还没有兑换记录～完成习惯累积积分，然后好好宠爱自己 🎀",
+    "photoAlt": "兑换照片",
+    "rewardFallback": "奖励"
+  },
+  "joyRecord": {
+    "success_title": "兑换成功！🎀",
+    "enjoy": "好好享受「{title}」— 你值得 💕",
+    "enjoy_sub": "要不要拍张照、留句话，记住这份喜悦？",
+    "photoHint": "点一下拍照 / 选一张照片",
+    "notePlaceholder": "想对这份喜悦说的话…",
+    "skip": "先跳过",
+    "save": "记下来 📸",
+    "thinking": "mochi 正在看你的照片…",
+    "thinking_sub": "帮你记下这份喜悦",
+    "thanksMochi": "谢谢 mochi 🎀",
+    "fallback": "「{title}」看起来很棒！你值得这份开心 🎀",
+    "error": "没能记下来，再试一次："
   }
 }

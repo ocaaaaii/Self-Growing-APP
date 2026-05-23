@@ -71,8 +71,8 @@
     "mochiRemaining": "あと {n} 件で今日の目標達成！君ならできる！"
   },
   "habits": {
-    "title": "マイ習慣リスト",
-    "subtitle": "少しずつ、好きな自分になっていこう",
+    "title": "すべての小さな習慣 ✨",
+    "subtitle": "少しずつ、好きな自分になる",
     "filterAll": "すべて",
     "archived": "アーカイブ済み",
     "noHabits": "まだ習慣がないよ",
@@ -80,7 +80,9 @@
     "noFiltered": "このカテゴリにはまだ習慣がないよ～",
     "archiveConfirm": "「{title}」をアーカイブする？",
     "archiveHint": "アーカイブするとホーム画面に表示されなくなるよ",
-    "buildSystem": "自分だけの生活システムを作ろう"
+    "buildSystem": "自分だけの生活システムを作ろう",
+    "handwriting": "my habits",
+    "profileAriaLabel": "マイページ"
   },
   "addHabit": {
     "titleAdd": "やることを追加",
@@ -457,5 +459,35 @@
       "title": "自分へのご褒美",
       "desc": "最初の報酬を交換する"
     }
+  },
+  "ifthenCategories": {
+    "🌅 早晨流程": "🌅 朝のルーティン",
+    "🏠 回家流程": "🏠 帰宅ルーティン",
+    "📱 數位戒斷": "📱 デジタルデトックス",
+    "💭 情緒對應": "💭 感情リセット",
+    "🎯 專注獎勵": "🎯 集中ご褒美",
+    "🌙 睡前流程": "🌙 就寝前ルーティン"
+  },
+  "rewardHistory": {
+    "title": "交換履歴",
+    "subtitle": "自分へのご褒美の記録",
+    "viewMemories": "思い出を見る →",
+    "empty": "まだ交換記録がありません～習慣を続けてポイントを貯めて、自分を大切にしてね 🎀",
+    "photoAlt": "交換写真",
+    "rewardFallback": "報酬"
+  },
+  "joyRecord": {
+    "success_title": "交換完了！🎀",
+    "enjoy": "「{title}」を楽しんでね — あなたにはその価値があります 💕",
+    "enjoy_sub": "写真を撮って、この喜びを記録しませんか？",
+    "photoHint": "タップして写真を撮る / 選ぶ",
+    "notePlaceholder": "この喜びについて一言…",
+    "skip": "スキップ",
+    "save": "記録する 📸",
+    "thinking": "mochi が写真を見ています…",
+    "thinking_sub": "この喜びを記録しています",
+    "thanksMochi": "ありがとう mochi 🎀",
+    "fallback": "「{title}」素敵ですね！あなたはこの喜びを受け取る価値があります 🎀",
+    "error": "保存できませんでした。もう一度お試しください："
   }
 }

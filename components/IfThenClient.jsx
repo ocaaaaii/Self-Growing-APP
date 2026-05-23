@@ -134,7 +134,7 @@ export default function IfThenClient({ rules: initialRules }) {
                   : "border-line bg-cream-card text-cocoa"
               }`}
             >
-              {f === "全部" ? t("ifthen.filterAll") : f}
+              {f === "全部" ? t("ifthen.filterAll") : (t(`ifthenCategories.${f}`) || f)}
             </button>
           ))}
         </div>
