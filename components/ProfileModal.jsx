@@ -200,6 +200,14 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
         </select>
       </div>
 
+      {/* guide link */}
+      <button
+        onClick={() => { onClose(); router.push("/welcome"); }}
+        className="mt-2.5 w-full rounded-2xl bg-beige/60 py-3 text-sm font-medium text-milktea transition hover:text-cocoa"
+      >
+        ✨ {t("profile.viewGuide") || "查看功能導覽"}
+      </button>
+
       <form action="/auth/signout" method="post" className="mt-2.5">
         <button
           type="submit"

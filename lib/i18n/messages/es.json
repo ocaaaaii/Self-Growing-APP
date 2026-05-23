@@ -223,7 +223,8 @@
     "themeSaving": "Guardando…",
     "themeHint": "Pulsa para cambiar al instante — toda la app cambiará ✨",
     "language": "Idioma / Language",
-    "signOut": "Cerrar sesión"
+    "signOut": "Cerrar sesión",
+    "viewGuide": "Ver guía de la app"
   },
   "gratitude": {
     "done": "✓ Gratitud de hoy completada · ",

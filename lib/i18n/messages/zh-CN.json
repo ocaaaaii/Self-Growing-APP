@@ -223,7 +223,8 @@
     "themeSaving": "保存中…",
     "themeHint": "点一下就会立刻换上，整个 App 都会跟着变 ✨",
     "language": "语言 / Language",
-    "signOut": "退出登录"
+    "signOut": "退出登录",
+    "viewGuide": "查看功能介绍"
   },
   "gratitude": {
     "done": "✓ 已完成今日感恩 · ",

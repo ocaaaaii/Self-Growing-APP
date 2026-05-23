@@ -223,7 +223,8 @@
     "themeSaving": "저장 중…",
     "themeHint": "누르면 바로 바뀌어요 — 앱 전체가 같이 바뀔 거예요 ✨",
     "language": "언어 / Language",
-    "signOut": "로그아웃"
+    "signOut": "로그아웃",
+    "viewGuide": "앱 가이드 보기"
   },
   "gratitude": {
     "done": "✓ 오늘의 감사 기록 완료 · ",

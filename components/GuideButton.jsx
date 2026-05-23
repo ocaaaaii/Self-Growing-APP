@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
 
 const HINT_KEY = "guide-hint-shown";
@@ -70,10 +70,15 @@ function HintBubble({ btnRef, onDismiss, t }) {
 
 export default function GuideButton() {
   const router = useRouter();
+  const pathname = usePathname();
   const { t } = useLocale();
   const [showHint, setShowHint] = useState(false);
   const desktopRef = useRef(null);
   const mobileRef = useRef(null);
+
+  // On the habits page, the top-right already has a profile button.
+  // Hide the mobile GuideButton there to avoid overlap.
+  const hideMobile = pathname === "/habits";
 
   // Show hint once on first visit (after 800 ms delay)
   useEffect(() => {
@@ -128,9 +133,10 @@ export default function GuideButton() {
         </button>
       </div>
 
-      {/* ── Mobile: absolute top-right, safe-area aware ── */}
+      {/* ── Mobile: absolute top-right, safe-area aware ──
+           Hidden on /habits (profile button already occupies that spot) */}
       <div
-        className="absolute right-4 z-30 sm:hidden"
+        className={`absolute right-4 z-30 sm:hidden ${hideMobile ? "hidden" : ""}`}
         style={{ top: "calc(10px + env(safe-area-inset-top))" }}
       >
         <button

@@ -247,7 +247,8 @@
     "themeSaving": "Saving…",
     "themeHint": "Tap to switch instantly — the whole app will change ✨",
     "language": "Language",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "viewGuide": "View app guide"
   },
   "gratitude": {
     "done": "✓ Today's gratitude done · ",
