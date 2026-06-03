@@ -34,7 +34,7 @@ export default async function AppLayout({ children }) {
   return (
     <LocaleProvider initialLocale={locale} initialMessages={messages}>
       {/* Mobile: full-screen app. Desktop (sm+): centred phone frame */}
-      <main className="h-[100dvh] w-full sm:flex sm:h-auto sm:min-h-screen sm:flex-col sm:items-center sm:justify-center sm:gap-3 sm:px-3 sm:py-6">
+      <main className="h-[100dvh] w-full sm:flex sm:h-auto sm:min-h-screen sm:flex-col sm:items-center sm:justify-center sm:gap-1 sm:px-3 sm:py-4">
         <ThemeApplier theme={theme} />
         <div className="paper relative flex h-full w-full flex-col overflow-hidden sm:h-[820px] sm:max-w-[390px] sm:rounded-[36px] sm:shadow-[0_8px_32px_rgba(40,30,22,0.22)]">
           {/* status bar — desktop (phone frame) only */}
