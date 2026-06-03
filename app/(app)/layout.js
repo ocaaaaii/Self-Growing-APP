@@ -34,7 +34,7 @@ export default async function AppLayout({ children }) {
   return (
     <LocaleProvider initialLocale={locale} initialMessages={messages}>
       {/* Mobile: full-screen app. Desktop (sm+): centred phone frame */}
-      <main className="h-[100dvh] w-full sm:flex sm:h-auto sm:min-h-screen sm:items-center sm:justify-center sm:px-3 sm:py-6">
+      <main className="h-[100dvh] w-full sm:flex sm:h-auto sm:min-h-screen sm:flex-col sm:items-center sm:justify-center sm:gap-3 sm:px-3 sm:py-6">
         <ThemeApplier theme={theme} />
         <div className="paper relative flex h-full w-full flex-col overflow-hidden sm:h-[820px] sm:max-w-[390px] sm:rounded-[36px] sm:shadow-[0_8px_32px_rgba(40,30,22,0.22)]">
           {/* status bar — desktop (phone frame) only */}
@@ -65,6 +65,11 @@ export default async function AppLayout({ children }) {
           {/* bottom nav — sticks to bottom; includes safe-area inset on real phones */}
           <BottomNav />
         </div>
+
+        {/* footer — desktop only, below the phone frame */}
+        <p className="hidden sm:block text-center text-[10px] text-milktea/60 leading-relaxed">
+          Developed by CA<br />© 2026 Mochi Self Growing · All rights reserved.
+        </p>
       </main>
     </LocaleProvider>
   );
