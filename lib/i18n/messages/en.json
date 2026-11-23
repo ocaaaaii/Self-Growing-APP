@@ -525,7 +525,10 @@
     "errPasswordTooShort": "Password needs to be at least 6 characters",
     "errGeneric": "Something went wrong, please try again",
     "noticeResetSent": "Reset email sent! Click the link in the email to set a new password 💌",
-    "noticeSignupSent": "Confirmation email sent! Click the link to complete your sign up 💌"
+    "noticeSignupSent": "Confirmation email sent! Click the link to complete your sign up 💌",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "errGoogle": "Google sign-in didn't work. Please try again."
   },
   "ui": {
     "close": "Close",

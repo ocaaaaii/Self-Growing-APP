@@ -525,7 +525,10 @@
     "errPasswordTooShort": "密码至少要 6 个字哦",
     "errGeneric": "发生了一点问题，再试一次看看",
     "noticeResetSent": "重置密码的邮件已寄到你的邮箱～点开邮件里的链接就能设定新密码 💌",
-    "noticeSignupSent": "确认邮件已寄到你的邮箱～点开邮件里的链接就完成注册啦 💌"
+    "noticeSignupSent": "确认邮件已寄到你的邮箱～点开邮件里的链接就完成注册啦 💌",
+    "or": "或",
+    "continueWithGoogle": "使用 Google 账号继续",
+    "errGoogle": "Google 登录没有成功，再试一次看看"
   },
   "ui": {
     "close": "关闭",

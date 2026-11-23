@@ -525,7 +525,10 @@
     "errPasswordTooShort": "A senha precisa ter pelo menos 6 caracteres",
     "errGeneric": "Algo deu errado, por favor tente novamente",
     "noticeResetSent": "Email de redefinição enviado! Clique no link do email 💌",
-    "noticeSignupSent": "Email de confirmação enviado! Clique no link para concluir seu cadastro 💌"
+    "noticeSignupSent": "Email de confirmação enviado! Clique no link para concluir seu cadastro 💌",
+    "or": "ou",
+    "continueWithGoogle": "Continuar com Google",
+    "errGoogle": "Não foi possível entrar com o Google. Tente novamente."
   },
   "ui": {
     "close": "Fechar",

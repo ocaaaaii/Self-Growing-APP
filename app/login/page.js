@@ -61,6 +61,17 @@ function useLoginLocale() {
 
 // ────────────────────────────────────────────────────────────────────────────
 
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
+    </svg>
+  );
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -73,6 +84,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [oauthFailed, setOauthFailed] = useState(false);
+
+  // /auth/callback 換 session 失敗時會帶 ?error=auth 回來
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("error") === "auth") setOauthFailed(true);
+    } catch {}
+  }, []);
 
   // 載入上次用過的 email
   useEffect(() => {
@@ -92,6 +112,26 @@ export default function LoginPage() {
     setMode(m);
     setError("");
     setNotice("");
+    setOauthFailed(false);
+  }
+
+  async function handleGoogle() {
+    setError("");
+    setNotice("");
+    setOauthFailed(false);
+    setLoading(true);
+    try { localStorage.setItem("locale", locale); } catch {}
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    // 成功時瀏覽器會直接跳轉到 Google，不會回到這裡
+    if (error) {
+      setError(error.message || t("login.errGoogle"));
+      setLoading(false);
+    }
   }
 
   async function handleSubmit(e) {
@@ -170,7 +210,7 @@ export default function LoginPage() {
           <h1 className="mt-3 flex items-center gap-1.5 text-2xl font-semibold text-cocoa-deep">
             <Bow size={22} /> {t("login.title")}
           </h1>
-          <p className="mt-1 font-hand text-lg text-cocoa-soft">
+          <p className="mt-1 font-hand text-lg text-muted">
             {t("login.subtitle")}
           </p>
         </div>
@@ -188,7 +228,7 @@ export default function LoginPage() {
                 className={`flex-1 rounded-xl py-2 text-sm font-semibold transition ${
                   mode === tab.k
                     ? "bg-cream-card text-cocoa-deep shadow-soft"
-                    : "text-milktea"
+                    : "text-muted"
                 }`}
               >
                 {tab.label}
@@ -202,7 +242,7 @@ export default function LoginPage() {
             <h2 className="text-base font-semibold text-cocoa-deep">
               {t("login.resetTitle")}
             </h2>
-            <p className="mt-1 text-xs text-milktea">
+            <p className="mt-1 text-xs text-muted">
               {t("login.resetSubtitle")}
             </p>
           </div>
@@ -212,7 +252,7 @@ export default function LoginPage() {
           {mode === "signup" && (
             <>
               <div>
-                <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+                <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
                   {t("login.labelNickname")}
                 </label>
                 <input
@@ -229,7 +269,7 @@ export default function LoginPage() {
 
               {/* language picker */}
               <div>
-                <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+                <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
                   {t("login.labelLanguage")}
                 </label>
                 <select
@@ -248,7 +288,7 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+            <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
               {t("login.labelEmail")}
             </label>
             <input
@@ -264,7 +304,7 @@ export default function LoginPage() {
 
           {!isReset && (
             <div>
-              <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+              <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
                 {t("login.labelPassword")}
               </label>
               <input
@@ -280,13 +320,18 @@ export default function LoginPage() {
             </div>
           )}
 
+          {oauthFailed && !error && (
+            <div className="rounded-xl bg-dusty/25 px-3 py-2 text-xs text-cocoa-deep">
+              {t("login.errGoogle")}
+            </div>
+          )}
           {error && (
             <div className="rounded-xl bg-dusty/25 px-3 py-2 text-xs text-cocoa-deep">
               {error}
             </div>
           )}
           {notice && (
-            <div className="rounded-xl bg-sage/25 px-3 py-2 text-xs text-cocoa">
+            <div className="rounded-xl bg-sage/25 px-3 py-2 text-xs text-accent">
               {notice}
             </div>
           )}
@@ -306,11 +351,31 @@ export default function LoginPage() {
           </button>
         </form>
 
+        {/* Google 登入 */}
+        {!isReset && (
+          <>
+            <div className="my-4 flex items-center gap-3 text-xs text-muted">
+              <span className="h-px flex-1 bg-line" />
+              {t("login.or")}
+              <span className="h-px flex-1 bg-line" />
+            </div>
+            <button
+              type="button"
+              onClick={handleGoogle}
+              disabled={loading}
+              className="flex w-full items-center justify-center gap-2.5 rounded-2xl border border-line bg-cream-card py-3 text-sm font-semibold text-cocoa-deep shadow-soft transition hover:-translate-y-px hover:bg-white disabled:opacity-60"
+            >
+              <GoogleIcon />
+              {t("login.continueWithGoogle")}
+            </button>
+          </>
+        )}
+
         {/* footer links */}
         {isReset ? (
           <button
             onClick={() => switchMode("login")}
-            className="mt-4 w-full text-center text-xs font-medium text-cocoa-soft"
+            className="mt-4 w-full text-center text-xs font-medium text-muted"
           >
             {t("login.backToLogin")}
           </button>
@@ -320,19 +385,19 @@ export default function LoginPage() {
               <>
                 <button
                   onClick={() => switchMode("reset")}
-                  className="mt-4 w-full text-center text-xs font-medium text-cocoa-soft"
+                  className="mt-4 w-full text-center text-xs font-medium text-muted"
                 >
                   {t("login.forgotPassword")}
                 </button>
                 <button
                   onClick={() => router.push("/welcome")}
-                  className="mt-2 w-full text-center text-xs font-medium text-milktea hover:text-cocoa transition"
+                  className="mt-2 w-full text-center text-xs font-medium text-muted hover:text-accent transition"
                 >
                   {t("login.seeIntro")}
                 </button>
               </>
             )}
-            <p className="mt-3 text-center text-[11px] leading-relaxed text-milktea">
+            <p className="mt-3 text-center text-xs leading-relaxed text-muted">
               {mode === "signup" ? t("login.signupHint") : t("login.welcomeBack")}
             </p>
           </>

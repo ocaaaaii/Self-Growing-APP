@@ -525,7 +525,10 @@
     "errPasswordTooShort": "La contraseña debe tener al menos 6 caracteres",
     "errGeneric": "Algo salió mal, por favor intenta de nuevo",
     "noticeResetSent": "¡Correo de restablecimiento enviado! Haz clic en el enlace del correo 💌",
-    "noticeSignupSent": "¡Correo de confirmación enviado! Haz clic en el enlace para completar tu registro 💌"
+    "noticeSignupSent": "¡Correo de confirmación enviado! Haz clic en el enlace para completar tu registro 💌",
+    "or": "o",
+    "continueWithGoogle": "Continuar con Google",
+    "errGoogle": "No se pudo iniciar sesión con Google. Inténtalo de nuevo."
   },
   "ui": {
     "close": "Cerrar",
