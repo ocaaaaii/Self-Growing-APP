@@ -402,6 +402,11 @@ export default function LoginPage() {
             </p>
           </>
         )}
+        <nav className="mt-6 flex justify-center gap-4 text-xs text-muted">
+          <a href="/privacy" className="underline underline-offset-4 hover:text-accent">隱私權政策</a>
+          <a href="/terms" className="underline underline-offset-4 hover:text-accent">服務條款</a>
+          <a href="/feedback" className="underline underline-offset-4 hover:text-accent">意見回饋</a>
+        </nav>
       </div>
     </main>
   );
