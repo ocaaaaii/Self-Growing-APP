@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { ENCOURAGEMENTS } from "@/lib/constants";
+import { ENCOURAGEMENTS, todayStr } from "@/lib/constants";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
 import PointsCard from "./PointsCard";
@@ -62,10 +62,29 @@ export default function HomeClient({
   isSunday,
   weekStart,
   weeklyReviewDone: initialWeeklyReviewDone,
+  serverNow,
 }) {
   const router = useRouter();
   const supabase = createClient();
   const { t } = useLocale();
+
+  // Clock for the greeting/date/late-night banner. The first render uses the
+  // server's value (already in the user's time zone) so server and browser
+  // HTML match; after mounting we switch to the browser clock.
+  const [clock, setClock] = useState(() => serverNow || null);
+  useEffect(() => {
+    const tick = () => {
+      const d = new Date();
+      setClock({
+        hour: d.getHours(),
+        minute: d.getMinutes(),
+        dateLabel: d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }),
+      });
+    };
+    tick();
+    const id = setInterval(tick, 60000);
+    return () => clearInterval(id);
+  }, []);
   const frameRef = useRef(null);
   const [askConfirm, confirmDialog] = useConfirm();
 
@@ -92,7 +111,12 @@ export default function HomeClient({
   const [savingGratitude, setSavingGratitude] = useState(false);
   const [showGratHistory, setShowGratHistory] = useState(false);
   // Pick a random gratitude quote from i18n
-  const [quoteIdx] = useState(() => Math.floor(Math.random() * 4));
+  // (picked after mount: a random pick during render differs between the
+  // server HTML and the browser and breaks hydration)
+  const [quoteIdx, setQuoteIdx] = useState(0);
+  useEffect(() => {
+    setQuoteIdx(Math.floor(Math.random() * 4));
+  }, []);
   const rawQuote = t(`gratitudeQuotes.${quoteIdx}`);
   // Fallback: if key not found yet, t() returns the key itself
   const quote = rawQuote.startsWith("gratitudeQuotes.")
@@ -184,6 +208,17 @@ export default function HomeClient({
   const [aiMessage, setAiMessage] = useState(null);
   useEffect(() => {
     let cancelled = false;
+    // One AI line per day (and one more once everything is done), cached on
+    // this device so reopening the app doesn't call the API again.
+    const allDone = initialHabits.length > 0 && doneSet.size >= initialHabits.length;
+    const cacheKey = `mochi-encourage:${username || ""}:${todayStr()}:${allDone ? 1 : 0}`;
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        setAiMessage(cached);
+        return;
+      }
+    } catch {}
     fetch("/api/encourage", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -200,7 +235,12 @@ export default function HomeClient({
     })
       .then((r) => r.json())
       .then((d) => {
-        if (!cancelled && d?.message) setAiMessage(d.message);
+        if (!cancelled && d?.message) {
+          setAiMessage(d.message);
+          try {
+            localStorage.setItem(cacheKey, d.message);
+          } catch {}
+        }
       })
       .catch(() => {});
     return () => {
@@ -527,8 +567,7 @@ export default function HomeClient({
   }
 
   // 是否顯示今晚復盤提示條（23:55 後、有未做完、還沒復盤、不是休息日）
-  const now = new Date();
-  const isLateNight = now.getHours() === 23 && now.getMinutes() >= 55;
+  const isLateNight = !!clock && clock.hour === 23 && clock.minute >= 55;
   const showReflectionBanner =
     isLateNight && incompleteHabits.length > 0 && !reflectionDone && !isRestDay && totalCount > 0;
 
@@ -599,19 +638,12 @@ export default function HomeClient({
         {/* greeting */}
         <header className="mb-4 mt-1.5 flex items-end justify-between gap-3 pr-10">
           <div className="min-w-0">
-            <div className="font-hand text-lg text-muted" suppressHydrationWarning>
-              {new Date().toLocaleDateString("en-US", {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-              })}
+            <div className="font-hand text-lg text-muted">
+              {clock?.dateLabel ?? " "}
             </div>
-            <h1
-              className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep"
-              suppressHydrationWarning
-            >
+            <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
               {(() => {
-                const h = new Date().getHours();
+                const h = clock?.hour ?? 12;
                 if (h < 5 || h >= 18) return t("home.greeting_evening");
                 if (h < 11) return t("home.greeting_morning");
                 return t("home.greeting_noon");

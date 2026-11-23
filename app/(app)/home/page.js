@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { todayStr } from "@/lib/constants";
+import { zonedNow } from "@/lib/serverDate";
 import DocTitle from "@/components/DocTitle";
 import HomeClient from "@/components/HomeClient";
 
@@ -37,7 +38,7 @@ export default async function HomePage() {
   // handle it here so we never hit user.id on null.
   if (!user) redirect("/login");
 
-  const todayDate = new Date();
+  const todayDate = zonedNow(); // the user's calendar day, not the server's (UTC)
   const today = todayStr(todayDate);
   const dayOfWeek = todayDate.getDay();
 
@@ -136,6 +137,11 @@ export default async function HomePage() {
       isSunday={isSunday}
       weekStart={weekStart}
       weeklyReviewDone={!!weeklyReviewData}
+      serverNow={{
+        hour: todayDate.getHours(),
+        minute: todayDate.getMinutes(),
+        dateLabel: todayDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }),
+      }}
     />
     </>
   );

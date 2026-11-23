@@ -5,6 +5,7 @@ import Fab from "@/components/Fab";
 import ThemeApplier from "@/components/ThemeApplier";
 import GuideButton from "@/components/GuideButton";
 import { LocaleProvider } from "@/components/LocaleProvider";
+import TimezoneCookie from "@/components/TimezoneCookie";
 import { loadMessages, DEFAULT_LOCALE } from "@/lib/i18n";
 
 // Shared shell for the logged-in app.
@@ -33,6 +34,7 @@ export default async function AppLayout({ children }) {
 
   return (
     <LocaleProvider initialLocale={locale} initialMessages={messages}>
+      <TimezoneCookie />
       {/* Mobile: full-screen app. Desktop (sm+): centred phone frame */}
       <main className="h-[100dvh] w-full sm:flex sm:h-auto sm:min-h-screen sm:flex-col sm:items-center sm:justify-center sm:gap-1 sm:px-3 sm:py-4">
         <ThemeApplier theme={theme} />

@@ -2,6 +2,53 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import DocTitle from "@/components/DocTitle";
 import GrowthClient from "@/components/GrowthClient";
+import { zonedNow } from "@/lib/serverDate";
+
+// Day-based stats from habit_logs. Prefers the growth_stats() SQL function;
+// if it isn't installed yet, pages through the rows (1000 at a time) instead.
+async function loadDayStats(supabase, userId, todayKey) {
+  const { data, error } = await supabase.rpc("growth_stats", { p_today: todayKey });
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!error && row) {
+    return {
+      growthDays: row.growth_days ?? 0,
+      currentStreak: row.current_streak ?? 0,
+      bestStreak: row.best_streak ?? 0,
+    };
+  }
+
+  const days = new Set();
+  for (let from = 0; from < 100000; from += 1000) {
+    const { data: rows, error: e } = await supabase
+      .from("habit_logs")
+      .select("completed_on")
+      .eq("user_id", userId)
+      .lte("completed_on", todayKey)
+      .order("completed_on", { ascending: true })
+      .range(from, from + 999);
+    if (e || !rows) break;
+    rows.forEach((r) => days.add(r.completed_on));
+    if (rows.length < 1000) break;
+  }
+
+  const toNum = (k) => Math.round(Date.parse(`${k}T00:00:00Z`) / 86400000);
+  const nums = [...days].map(toNum).sort((a, b) => a - b);
+  let best = 0;
+  let run = 0;
+  for (let i = 0; i < nums.length; i++) {
+    run = i > 0 && nums[i] - nums[i - 1] === 1 ? run + 1 : 1;
+    best = Math.max(best, run);
+  }
+  const today = toNum(todayKey);
+  const set = new Set(nums);
+  let cursor = set.has(today) ? today : today - 1;
+  let current = 0;
+  while (set.has(cursor)) {
+    current += 1;
+    cursor -= 1;
+  }
+  return { growthDays: days.size, currentStreak: current, bestStreak: best };
+}
 
 export const metadata = { title: "成長紀錄" };
 
@@ -13,7 +60,7 @@ export default async function GrowthPage() {
 
   if (!user) redirect("/login");
 
-  const now = new Date();
+  const now = zonedNow(); // the user's calendar day, not the server's (UTC)
   const year = now.getFullYear();
   const month = now.getMonth(); // 0-indexed
   const lastDay = new Date(year, month + 1, 0).getDate();
@@ -32,7 +79,6 @@ export default async function GrowthPage() {
     profileRes,
     habitsRes,
     monthLogsRes,
-    allLogsRes,
     gratCountRes,
     redeemCountRes,
     chartHabitLogsRes,
@@ -46,7 +92,6 @@ export default async function GrowthPage() {
       .eq("user_id", user.id)
       .gte("completed_on", firstOfMonth)
       .lte("completed_on", lastOfMonth),
-    supabase.from("habit_logs").select("completed_on").eq("user_id", user.id),
     supabase
       .from("gratitude_entries")
       .select("id", { count: "exact", head: true })
@@ -96,36 +141,15 @@ export default async function GrowthPage() {
   });
 
   const habits       = habitsRes.data || [];
-  const logDays      = new Set((allLogsRes.data || []).map((l) => l.completed_on));
-  const growthDays   = logDays.size;
-
-  // Current streak: consecutive days with at least one check-off, counting back
-  // from today (or from yesterday, if today has nothing yet). The per-habit
-  // `streak` column is only updated on check-off, so it goes stale after a
-  // break and must not be shown as "current".
-  const dayKey = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-  const cursor = new Date(now);
-  if (!logDays.has(dayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
-  let currentStreak = 0;
-  while (logDays.has(dayKey(cursor))) {
-    currentStreak += 1;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-
+  // growth days / current streak / best streak are computed in the database
+  // (growth_stats) so a long history isn't cut off at the API's 1000-row limit.
+  const todayKey = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+  const dayStats = await loadDayStats(supabase, user.id, todayKey);
+  const growthDays = dayStats.growthDays;
+  const currentStreak = dayStats.currentStreak;
   // Best streak ever, for badges: once earned, a streak badge stays unlocked.
-  // Longest run of consecutive log days, or the per-habit max if that is higher.
-  const sortedDays = [...logDays].sort();
-  let bestRun = 0;
-  let run = 0;
-  let prev = null;
-  for (const k of sortedDays) {
-    const d = new Date(`${k}T00:00:00`);
-    run = prev && Math.round((d - prev) / 86400000) === 1 ? run + 1 : 1;
-    bestRun = Math.max(bestRun, run);
-    prev = d;
-  }
   const bestStreak = Math.max(
-    bestRun,
+    dayStats.bestStreak,
     habits.reduce((m, h) => Math.max(m, h.streak || 0), 0),
     currentStreak
   );

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { takeAiQuota } from "@/lib/aiQuota";
 
 // POST /api/reward-comment
 // Body: { photoUrl, rewardTitle, note }
@@ -24,8 +25,8 @@ export async function POST(request) {
   }
   const { photoUrl, rewardTitle = "獎勵", note = "" } = body;
 
-  // No key OR no photo → return a sweet generic line so the UX still works
-  if (!apiKey || !photoUrl) {
+  // No key, no photo, or over today's limit → a sweet generic line so the UX still works
+  if (!apiKey || !photoUrl || !(await takeAiQuota(supabase, "reward_comment"))) {
     return NextResponse.json({
       comment: `「${rewardTitle}」看起來很棒！你值得這份開心 🎀`,
       fallback: true,

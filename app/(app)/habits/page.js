@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { todayStr } from "@/lib/constants";
+import { zonedNow } from "@/lib/serverDate";
 import DocTitle from "@/components/DocTitle";
 import HabitsClient from "@/components/HabitsClient";
 
@@ -14,7 +15,7 @@ export default async function HabitsPage() {
 
   if (!user) redirect("/login");
 
-  const today = todayStr();
+  const today = todayStr(zonedNow());
 
   const [habitsRes, todayLogsRes, profileRes] = await Promise.all([
     supabase

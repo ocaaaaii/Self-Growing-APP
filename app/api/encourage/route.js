@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { takeAiQuota } from "@/lib/aiQuota";
 
 // POST /api/encourage
 // Generates a personalised encouragement line from Mochi using the
@@ -20,6 +21,10 @@ export async function POST(request) {
   if (!apiKey) {
     // no key configured — let the client use its own messages
     return NextResponse.json({ message: null });
+  }
+  // over today's limit — the client falls back to its built-in messages
+  if (!(await takeAiQuota(supabase, "encourage"))) {
+    return NextResponse.json({ message: null, limited: true });
   }
 
   let stats = {};
