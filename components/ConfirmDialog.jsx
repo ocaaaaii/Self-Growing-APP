@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import Modal from "./Modal";
 import Mochi from "./Mochi";
+import { useT } from "./LocaleProvider";
 
 // Replaces window.confirm() with a sheet in the app's own look.
 //
@@ -49,12 +50,15 @@ export default function ConfirmDialog({
   open,
   title,
   body,
-  confirmLabel = "確定",
-  cancelLabel = "先不要",
+  confirmLabel,
+  cancelLabel,
   destructive = true,
   onConfirm,
   onCancel,
 }) {
+  const t = useT();
+  confirmLabel = confirmLabel || t("ui.confirm");
+  cancelLabel = cancelLabel || t("ui.notNow");
   return (
     <Modal open={open} onClose={onCancel} label={title}>
       <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />

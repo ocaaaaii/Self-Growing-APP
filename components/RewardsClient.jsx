@@ -124,9 +124,9 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
 
   async function handleDeleteReward(reward) {
     const ok = await askConfirm({
-      title: `刪除「${reward.title}」？`,
-      body: "這個獎勵和它的兌換紀錄都會一起刪掉，刪了就找不回來。已經花掉的點數不會退回。",
-      confirmLabel: "刪除獎勵",
+      title: t("ui.deleteTitle", { title: reward.title }),
+      body: t("ui.deleteRewardBody"),
+      confirmLabel: t("ui.deleteReward"),
     });
     if (!ok) return;
     setSaving(true);

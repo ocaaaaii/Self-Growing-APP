@@ -355,9 +355,9 @@ export default function HomeClient({
 
   async function handleDeleteHabit(habit) {
     const ok = await askConfirm({
-      title: `刪除「${habit.title}」？`,
-      body: "這個習慣和它的打卡紀錄都會一起刪掉，刪了就找不回來。",
-      confirmLabel: "刪除習慣",
+      title: t("ui.deleteTitle", { title: habit.title }),
+      body: t("ui.deleteHabitBody"),
+      confirmLabel: t("ui.deleteHabit"),
     });
     if (!ok) return;
     setSavingHabit(true);

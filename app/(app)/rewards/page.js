@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import DocTitle from "@/components/DocTitle";
 import RewardsClient from "@/components/RewardsClient";
 
 export const metadata = { title: "獎勵" };
@@ -31,10 +32,13 @@ export default async function RewardsPage() {
   ]);
 
   return (
-    <RewardsClient
+    <>
+      <DocTitle k="ui.titleRewards" />
+      <RewardsClient
       initialPoints={profileRes.data?.total_points ?? 0}
       rewards={rewardsRes.data || []}
       history={historyRes.data || []}
     />
+    </>
   );
 }

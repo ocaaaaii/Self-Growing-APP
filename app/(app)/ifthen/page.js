@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import DocTitle from "@/components/DocTitle";
 import IfThenClient from "@/components/IfThenClient";
 
 export const metadata = { title: "規則" };
@@ -18,5 +19,8 @@ export default async function IfThenPage() {
     .eq("user_id", user.id)
     .order("created_at", { ascending: true });
 
-  return <IfThenClient rules={rules || []} />;
+  return <>
+      <DocTitle k="ui.titleIfthen" />
+      <IfThenClient rules={rules || []} />
+    </>;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useT } from "./LocaleProvider";
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -76,11 +77,12 @@ export default function Modal({ open, onClose, children, className = "", label }
 
 // The ✕ in the corner of every sheet.
 export function CloseButton({ onClick, className = "" }) {
+  const t = useT();
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label="關閉"
+      aria-label={t("ui.close")}
       className={`absolute right-[14px] top-[12px] flex h-10 w-10 items-center justify-center rounded-full text-accent transition hover:bg-beige focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50 ${className}`}
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">

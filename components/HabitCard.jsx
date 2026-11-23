@@ -2,6 +2,7 @@
 
 import Icon from "./Icon";
 import { iconFor } from "@/lib/icons";
+import { useT } from "./LocaleProvider";
 
 // One habit row.
 // Only the checkbox logs the habit (no more accidental check-offs from a
@@ -27,6 +28,7 @@ export default function HabitCard({
   onCalendar, // 有傳才顯示日曆按鈕
   showMeta = true,
 }) {
+  const t = useT();
   const bgClass = ICON_BG[habit.category] || "bg-beige";
   const icon = iconFor(habit.emoji, habit.category);
 
@@ -41,7 +43,7 @@ export default function HabitCard({
         onClick={() => onEdit?.(habit)}
         disabled={!onEdit}
         className="flex min-w-0 flex-1 items-center gap-3 rounded-[14px] p-1.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50 disabled:cursor-default"
-        aria-label={onEdit ? `編輯「${habit.title}」` : undefined}
+        aria-label={onEdit ? t("ui.editHabit", { title: habit.title }) : undefined}
       >
         <span
           className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[12px] text-cocoa-deep ${bgClass} ${
@@ -67,7 +69,7 @@ export default function HabitCard({
               {habit.streak >= STREAK_MIN && (
                 <span className="flex items-center gap-0.5 font-semibold text-accent">
                   <Icon name="flame" size={13} />
-                  連續 {habit.streak} 天
+                  {t("ui.streakDays", { n: habit.streak })}
                 </span>
               )}
             </span>
@@ -80,7 +82,7 @@ export default function HabitCard({
           type="button"
           onClick={() => onCalendar(habit)}
           className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full text-muted transition hover:bg-beige hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50"
-          aria-label={`「${habit.title}」的打卡日曆`}
+          aria-label={t("ui.habitCalendar", { title: habit.title })}
         >
           <Icon name="calendar" size={18} />
         </button>

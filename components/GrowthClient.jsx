@@ -126,6 +126,7 @@ export default function GrowthClient({
   dayCounts,
   totalPoints,
   longestStreak,
+  currentStreak = 0,
   growthDays,
   habitCount,
   gratitudeCount = 0,
@@ -234,7 +235,7 @@ export default function GrowthClient({
         {[
           { icon: "calendar", num: `${completionRate}%`, label: t("growth.monthlyRate") },
           { icon: "star", num: totalPoints.toLocaleString(), label: t("growth.totalPoints") },
-          { icon: "flame", num: longestStreak, label: t("growth.longestStreak") },
+          { icon: "flame", num: currentStreak, label: t("growth.longestStreak") },
         ].map((s) => (
           <div
             key={s.label}

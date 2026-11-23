@@ -85,7 +85,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      aria-label="主選單"
+      aria-label={t("ui.mainNav")}
       className="grid flex-shrink-0 grid-cols-5 gap-1 border-t border-line/60 bg-cream-paper/95 px-3 pt-2 backdrop-blur"
       style={{ paddingBottom: "max(14px, env(safe-area-inset-bottom))" }}
     >

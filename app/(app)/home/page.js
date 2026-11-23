@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { todayStr } from "@/lib/constants";
+import DocTitle from "@/components/DocTitle";
 import HomeClient from "@/components/HomeClient";
 
 export const metadata = { title: "今天" };
@@ -118,7 +119,9 @@ export default async function HomePage() {
   const profile = profileRes.data;
 
   return (
-    <HomeClient
+    <>
+      <DocTitle k="ui.titleHome" />
+      <HomeClient
       initialPoints={profile?.total_points ?? 0}
       username={profile?.username || user.email.split("@")[0]}
       habits={todayHabits}
@@ -134,5 +137,6 @@ export default async function HomePage() {
       weekStart={weekStart}
       weeklyReviewDone={!!weeklyReviewData}
     />
+    </>
   );
 }

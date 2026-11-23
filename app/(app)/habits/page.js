@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { todayStr } from "@/lib/constants";
+import DocTitle from "@/components/DocTitle";
 import HabitsClient from "@/components/HabitsClient";
 
 export const metadata = { title: "我的習慣" };
@@ -31,10 +32,13 @@ export default async function HabitsPage() {
   ]);
 
   return (
-    <HabitsClient
+    <>
+      <DocTitle k="ui.titleHabits" />
+      <HabitsClient
       habits={habitsRes.data || []}
       todayLogs={todayLogsRes.data || []}
       nickname={profileRes.data?.username || user.email.split("@")[0]}
     />
+    </>
   );
 }

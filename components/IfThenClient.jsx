@@ -78,9 +78,9 @@ export default function IfThenClient({ rules: initialRules }) {
 
   async function handleDelete(rule) {
     const ok = await askConfirm({
-      title: "刪除這條規則？",
-      body: `「${rule.trigger_condition}」這條規則會被刪掉，刪了就找不回來。只想先停用的話，可以把它切成暫停。`,
-      confirmLabel: "刪除規則",
+      title: t("ui.deleteRuleTitle"),
+      body: t("ui.deleteRuleBody", { text: rule.trigger_condition }),
+      confirmLabel: t("ui.deleteRule"),
     });
     if (!ok) return;
     setSaving(true);

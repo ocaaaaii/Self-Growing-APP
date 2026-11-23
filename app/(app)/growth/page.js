@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import DocTitle from "@/components/DocTitle";
 import GrowthClient from "@/components/GrowthClient";
 
 export const metadata = { title: "成長紀錄" };
@@ -111,6 +112,24 @@ export default async function GrowthPage() {
     cursor.setDate(cursor.getDate() - 1);
   }
 
+  // Best streak ever, for badges: once earned, a streak badge stays unlocked.
+  // Longest run of consecutive log days, or the per-habit max if that is higher.
+  const sortedDays = [...logDays].sort();
+  let bestRun = 0;
+  let run = 0;
+  let prev = null;
+  for (const k of sortedDays) {
+    const d = new Date(`${k}T00:00:00`);
+    run = prev && Math.round((d - prev) / 86400000) === 1 ? run + 1 : 1;
+    bestRun = Math.max(bestRun, run);
+    prev = d;
+  }
+  const bestStreak = Math.max(
+    bestRun,
+    habits.reduce((m, h) => Math.max(m, h.streak || 0), 0),
+    currentStreak
+  );
+
   // ── 折線圖：建立過去 14 天每日點數 ──
   const dailyMap = {};
   for (let i = 13; i >= 0; i--) {
@@ -142,18 +161,22 @@ export default async function GrowthPage() {
     .map(([date, pts]) => ({ date, pts }));
 
   return (
-    <GrowthClient
+    <>
+      <DocTitle k="ui.titleGrowth" />
+      <GrowthClient
       year={year}
       month={month}
       todayDate={now.getDate()}
       dayCounts={dayCounts}
       totalPoints={profileRes.data?.total_points ?? 0}
-      longestStreak={currentStreak}
+      currentStreak={currentStreak}
+      longestStreak={bestStreak}
       growthDays={growthDays}
       habitCount={habits.length}
       gratitudeCount={gratCountRes.count ?? 0}
       redeemCount={redeemCountRes.count ?? 0}
       dailyPoints={dailyPoints}
     />
+    </>
   );
 }

@@ -49,7 +49,7 @@ export default function GratitudeCard({ quote, todayEntry, onSave, saving }) {
             value={items[i]}
             disabled={done || saving}
             onChange={(e) => setItem(i, e.target.value)}
-            aria-label={`感恩的事 ${i + 1}`}
+            aria-label={t("ui.gratitudeItem", { n: i + 1 })}
             placeholder={t("gratitude.placeholder")}
             className="flex-1 border-b-[1.5px] border-dashed border-line bg-transparent px-0.5 py-2 text-[15px] text-cocoa-deep outline-none placeholder:text-muted focus:border-cocoa-soft disabled:opacity-80"
           />

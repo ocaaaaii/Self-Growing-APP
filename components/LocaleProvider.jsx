@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { getMessage, LOCALES, DEFAULT_LOCALE } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
+import zhTW from "@/lib/i18n/messages/zh-TW.json";
 
 const LocaleContext = createContext(null);
 
@@ -59,6 +60,13 @@ export function LocaleProvider({ children, initialLocale, initialMessages }) {
       {children}
     </LocaleContext.Provider>
   );
+}
+
+// For shared pieces (Modal, Fab, cards) that may render outside the provider.
+const fallbackT = (key, vars) => getMessage(zhTW, key, vars);
+export function useT() {
+  const ctx = useContext(LocaleContext);
+  return ctx ? ctx.t : fallbackT;
 }
 
 export function useLocale() {

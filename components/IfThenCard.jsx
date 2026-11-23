@@ -22,11 +22,11 @@ export default function IfThenCard({ rule, onEdit, onToggle, busy }) {
         type="button"
         onClick={() => onEdit(rule)}
         className="block w-full rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50"
-        aria-label={`編輯規則：${rule.trigger_condition}`}
+        aria-label={t("ui.editRule", { text: rule.trigger_condition })}
       >
         <div className="flex items-start gap-2.5 text-[14px] leading-relaxed text-cocoa-deep">
           <span className="mt-px flex-shrink-0 rounded-lg bg-beige px-2 py-0.5 text-xs font-semibold text-cocoa-deep">
-            如果
+            {t("ui.if")}
           </span>
           <span>{rule.trigger_condition}</span>
         </div>
@@ -35,7 +35,7 @@ export default function IfThenCard({ rule, onEdit, onToggle, busy }) {
         </div>
         <div className="flex items-start gap-2.5 text-[14px] font-medium leading-relaxed text-cocoa-deep">
           <span className="mt-px flex-shrink-0 rounded-lg bg-sage/50 px-2 py-0.5 text-xs font-semibold text-cocoa-deep">
-            就去
+            {t("ui.then")}
           </span>
           <span>{rule.action_response}</span>
         </div>
