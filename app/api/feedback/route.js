@@ -43,6 +43,9 @@ export async function POST(request) {
   });
 
   if (error) {
+    if (/feedback_rate_limited/.test(error.message)) {
+      return NextResponse.json({ error: "busy" }, { status: 429 });
+    }
     console.error("[feedback] insert failed", error.message);
     return NextResponse.json({ error: "save" }, { status: 500 });
   }

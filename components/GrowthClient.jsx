@@ -125,6 +125,7 @@ export default function GrowthClient({
   todayDate,
   dayCounts,
   totalPoints,
+  lifetimePoints,
   longestStreak,
   currentStreak = 0,
   growthDays,
@@ -144,7 +145,7 @@ export default function GrowthClient({
 
   // achievement unlock status, computed from the user's data
   const stats = {
-    totalPoints,
+    totalPoints: Math.max(totalPoints, lifetimePoints ?? 0),
     longestStreak,
     growthDays,
     habitCount,

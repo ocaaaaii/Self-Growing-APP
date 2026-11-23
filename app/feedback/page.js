@@ -46,6 +46,8 @@ export default function FeedbackPage() {
         setError(
           data.error === "email"
             ? "Email 格式看起來不太對，可以再確認一下，或留空。"
+            : data.error === "busy"
+            ? "短時間內送出太多次了，請過一會兒再試。"
             : "沒能送出，請稍後再試一次。"
         );
         return;

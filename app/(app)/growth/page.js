@@ -98,8 +98,9 @@ export default async function GrowthPage() {
       .eq("user_id", user.id),
     supabase
       .from("reward_history")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id),
+      .select("points_spent", { count: "exact" })
+      .eq("user_id", user.id)
+      .limit(1000),
     // 折線圖：習慣點數
     supabase
       .from("habit_logs")
@@ -199,6 +200,12 @@ export default async function GrowthPage() {
       habitCount={habits.length}
       gratitudeCount={gratCountRes.count ?? 0}
       redeemCount={redeemCountRes.count ?? 0}
+      // points earned over time = what's left + what's been spent on rewards,
+      // so point badges don't re-lock after a redemption
+      lifetimePoints={
+        (profileRes.data?.total_points ?? 0) +
+        (redeemCountRes.data || []).reduce((s, r) => s + (r.points_spent || 0), 0)
+      }
       dailyPoints={dailyPoints}
     />
     </>
