@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import Bow from "./Bow";
 import { IFTHEN_CATEGORIES } from "@/lib/constants";
 import { useLocale } from "@/components/LocaleProvider";
@@ -38,21 +38,16 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
   return (
     <Modal open={open} onClose={onClose}>
       <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-      <button
-        onClick={onClose}
-        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-      >
-        ✕
-      </button>
+      <CloseButton onClick={onClose} />
 
       <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
         <Bow size={20} /> {editing ? t("addIfthen.titleEdit") : t("addIfthen.titleAdd")}
       </h2>
-      <p className="mb-[18px] text-xs text-milktea">{t("addIfthen.subtitle")}</p>
+      <p className="mb-[18px] text-xs text-muted">{t("addIfthen.subtitle")}</p>
 
       <div className="mb-3.5">
-        <label className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-cocoa">
-          <span className="rounded-lg bg-dusty/40 px-2 py-0.5 text-[10px] font-bold text-cocoa">
+        <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold tracking-wide text-accent">
+          <span className="rounded-lg bg-dusty/40 px-2 py-0.5 text-xs font-bold text-accent">
             IF
           </span>
           {t("addIfthen.ifLabel")}
@@ -66,8 +61,8 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
       </div>
 
       <div className="mb-3.5">
-        <label className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-cocoa">
-          <span className="rounded-lg bg-sage px-2 py-0.5 text-[10px] font-bold text-cocoa">
+        <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold tracking-wide text-accent">
+          <span className="rounded-lg bg-sage px-2 py-0.5 text-xs font-bold text-accent">
             THEN
           </span>
           {t("addIfthen.thenLabel")}
@@ -81,7 +76,7 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
       </div>
 
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addIfthen.category")}
         </label>
         <div className="flex flex-wrap gap-1.5">
@@ -93,7 +88,7 @@ export default function IfThenModal({ open, onClose, onSave, onDelete, rule, sav
               className={`rounded-xl border px-3 py-[7px] text-xs font-medium transition ${
                 category === c
                   ? "border-cocoa bg-cocoa text-cream-card"
-                  : "border-line bg-cream-card text-cocoa"
+                  : "border-line bg-cream-card text-accent"
               }`}
             >
               {t(`ifthenCategories.${c}`) || c}

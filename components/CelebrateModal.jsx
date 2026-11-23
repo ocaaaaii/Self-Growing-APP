@@ -3,27 +3,28 @@
 import Modal from "./Modal";
 import Mochi from "./Mochi";
 import { useLocale } from "@/components/LocaleProvider";
+import { stripEmoji } from "@/lib/icons";
 
 // Celebration popup — Mochi bounces in, shows points earned.
 export default function CelebrateModal({ open, onClose, title, message, badge, mood = "loving" }) {
   const { t } = useLocale();
   return (
-    <Modal open={open} onClose={onClose} className="text-center">
+    <Modal open={open} onClose={onClose} className="text-center" label={stripEmoji(title)}>
       <div className="mx-auto mb-3.5 mt-2 animate-bounceIn" style={{ width: 120 }}>
         <Mochi mood={mood} size={120} />
       </div>
       <h2 className="flex items-center justify-center gap-2 text-xl font-semibold text-cocoa-deep">
-        {title}
+        {stripEmoji(title)}
       </h2>
       {message && (
-        <p className="mt-1.5 text-[13px] leading-relaxed text-cocoa">{message}</p>
+        <p className="mt-1.5 text-sm leading-relaxed text-accent">{stripEmoji(message)}</p>
       )}
       {badge && (
         <div
           className="my-4 inline-block rounded-[18px] px-[22px] py-1.5 font-hand text-[28px] font-bold text-cocoa-deep"
           style={{ background: "linear-gradient(135deg, rgb(var(--c-butter)), rgb(var(--c-beige)))" }}
         >
-          {badge}
+          {stripEmoji(badge)}
         </div>
       )}
       <button

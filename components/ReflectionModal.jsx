@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import Mochi from "./Mochi";
 import { useLocale } from "@/components/LocaleProvider";
+import Icon from "./Icon";
+import { iconFor } from "@/lib/icons";
 
 export default function ReflectionModal({
   open,
@@ -35,12 +37,7 @@ export default function ReflectionModal({
   return (
     <Modal open={open} onClose={handleClose}>
       <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-      <button
-        onClick={handleClose}
-        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-      >
-        ✕
-      </button>
+      <CloseButton onClick={handleClose} />
 
       {/* header */}
       <div className="mb-[18px] flex items-start gap-3">
@@ -51,7 +48,7 @@ export default function ReflectionModal({
           <h2 className="text-lg font-semibold leading-snug text-cocoa-deep">
             {title}
           </h2>
-          <p className="mt-0.5 text-xs leading-relaxed text-milktea">
+          <p className="mt-0.5 text-xs leading-relaxed text-muted">
             {subtitle}<br />
             {t("reflection.footer")}
           </p>
@@ -61,13 +58,13 @@ export default function ReflectionModal({
       {/* 未完成的習慣 */}
       {incompleteHabits && incompleteHabits.length > 0 && (
         <div className="mb-4 rounded-[14px] border border-line/60 bg-cream-card/60 px-3.5 py-3">
-          <p className="mb-2 text-[11px] font-semibold tracking-wide text-cocoa">
+          <p className="mb-2 text-xs font-semibold tracking-wide text-accent">
             {incompleteLabel}
           </p>
           <div className="flex flex-col gap-1.5">
             {incompleteHabits.map((h) => (
               <div key={h.id} className="flex items-center gap-2 text-[13px] text-cocoa-deep">
-                <span className="text-base">{h.emoji}</span>
+                <Icon name={iconFor(h.emoji, h.category)} size={16} className="text-accent" />
                 <span>{h.title}</span>
               </div>
             ))}
@@ -77,7 +74,7 @@ export default function ReflectionModal({
 
       {/* reflection textarea */}
       <div className="mb-4">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {isYesterday ? t("reflection.label_yesterday") : t("reflection.label_today")}
         </label>
         <textarea
@@ -91,8 +88,8 @@ export default function ReflectionModal({
 
       {/* points hint */}
       <div className="mb-4 flex items-center gap-2 rounded-[12px] bg-beige/60 px-3.5 py-2.5">
-        <span className="text-base">✨</span>
-        <p className="text-[12px] leading-relaxed text-cocoa-soft">
+        <Icon name="sparkle" size={16} className="text-accent" />
+        <p className="text-[12px] leading-relaxed text-muted">
           {t("reflection.pointsHint")}
         </p>
       </div>

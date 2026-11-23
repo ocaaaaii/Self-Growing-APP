@@ -12,12 +12,14 @@ import AddHabitModal from "./AddHabitModal";
 import ProfileModal from "./ProfileModal";
 import HabitCalendarModal from "./HabitCalendarModal";
 import { useLocale } from "@/components/LocaleProvider";
+import { useConfirm } from "./ConfirmDialog";
 
 const FILTERS = ["全部", "已封存", ...CATEGORIES];
 
 export default function HabitsClient({ habits: initialHabits, todayLogs, nickname }) {
   const router = useRouter();
   const supabase = createClient();
+  const [askConfirm, confirmDialog] = useConfirm();
   const { t } = useLocale();
 
   const [habits, setHabits] = useState(initialHabits);
@@ -130,8 +132,8 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
         setHabits((hs) => [...hs, data]);
         setCelebrate({
           title: "加入啦！",
-          message: `「${data.title}」已經放進你的習慣清單 ✨`,
-          badge: "🌱 + 1 小事",
+          message: `「${data.title}」已經放進你的習慣清單`,
+          badge: "+1 件小事",
           mood: "loving",
         });
       }
@@ -145,6 +147,12 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
   }
 
   async function handleDeleteHabit(habit) {
+    const ok = await askConfirm({
+      title: `刪除「${habit.title}」？`,
+      body: "這個習慣和它的打卡紀錄都會一起刪掉，刪了就找不回來。如果只是想先暫停，可以改成封存。",
+      confirmLabel: "刪除習慣",
+    });
+    if (!ok) return;
     setSavingHabit(true);
     try {
       const { error } = await supabase
@@ -173,14 +181,14 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
         {/* header */}
         <div className="mb-[18px] mt-1.5 flex items-start justify-between">
           <div>
-            <div className="font-hand text-lg text-milktea">{t("habits.handwriting")}</div>
+            <div className="font-hand text-lg text-muted">{t("habits.handwriting")}</div>
             <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
               {t("habits.title")}
             </h1>
           </div>
           <button
             onClick={() => setShowProfile(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-cream-card text-cocoa"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-cream-card text-accent"
             aria-label={t("habits.profileAriaLabel")}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -204,7 +212,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
               className={`flex-shrink-0 rounded-2xl border px-3.5 py-[7px] text-xs font-medium transition ${
                 filter === f
                   ? "border-cocoa bg-cocoa text-cream-card"
-                  : "border-line bg-cream-card text-cocoa"
+                  : "border-line bg-cream-card text-accent"
               }`}
             >
               {f === "全部" ? t("habits.filterAll") : f === "已封存" ? t("habits.archived") : (t(`categories.${f}`) || f)}
@@ -219,12 +227,12 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
             <p className="mt-3 text-sm font-medium text-cocoa-deep">
               {t("habits.noHabits")}
             </p>
-            <p className="mt-1 text-xs text-milktea">
+            <p className="mt-1 text-xs text-muted">
               {t("habits.noHabitsHint")}
             </p>
           </div>
         ) : shown.length === 0 ? (
-          <div className="rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center text-sm text-milktea shadow-soft">
+          <div className="rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center text-sm text-muted shadow-soft">
             {t("habits.noFiltered")}
           </div>
         ) : (
@@ -244,7 +252,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
         )}
 
         {/* gentle footer note */}
-        <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-milktea">
+        <div className="mt-5 flex items-center justify-center gap-2 text-xs text-muted">
           <Bow size={14} /> {t("habits.buildSystem")}
         </div>
       </div>
@@ -282,6 +290,7 @@ export default function HabitsClient({ habits: initialHabits, todayLogs, nicknam
         onClose={() => setCalendarHabit(null)}
         habit={calendarHabit}
       />
+      {confirmDialog}
     </div>
   );
 }

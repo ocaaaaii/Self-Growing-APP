@@ -1,16 +1,18 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
 
 function Icon({ name, active }) {
-  const stroke = active ? "rgb(var(--c-cocoa-deep))" : "rgb(var(--c-milktea))";
+  const stroke = active ? "rgb(var(--c-cocoa-deep))" : "rgb(var(--c-text-muted))";
   const common = {
     width: 22,
     height: 22,
     viewBox: "0 0 24 24",
     fill: "none",
     xmlns: "http://www.w3.org/2000/svg",
+    "aria-hidden": true,
   };
   if (name === "home")
     return (
@@ -71,45 +73,42 @@ function Icon({ name, active }) {
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const router = useRouter();
   const { t } = useLocale();
 
   const ITEMS = [
-    { key: "home", label: t("nav.home"), href: "/home", ready: true },
-    { key: "habits", label: t("nav.habits"), href: "/habits", ready: true },
-    { key: "ifthen", label: t("nav.rules"), href: "/ifthen", ready: true },
-    { key: "rewards", label: t("nav.rewards"), href: "/rewards", ready: true },
-    { key: "growth", label: t("nav.growth"), href: "/growth", ready: true },
+    { key: "home", label: t("nav.home"), href: "/home" },
+    { key: "habits", label: t("nav.habits"), href: "/habits" },
+    { key: "ifthen", label: t("nav.rules"), href: "/ifthen" },
+    { key: "rewards", label: t("nav.rewards"), href: "/rewards" },
+    { key: "growth", label: t("nav.growth"), href: "/growth" },
   ];
 
   return (
     <nav
-      className="grid flex-shrink-0 grid-cols-5 gap-1 border-t border-line/60 bg-cream-paper/95 px-4 pt-3 backdrop-blur"
-      style={{ paddingBottom: "max(20px, env(safe-area-inset-bottom))" }}
+      aria-label="主選單"
+      className="grid flex-shrink-0 grid-cols-5 gap-1 border-t border-line/60 bg-cream-paper/95 px-3 pt-2 backdrop-blur"
+      style={{ paddingBottom: "max(14px, env(safe-area-inset-bottom))" }}
     >
       {ITEMS.map((it) => {
         const active = pathname === it.href;
         return (
-          <button
+          <Link
             key={it.key}
-            onClick={() => {
-              if (it.ready) router.push(it.href);
-            }}
-            className={`flex flex-col items-center gap-1 rounded-lg py-1 transition ${
-              it.ready ? "" : "opacity-40"
-            }`}
+            href={it.href}
+            aria-current={active ? "page" : undefined}
+            className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-xl py-1 outline-none transition focus-visible:ring-2 focus-visible:ring-cocoa/50"
           >
-            <span className={active ? "rounded-lg bg-beige p-1" : "p-1"}>
+            <span className={`rounded-lg px-3 py-1 transition ${active ? "bg-beige" : ""}`}>
               <Icon name={it.key} active={active} />
             </span>
             <span
-              className={`text-[10px] font-medium ${
-                active ? "text-cocoa-deep" : "text-milktea"
+              className={`text-xs ${
+                active ? "font-semibold text-cocoa-deep" : "font-medium text-muted"
               }`}
             >
               {it.label}
             </span>
-          </button>
+          </Link>
         );
       })}
     </nav>

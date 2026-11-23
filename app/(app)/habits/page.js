@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { todayStr } from "@/lib/constants";
 import HabitsClient from "@/components/HabitsClient";
 
+export const metadata = { title: "我的習慣" };
+
 export default async function HabitsPage() {
   const supabase = createClient();
   const {

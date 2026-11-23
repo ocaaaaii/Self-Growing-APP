@@ -28,6 +28,9 @@
   --c-sky: 184 197 201;
   --c-butter: 232 216 168;
   --c-line: 216 207 194;
+  /* text roles: both pass 4.5:1 on bg, paper, card and beige */
+  --c-text-muted: 110 83 64;
+  --c-text-accent: 116 81 57;
   --grad-btn-from: 164 120 84;
   --grad-btn-to: 139 94 63;
   --grad-points-from: 154 107 78;
@@ -59,6 +62,9 @@
   --c-sky: 178 200 198;
   --c-butter: 224 230 168;
   --c-line: 205 218 203;
+  /* text roles: both pass 4.5:1 on bg, paper, card and beige */
+  --c-text-muted: 79 102 79;
+  --c-text-accent: 77 104 77;
   --grad-btn-from: 124 154 120;
   --grad-btn-to: 92 122 92;
   --grad-points-from: 100 134 100;
@@ -90,6 +96,9 @@
   --c-sky: 188 198 210;
   --c-butter: 240 222 182;
   --c-line: 231 215 219;
+  /* text roles: both pass 4.5:1 on bg, paper, card and beige */
+  --c-text-muted: 134 85 96;
+  --c-text-accent: 142 81 93;
   --grad-btn-from: 196 130 142;
   --grad-btn-to: 170 100 112;
   --grad-points-from: 182 110 126;
@@ -121,6 +130,9 @@
   --c-sky: 148 190 208;
   --c-butter: 206 180 128;
   --c-line: 194 208 222;
+  /* text roles: both pass 4.5:1 on bg, paper, card and beige */
+  --c-text-muted: 70 94 123;
+  --c-text-accent: 64 95 128;
   --grad-btn-from: 95 130 165;
   --grad-btn-to: 64 95 128;
   --grad-points-from: 58 95 130;
@@ -152,6 +164,9 @@
   --c-sky: 128 155 178;
   --c-butter: 188 195 208;
   --c-line: 66 70 80;
+  /* text roles: both pass 4.5:1 on bg, paper, card and beige */
+  --c-text-muted: 166 171 182;
+  --c-text-accent: 192 196 206;
   --grad-btn-from: 118 132 152;
   --grad-btn-to: 88 100 118;
   --grad-points-from: 80 90 106;
@@ -183,6 +198,9 @@
   --c-sky: 192 202 172;
   --c-butter: 248 214 96;
   --c-line: 234 218 195;
+  /* text roles: both pass 4.5:1 on bg, paper, card and beige */
+  --c-text-muted: 137 88 44;
+  --c-text-accent: 142 87 39;
   --grad-btn-from: 220 148 72;
   --grad-btn-to: 188 112 44;
   --grad-points-from: 192 130 62;
@@ -214,6 +232,9 @@
   --c-sky: 128 165 158;
   --c-butter: 195 180 135;
   --c-line: 188 208 186;
+  /* text roles: both pass 4.5:1 on bg, paper, card and beige */
+  --c-text-muted: 69 97 71;
+  --c-text-accent: 62 95 65;
   --grad-btn-from: 88 128 92;
   --grad-btn-to: 60 98 64;
   --grad-points-from: 56 92 60;
@@ -245,6 +266,9 @@
   --c-sky: 150 166 170;
   --c-butter: 206 188 136;
   --c-line: 86 78 70;
+  /* text roles: both pass 4.5:1 on bg, paper, card and beige */
+  --c-text-muted: 195 182 167;
+  --c-text-accent: 222 184 152;
   --grad-btn-from: 200 162 132;
   --grad-btn-to: 168 128 100;
   --grad-points-from: 110 84 64;
@@ -261,6 +285,31 @@
 
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* browser surfaces in the app's own colours */
+::selection {
+  background: rgb(var(--c-butter) / 0.7);
+  color: rgb(var(--c-cocoa-deep));
+}
+input,
+textarea {
+  caret-color: rgb(var(--c-cocoa));
+}
+:focus-visible {
+  outline-color: rgb(var(--c-cocoa));
+}
+
+/* respect "reduce motion": keep state changes, drop the floating and bouncing */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 html,

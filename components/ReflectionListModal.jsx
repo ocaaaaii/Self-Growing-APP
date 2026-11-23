@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import Bow from "./Bow";
 import { useLocale } from "@/components/LocaleProvider";
+import Icon from "./Icon";
 
 export default function ReflectionListModal({ open, onClose }) {
   const supabase = createClient();
@@ -43,29 +44,24 @@ export default function ReflectionListModal({ open, onClose }) {
   return (
     <Modal open={open} onClose={onClose}>
       <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-      <button
-        onClick={onClose}
-        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-      >
-        ✕
-      </button>
+      <CloseButton onClick={onClose} />
 
       <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
         <Bow size={20} /> {t("reflectionList.title")}
       </h2>
-      <p className="mb-[18px] text-xs text-milktea">
+      <p className="mb-[18px] text-xs text-muted">
         {t("reflectionList.subtitle")}
       </p>
 
       {loading ? (
-        <div className="flex items-center justify-center py-10 text-sm text-milktea">
+        <div className="flex items-center justify-center py-10 text-sm text-muted">
           {t("reflectionList.loading")}
         </div>
       ) : entries.length === 0 ? (
         <div className="flex flex-col items-center py-10 text-center">
-          <span className="mb-2 text-3xl">🌙</span>
+          <Icon name="moon" size={32} className="mb-2 text-muted" />
           <p className="text-sm font-medium text-cocoa-deep">{t("reflectionList.empty")}</p>
-          <p className="mt-1 text-xs text-milktea">
+          <p className="mt-1 text-xs text-muted">
             {t("reflectionList.emptyHint")}
           </p>
         </div>
@@ -78,11 +74,11 @@ export default function ReflectionListModal({ open, onClose }) {
             >
               {/* date + points */}
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-hand text-[13px] text-cocoa-soft">
+                <span className="font-hand text-[13px] text-muted">
                   {formatDate(e.entry_date)}
                 </span>
                 {e.points_earned > 0 && (
-                  <span className="rounded-lg bg-cream-bg px-2 py-0.5 text-[10px] font-bold text-cocoa">
+                  <span className="rounded-lg bg-cream-bg px-2 py-0.5 text-xs font-bold text-accent">
                     +{e.points_earned} pt
                   </span>
                 )}

@@ -68,7 +68,9 @@
     "mochiSays": "mochi가 하고 싶은 말 ✨",
     "mochiEmpty": "오늘은 자유의 날이에요 — 잘 쉬세요 🛁",
     "mochiAllDone": "오늘 모든 것을 완료했어요! 정말 대단해요 🎀",
-    "mochiRemaining": "앞으로 {n}개만 더 하면 오늘 목표 달성! 화이팅!"
+    "mochiRemaining": "{done}개 했어요. {n}개 남았어요, 천천히 해요.",
+    "mochiStart": "오늘은 작은 일 하나부터 시작해요. 곁에 있을게요.",
+    "doneGroup": "완료 {n}개"
   },
   "habits": {
     "title": "나의 모든 작은 습관 ✨",
@@ -160,7 +162,11 @@
     "notAffordable_body": "{cost} pt가 필요해요.\nmochi는 당신을 믿어요 — 조금만 더 하면 OK 🌱",
     "needs": "필요한 포인트:",
     "notAffordable_msg": "mochi가 믿고 있어요, 조금만 더 하면 돼요 🌱",
-    "notAffordable_btn": "알겠어요, 더 열심히 할게요"
+    "notAffordable_btn": "알겠어요, 더 열심히 할게요",
+    "balanceLabel": "교환 후 포인트",
+    "spend": "{n} pt를 사용해요",
+    "notAffordable_far": "{n} pt 남았어요",
+    "youHave": "지금 {n} pt가 있어요."
   },
   "ifthen": {
     "title": "좋은 습관을 자동으로 만들어요 💫",
@@ -192,8 +198,8 @@
     "title": "성장 기록",
     "subtitle": "매일매일이 당신의 것",
     "handwriting": "growth log",
-    "totalPoints": "누적 포인트",
-    "longestStreak": "최장 연속일",
+    "totalPoints": "현재 포인트",
+    "longestStreak": "연속 일수",
     "growthDays": "성장한 날",
     "days": "일",
     "achievements": "성취 배지",

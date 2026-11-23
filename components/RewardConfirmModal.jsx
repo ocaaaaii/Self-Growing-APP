@@ -1,7 +1,8 @@
 "use client";
 
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import Mochi from "./Mochi";
+import Icon from "./Icon";
 import { useLocale } from "@/components/LocaleProvider";
 
 // Confirm redeeming a reward — "你值得"
@@ -12,17 +13,18 @@ export default function RewardConfirmModal({
   affordable,
   soldOut,
   busy,
+  points = 0,
   onConfirm,
 }) {
   const { t } = useLocale();
+  const cost = reward?.point_cost ?? 0;
+  const after = Math.max(points - cost, 0);
+  const short = Math.max(cost - points, 0);
+  // "almost there" only when it's actually close
+  const nearlyThere = cost > 0 && points / cost >= 0.8;
   return (
-    <Modal open={open} onClose={onClose} className="text-center">
-      <button
-        onClick={onClose}
-        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-      >
-        ✕
-      </button>
+    <Modal open={open} onClose={onClose} className="text-center" label={reward?.title}>
+      <CloseButton onClick={onClose} />
 
       <div className="mx-auto mb-3.5 mt-2 animate-bounceIn" style={{ width: 110 }}>
         <Mochi mood={affordable ? "loving" : "sad"} size={110} />
@@ -33,7 +35,7 @@ export default function RewardConfirmModal({
           <h2 className="text-xl font-semibold text-cocoa-deep">
             {t("rewardConfirm.soldOut_title")}
           </h2>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-cocoa">
+          <p className="mt-1.5 text-[13px] leading-relaxed text-accent">
             <strong className="text-cocoa-deep">{reward?.title}</strong>{" "}
             {t("rewardConfirm.soldOut_body")}
           </p>
@@ -49,26 +51,29 @@ export default function RewardConfirmModal({
           <h2 className="text-xl font-semibold text-cocoa-deep">
             {t("rewardConfirm.affordable_title")}
           </h2>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-cocoa">
+          <p className="mt-1.5 text-[13px] leading-relaxed text-accent">
             {t("rewardConfirm.want_to_redeem")} <strong className="text-cocoa-deep">{reward?.title}</strong>
             <br />
             {t("rewardConfirm.affordable_msg")}
           </p>
           {reward?.description && (
-            <p className="mt-2 text-xs italic text-milktea">
+            <p className="mt-2 text-xs italic text-muted">
               「{reward.description}」
             </p>
           )}
-          <div
-            className="my-4 inline-block rounded-[18px] px-[22px] py-1.5 font-hand text-[28px] font-bold text-cocoa-deep"
-            style={{ background: "linear-gradient(135deg, rgb(var(--c-butter)), rgb(var(--c-beige)))" }}
-          >
-            - {reward?.point_cost} pt
+          <div className="my-4 rounded-[18px] bg-cream-card px-4 py-3">
+            <div className="text-xs text-muted">{t("rewardConfirm.balanceLabel")}</div>
+            <div className="mt-0.5 flex items-center justify-center gap-2 text-lg font-bold tabular-nums text-cocoa-deep">
+              <span>{points.toLocaleString()}</span>
+              <Icon name="arrowRight" size={18} className="text-muted" />
+              <span>{after.toLocaleString()} pt</span>
+            </div>
+            <div className="mt-0.5 text-xs text-muted">{t("rewardConfirm.spend", { n: cost.toLocaleString() })}</div>
           </div>
           <div className="grid grid-cols-2 gap-2.5">
             <button
               onClick={onClose}
-              className="rounded-2xl bg-beige py-3.5 text-sm font-semibold text-cocoa"
+              className="rounded-2xl bg-beige py-3.5 text-sm font-semibold text-accent"
             >
               {t("rewardConfirm.affordable_cancel")}
             </button>
@@ -84,9 +89,13 @@ export default function RewardConfirmModal({
         </>
       ) : (
         <>
-          <h2 className="text-xl font-semibold text-cocoa-deep">{t("rewardConfirm.notAffordable_title")}</h2>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-cocoa">
-            <strong className="text-cocoa-deep">{reward?.title}</strong> {t("rewardConfirm.needs")} {reward?.point_cost} pt。
+          <h2 className="text-xl font-semibold text-cocoa-deep">
+            {nearlyThere
+              ? t("rewardConfirm.notAffordable_title")
+              : t("rewardConfirm.notAffordable_far", { n: short.toLocaleString() })}
+          </h2>
+          <p className="mt-1.5 text-[13px] leading-relaxed text-accent">
+            <strong className="text-cocoa-deep">{reward?.title}</strong> {t("rewardConfirm.needs")} {cost.toLocaleString()} pt，{t("rewardConfirm.youHave", { n: points.toLocaleString() })}
             <br />
             {t("rewardConfirm.notAffordable_msg")}
           </p>

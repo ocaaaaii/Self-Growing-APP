@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { todayStr } from "@/lib/constants";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import Mochi from "./Mochi";
 import { useLocale } from "@/components/LocaleProvider";
+import Icon from "./Icon";
+import { iconFor } from "@/lib/icons";
 
 export default function WeeklyReviewModal({
   open,
@@ -113,12 +115,7 @@ export default function WeeklyReviewModal({
   return (
     <Modal open={open} onClose={handleClose}>
       <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-      <button
-        onClick={handleClose}
-        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-      >
-        ✕
-      </button>
+      <CloseButton onClick={handleClose} />
 
       {/* header */}
       <div className="mb-4 flex items-start gap-3">
@@ -129,13 +126,13 @@ export default function WeeklyReviewModal({
           <h2 className="text-lg font-semibold leading-snug text-cocoa-deep">
             {t("weeklyReview.title")}
           </h2>
-          <p className="mt-0.5 text-xs text-milktea">{weekLabel}</p>
+          <p className="mt-0.5 text-xs text-muted">{weekLabel}</p>
         </div>
       </div>
 
       {/* weekly stats */}
       {loadingStats ? (
-        <div className="mb-4 flex h-20 items-center justify-center text-sm text-milktea">
+        <div className="mb-4 flex h-20 items-center justify-center text-sm text-muted">
           {t("common.calculating")}
         </div>
       ) : stats ? (
@@ -143,33 +140,33 @@ export default function WeeklyReviewModal({
           <div className="mb-2 grid grid-cols-2 gap-2">
             <div className="rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-3 text-center">
               <div className="text-xl font-bold text-cocoa-deep">+{stats.weeklyPoints}</div>
-              <div className="text-[10px] text-milktea">{t("weeklyReview.weeklyPoints")}</div>
+              <div className="text-xs text-muted">{t("weeklyReview.weeklyPoints")}</div>
             </div>
             <div className="rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-3 text-center">
               <div className="text-xl font-bold text-cocoa-deep">{stats.totalDone}</div>
-              <div className="text-[10px] text-milktea">{t("weeklyReview.checkIns")}</div>
+              <div className="text-xs text-muted">{t("weeklyReview.checkIns")}</div>
             </div>
           </div>
 
           {stats.best && stats.best.count > 0 && (
             <div className="mb-2 flex items-center gap-2.5 rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-2.5">
-              <span className="text-xl">{stats.best.emoji}</span>
+              <Icon name={iconFor(stats.best.emoji, stats.best.category)} size={20} className="text-accent" />
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] text-milktea">{t("weeklyReview.mostStable")}</p>
+                <p className="text-xs text-muted">{t("weeklyReview.mostStable")}</p>
                 <p className="truncate text-[13px] font-semibold text-cocoa-deep">{stats.best.title}</p>
               </div>
-              <span className="text-xs text-cocoa-soft">{`${stats.best.count}${t("common.times")}`}</span>
+              <span className="text-xs text-muted">{`${stats.best.count}${t("common.times")}`}</span>
             </div>
           )}
 
           {stats.worst && stats.worst !== stats.best && (
             <div className="flex items-center gap-2.5 rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-2.5">
-              <span className="text-xl">{stats.worst.emoji}</span>
+              <Icon name={iconFor(stats.worst.emoji, stats.worst.category)} size={20} className="text-accent" />
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] text-milktea">{t("weeklyReview.leastStable")}</p>
+                <p className="text-xs text-muted">{t("weeklyReview.leastStable")}</p>
                 <p className="truncate text-[13px] font-semibold text-cocoa-deep">{stats.worst.title}</p>
               </div>
-              <span className="text-xs text-cocoa-soft">{stats.worst.count}次</span>
+              <span className="text-xs text-muted">{stats.worst.count}次</span>
             </div>
           )}
         </div>
@@ -177,7 +174,7 @@ export default function WeeklyReviewModal({
 
       {/* proud moment */}
       <div className="mb-4">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("weeklyReview.proudLabel")}
         </label>
         <textarea
@@ -191,8 +188,8 @@ export default function WeeklyReviewModal({
 
       {/* points hint */}
       <div className="mb-4 flex items-center gap-2 rounded-[12px] bg-beige/60 px-3.5 py-2.5">
-        <span className="text-base">✨</span>
-        <p className="text-[12px] text-cocoa-soft">
+        <Icon name="sparkle" size={16} className="text-accent" />
+        <p className="text-[12px] text-muted">
           {t("weeklyReview.pointsHint")}
         </p>
       </div>

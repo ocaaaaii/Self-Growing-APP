@@ -31,6 +31,9 @@ module.exports = {
         sky: v("--c-sky"),
         butter: v("--c-butter"),
         line: v("--c-line"),
+        // text roles — use these for text, not milktea / cocoa (contrast)
+        muted: v("--c-text-muted"),
+        accent: v("--c-text-accent"),
       },
       fontFamily: {
         sans: ["Quicksand", "Noto Sans TC", "-apple-system", "sans-serif"],
@@ -45,8 +48,9 @@ module.exports = {
         xl3: "28px",
       },
       keyframes: {
+        // starts visible: content never sits invisible while the page settles
         fadeIn: {
-          "0%": { opacity: "0", transform: "translateY(8px)" },
+          "0%": { opacity: "0.85", transform: "translateY(6px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         slideUp: {
@@ -77,8 +81,8 @@ module.exports = {
         },
       },
       animation: {
-        fadeIn: "fadeIn 0.35s ease",
-        slideUp: "slideUp 0.35s cubic-bezier(0.34, 1.2, 0.4, 1)",
+        fadeIn: "fadeIn 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+        slideUp: "slideUp 0.32s cubic-bezier(0.22, 1, 0.36, 1)",
         floaty: "floaty 3s ease-in-out infinite",
         bounceIn: "bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
         floatUp: "floatUp 1.2s ease-out forwards",

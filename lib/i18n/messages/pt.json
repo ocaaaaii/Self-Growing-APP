@@ -68,7 +68,9 @@
     "mochiSays": "mochi quer te dizer ✨",
     "mochiEmpty": "Hoje é seu dia livre — descanse bem 🛁",
     "mochiAllDone": "Tudo feito hoje! Você é incrível 🎀",
-    "mochiRemaining": "Só mais {n} para atingir a meta de hoje — você é demais!"
+    "mochiRemaining": "{done} feitas, faltam {n}. Sem pressa.",
+    "mochiStart": "Comece hoje com uma coisa pequena. Estou aqui com você.",
+    "doneGroup": "Feitas ({n})"
   },
   "habits": {
     "title": "Todos os meus pequenos hábitos ✨",
@@ -160,7 +162,11 @@
     "notAffordable_body": "Você precisa de {cost} pt.\nmochi acredita em você — só mais alguns hábitos 🌱",
     "needs": "custa",
     "notAffordable_msg": "mochi acredita em você, mais um pouquinho! 🌱",
-    "notAffordable_btn": "Entendi, vou continuar"
+    "notAffordable_btn": "Entendi, vou continuar",
+    "balanceLabel": "Seus pontos depois",
+    "spend": "Usa {n} pt",
+    "notAffordable_far": "Faltam {n} pt",
+    "youHave": "Você tem {n} pt."
   },
   "ifthen": {
     "title": "Deixe os bons hábitos acontecerem sozinhos 💫",
@@ -192,8 +198,8 @@
     "title": "Registro de crescimento",
     "subtitle": "Cada dia é seu",
     "handwriting": "growth log",
-    "totalPoints": "Pontos totais",
-    "longestStreak": "Maior sequência",
+    "totalPoints": "Pontos atuais",
+    "longestStreak": "Dias seguidos",
     "growthDays": "Dias de crescimento",
     "days": "dias",
     "achievements": "Conquistas",

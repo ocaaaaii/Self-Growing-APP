@@ -1,5 +1,7 @@
 "use client";
 
+import { CloseButton } from "./Modal";
+
 import { useEffect, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 
@@ -83,12 +85,7 @@ export default function InstallBanner() {
     >
       <div className="mx-auto max-w-[390px] rounded-t-[24px] border-t border-line/50 bg-cream-paper px-5 py-4 shadow-[0_-4px_24px_rgba(40,30,22,0.15)]">
         {/* dismiss */}
-        <button
-          onClick={dismiss}
-          className="absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-beige text-[11px] text-cocoa"
-        >
-          ✕
-        </button>
+        <CloseButton onClick={dismiss} className="right-2 top-2" />
 
         <div className="flex items-start gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -105,16 +102,16 @@ export default function InstallBanner() {
 
             {showIosGuide ? (
               <>
-                <p className="mt-0.5 text-[12px] leading-relaxed text-milktea">
+                <p className="mt-0.5 text-[12px] leading-relaxed text-muted">
                   {t("installBanner.iosDesc")}
                 </p>
-                <p className="mt-2 flex items-center gap-1 rounded-xl bg-beige px-3 py-2 text-[11px] text-cocoa">
+                <p className="mt-2 flex items-center gap-1 rounded-xl bg-beige px-3 py-2 text-xs text-accent">
                   {t("installBanner.iosInstruction")}
                 </p>
               </>
             ) : (
               <>
-                <p className="mt-0.5 text-[12px] leading-relaxed text-milktea">
+                <p className="mt-0.5 text-[12px] leading-relaxed text-muted">
                   {t("installBanner.installDesc")}
                 </p>
                 <button

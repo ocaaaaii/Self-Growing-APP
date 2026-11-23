@@ -3,6 +3,8 @@
 import Bow from "./Bow";
 import { ACHIEVEMENTS } from "@/lib/constants";
 import { useLocale } from "@/components/LocaleProvider";
+import Icon from "./Icon";
+import { iconFor } from "@/lib/icons";
 
 // SVG 折線圖元件（過去 14 天每日點數）
 function PointsChart({ data }) {
@@ -81,8 +83,8 @@ function PointsChart({ data }) {
           key={v}
           x={PL - 4} y={py(v) + 4}
           textAnchor="end"
-          fontSize="8"
-          style={{ fill: "rgb(var(--c-milktea))" }}
+          fontSize="10"
+          style={{ fill: "rgb(var(--c-text-muted))" }}
         >
           {v}
         </text>
@@ -94,8 +96,8 @@ function PointsChart({ data }) {
           key={i}
           x={px(i)} y={H - 4}
           textAnchor="middle"
-          fontSize="8"
-          style={{ fill: "rgb(var(--c-milktea))" }}
+          fontSize="10"
+          style={{ fill: "rgb(var(--c-text-muted))" }}
         >
           {label}
         </text>
@@ -161,11 +163,11 @@ export default function GrowthClient({
   return (
     <div className="animate-fadeIn px-[22px] pb-[100px] pt-2">
       <div className="mb-[18px] mt-1.5">
-        <div className="font-hand text-lg text-milktea">{t("growth.handwriting")}</div>
+        <div className="font-hand text-lg text-muted">{t("growth.handwriting")}</div>
         <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
           {t("growth.title")}
         </h1>
-        <p className="mt-1 text-[13px] text-milktea">
+        <p className="mt-1 text-[13px] text-muted">
           {t("growth.subtitle")}
         </p>
       </div>
@@ -182,7 +184,7 @@ export default function GrowthClient({
         {["S", "M", "T", "W", "T", "F", "S"].map((w, i) => (
           <div
             key={i}
-            className="text-center text-[10px] font-semibold tracking-wide text-milktea"
+            className="text-center text-xs font-semibold tracking-wide text-muted"
           >
             {w}
           </div>
@@ -199,8 +201,8 @@ export default function GrowthClient({
           return (
             <div
               key={d}
-              className={`flex aspect-square items-center justify-center rounded-full text-[11px] transition ${
-                dot ? `${dot} text-cocoa-deep` : "bg-milktea-soft text-cocoa"
+              className={`flex aspect-square items-center justify-center rounded-full text-xs transition ${
+                dot ? `${dot} text-cocoa-deep` : "bg-milktea-soft text-accent"
               } ${isToday ? "font-bold ring-2 ring-cocoa-deep" : "font-medium"}`}
             >
               {d}
@@ -219,7 +221,7 @@ export default function GrowthClient({
         ].map((item) => (
           <div
             key={item.key}
-            className="flex items-center gap-1.5 text-[11px] text-milktea"
+            className="flex items-center gap-1.5 text-xs text-muted"
           >
             <span className={`h-3 w-3 rounded-full ${item.c}`} />
             {t(`growth.${item.key}`)}
@@ -230,24 +232,26 @@ export default function GrowthClient({
       {/* stats */}
       <div className="mt-3.5 grid grid-cols-3 gap-2.5">
         {[
-          { emoji: "📈", num: `${completionRate}%`, label: t("growth.monthlyRate") },
-          { emoji: "⭐", num: totalPoints.toLocaleString(), label: t("growth.totalPoints") },
-          { emoji: "🔥", num: longestStreak, label: t("growth.longestStreak") },
+          { icon: "calendar", num: `${completionRate}%`, label: t("growth.monthlyRate") },
+          { icon: "star", num: totalPoints.toLocaleString(), label: t("growth.totalPoints") },
+          { icon: "flame", num: longestStreak, label: t("growth.longestStreak") },
         ].map((s) => (
           <div
             key={s.label}
-            className="rounded-2xl border border-line/40 bg-cream-card p-3.5 text-center shadow-soft"
+            className="rounded-2xl border border-line/40 bg-cream-card px-3 py-3 shadow-soft"
           >
-            <div className="text-[22px]">{s.emoji}</div>
-            <div className="mt-1 text-lg font-bold text-cocoa-deep">{s.num}</div>
-            <div className="mt-0.5 text-[10px] text-milktea">{s.label}</div>
+            <div className="flex items-center gap-1 text-xs text-muted">
+              <Icon name={s.icon} size={14} />
+              {s.label}
+            </div>
+            <div className="mt-1 text-xl font-bold tabular-nums text-cocoa-deep">{s.num}</div>
           </div>
         ))}
       </div>
 
       <div className="mt-3.5 flex items-center justify-between rounded-2xl border border-line/40 bg-cream-card px-4 py-3.5 shadow-soft">
-        <div className="flex items-center gap-2 text-[13px] text-cocoa">
-          <span className="text-lg">🌷</span> {t("growth.growthDays")}
+        <div className="flex items-center gap-2 text-[13px] text-accent">
+          <Icon name="flower" size={18} /> {t("growth.growthDays")}
         </div>
         <div className="font-hand text-2xl font-bold text-cocoa-deep">
           {growthDays} {t("growth.days")}
@@ -260,9 +264,9 @@ export default function GrowthClient({
           <div className="mb-3 mt-[26px] flex items-baseline justify-between">
             <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
               <Bow size={18} /> {t("growth.pointsTrend")}
-              <span className="font-hand text-lg text-cocoa-soft">{t("growth.last7days")}</span>
+              <span className="font-hand text-lg text-muted">{t("growth.last7days")}</span>
             </h2>
-            <span className="text-xs text-milktea">
+            <span className="text-xs text-muted">
               {t("growth.maxPointsDay", { n: Math.max(...dailyPoints.map((d) => d.pts)) })}
             </span>
           </div>
@@ -276,9 +280,9 @@ export default function GrowthClient({
       <div className="mb-3 mt-[26px] flex items-baseline justify-between">
         <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
           <Bow size={18} /> {t("growth.achievements")}
-          <span className="font-hand text-lg text-cocoa-soft">badges</span>
+          <span className="font-hand text-lg text-muted">badges</span>
         </h2>
-        <span className="text-xs text-milktea">
+        <span className="text-xs text-muted">
           {t("growth.unlockCount", { n: unlockedCount, total: badges.length })}
         </span>
       </div>
@@ -293,30 +297,30 @@ export default function GrowthClient({
             }`}
           >
             <div
-              className={`text-[26px] ${
-                b.unlocked ? "" : "opacity-30 grayscale"
+              className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                b.unlocked ? "bg-butter/60 text-cocoa-deep" : "bg-beige/60 text-muted"
               }`}
             >
-              {b.emoji}
+              <Icon name={iconFor(b.emoji)} size={20} />
             </div>
             <div
-              className={`mt-1 text-[11px] font-semibold ${
-                b.unlocked ? "text-cocoa-deep" : "text-milktea"
+              className={`mt-1 text-xs font-semibold ${
+                b.unlocked ? "text-cocoa-deep" : "text-muted"
               }`}
             >
               {(() => { const v = t(`achievements_i18n.${b.key}.title`); return v.startsWith("achievements_i18n.") ? b.title : v; })()}
             </div>
-            <div className="mt-0.5 text-[9px] leading-tight text-milktea">
+            <div className="mt-0.5 text-[11px] leading-tight text-muted">
               {(() => { const v = t(`achievements_i18n.${b.key}.desc`); return v.startsWith("achievements_i18n.") ? b.desc : v; })()}
             </div>
-            <div className={`mt-1 text-[8px] font-semibold ${b.unlocked ? "text-sage" : "text-milktea opacity-60"}`}>
+            <div className={`mt-1 text-[8px] font-semibold ${b.unlocked ? "text-sage" : "text-muted opacity-60"}`}>
               {b.unlocked ? t("growth.unlocked") : t("growth.locked")}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-milktea">
+      <div className="mt-5 flex items-center justify-center gap-2 text-xs text-muted">
         <Bow size={14} />
         {growthDays === 0 ? t("growth.footerEmpty") : t("growth.footerHas")}
       </div>

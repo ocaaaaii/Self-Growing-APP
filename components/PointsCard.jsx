@@ -1,4 +1,4 @@
-// The featured points card with bow pattern 🎀  (always a saturated surface,
+// The featured points card with bow pattern (always a saturated surface,
 // so its text uses --c-on-points which stays light in every theme).
 export default function PointsCard({ points = 0, todayDelta = null, compact = false }) {
   const onPoints = "rgb(var(--c-on-points))";
@@ -43,21 +43,19 @@ export default function PointsCard({ points = 0, todayDelta = null, compact = fa
         />
       </svg>
 
-      <div className="relative z-[2] text-[11px] font-medium tracking-[2px] opacity-75">
-        MY POINTS
-      </div>
+      <div className="relative z-[2] text-xs font-medium opacity-90">目前點數</div>
       <div
         className={`relative z-[2] font-bold ${
           compact ? "text-[28px]" : "text-[38px]"
         }`}
       >
-        {points.toLocaleString()}
-        <span className="ml-1.5 text-sm font-medium opacity-75">pt</span>
+        <span className="tabular-nums">{points.toLocaleString()}</span>
+        <span className="ml-1.5 text-sm font-medium opacity-90">pt</span>
       </div>
 
       {todayDelta !== null && todayDelta > 0 && (
         <div className="relative z-[2] mt-2 inline-flex items-center gap-1 rounded-xl bg-white/15 px-2.5 py-1 text-xs font-semibold backdrop-blur">
-          ↑ +{todayDelta} 今天賺到的
+          今天 +{todayDelta} pt
         </div>
       )}
     </div>

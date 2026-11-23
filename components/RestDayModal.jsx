@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import Mochi from "./Mochi";
 import { useLocale } from "@/components/LocaleProvider";
 
@@ -23,12 +23,7 @@ export default function RestDayModal({ open, onClose, onSave, saving }) {
   return (
     <Modal open={open} onClose={handleClose}>
       <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-      <button
-        onClick={handleClose}
-        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-      >
-        ✕
-      </button>
+      <CloseButton onClick={handleClose} />
 
       {/* header */}
       <div className="mb-[18px] flex items-start gap-3">
@@ -39,7 +34,7 @@ export default function RestDayModal({ open, onClose, onSave, saving }) {
           <h2 className="text-lg font-semibold leading-snug text-cocoa-deep">
             {t("restDay.title")}
           </h2>
-          <p className="mt-0.5 text-xs leading-relaxed text-milktea">
+          <p className="mt-0.5 text-xs leading-relaxed text-muted">
             {t("restDay.subtitle")}
           </p>
         </div>
@@ -47,7 +42,7 @@ export default function RestDayModal({ open, onClose, onSave, saving }) {
 
       {/* reason textarea */}
       <div className="mb-4">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("restDay.reasonLabel")}
         </label>
         <textarea
@@ -60,7 +55,7 @@ export default function RestDayModal({ open, onClose, onSave, saving }) {
       </div>
 
       {/* what happens */}
-      <div className="mb-4 rounded-[12px] bg-beige/60 px-3.5 py-3 text-[12px] leading-relaxed text-cocoa-soft">
+      <div className="mb-4 rounded-[12px] bg-beige/60 px-3.5 py-3 text-[12px] leading-relaxed text-muted">
         <p>{t("restDay.benefit1")}</p>
         <p>{t("restDay.benefit2")}</p>
         <p>{t("restDay.benefit3")}</p>

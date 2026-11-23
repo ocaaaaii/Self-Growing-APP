@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import Bow from "./Bow";
 import { DIFFICULTY, CATEGORIES, FREQUENCIES, EMOJI_CHOICES } from "@/lib/constants";
 import { useLocale } from "@/components/LocaleProvider";
+import Icon from "./Icon";
+import { iconFor, uniqueIconChoices } from "@/lib/icons";
 
 function Pill({ active, children, onClick }) {
   return (
@@ -14,7 +16,7 @@ function Pill({ active, children, onClick }) {
       className={`rounded-xl border px-3 py-[7px] text-xs font-medium transition ${
         active
           ? "border-cocoa bg-cocoa text-cream-card"
-          : "border-line bg-cream-card text-cocoa"
+          : "border-line bg-cream-card text-accent"
       }`}
     >
       {children}
@@ -30,7 +32,7 @@ function DayPill({ active, children, onClick }) {
       className={`flex h-9 w-9 items-center justify-center rounded-full border text-xs font-semibold transition ${
         active
           ? "border-cocoa bg-cocoa text-cream-card"
-          : "border-line bg-cream-card text-cocoa"
+          : "border-line bg-cream-card text-accent"
       }`}
     >
       {children}
@@ -105,21 +107,16 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
   return (
     <Modal open={open} onClose={onClose}>
       <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-      <button
-        onClick={onClose}
-        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-      >
-        ✕
-      </button>
+      <CloseButton onClick={onClose} />
 
       <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
         <Bow size={20} /> {editing ? t("addHabit.titleEdit") : t("addHabit.titleAdd")}
       </h2>
-      <p className="mb-[18px] text-xs text-milktea">{t("addHabit.subtitle")}</p>
+      <p className="mb-[18px] text-xs text-muted">{t("addHabit.subtitle")}</p>
 
       {/* name */}
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addHabit.name")}
         </label>
         <input
@@ -132,22 +129,24 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
 
       {/* emoji */}
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addHabit.emoji")}
         </label>
         <div className="flex flex-wrap gap-1.5">
-          {EMOJI_CHOICES.map((e) => (
+          {uniqueIconChoices(EMOJI_CHOICES).map((e) => (
             <button
               key={e}
               type="button"
               onClick={() => setEmoji(e)}
-              className={`flex h-[42px] w-[42px] items-center justify-center rounded-xl border text-lg transition ${
-                emoji === e
-                  ? "border-cocoa bg-cocoa"
-                  : "border-line bg-cream-card"
+              aria-pressed={iconFor(emoji) === iconFor(e)}
+              aria-label={iconFor(e)}
+              className={`flex h-[42px] w-[42px] items-center justify-center rounded-xl border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50 ${
+                iconFor(emoji) === iconFor(e)
+                  ? "border-cocoa bg-cocoa text-cream-card"
+                  : "border-line bg-cream-card text-cocoa-deep"
               }`}
             >
-              {e}
+              <Icon name={iconFor(e)} size={20} />
             </button>
           ))}
         </div>
@@ -155,7 +154,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
 
       {/* category */}
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addHabit.category")}
         </label>
         <div className="flex flex-wrap gap-1.5">
@@ -169,7 +168,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
 
       {/* difficulty */}
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addHabit.difficulty")}
         </label>
         <div className="flex flex-wrap gap-1.5">
@@ -183,7 +182,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
 
       {/* frequency */}
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addHabit.frequency")}
         </label>
         <div className="flex flex-wrap gap-1.5">
@@ -205,9 +204,9 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
       {/* 每週自訂：選擇哪幾天（任意天數） */}
       {frequency === "每週自訂" && (
         <div className="mb-3.5 rounded-[14px] border border-line bg-cream-card/60 px-3.5 py-3">
-          <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
+          <label className="mb-2 block text-xs font-semibold tracking-wide text-accent">
             {t("addHabit.scheduleDays")}
-            <span className="ml-1.5 font-normal text-milktea">（{t("addHabit.scheduleDaysHint")}）</span>
+            <span className="ml-1.5 font-normal text-muted">（{t("addHabit.scheduleDaysHint")}）</span>
           </label>
           <div className="flex gap-1.5">
             {DAY_LABELS.map((label, i) => (
@@ -221,7 +220,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
             ))}
           </div>
           {scheduleDays.length > 0 && (
-            <p className="mt-2 text-[11px] text-cocoa-soft">
+            <p className="mt-2 text-xs text-muted">
               {t("addHabit.scheduleAppearNote", { days: scheduleDays.sort((a,b)=>a-b).map((d) => DAY_LABELS[d]).join("、") })}
             </p>
           )}
@@ -229,7 +228,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
       )}
 
       {/* 頻率說明 */}
-      <div className="mb-4 rounded-[12px] bg-beige/60 px-3 py-2.5 text-[11px] leading-relaxed text-milktea">
+      <div className="mb-4 rounded-[12px] bg-beige/60 px-3 py-2.5 text-xs leading-relaxed text-muted">
         {frequency === "每日" && t("addHabit.freq_daily_hint")}
         {frequency === "平日" && t("addHabit.freq_weekday_hint")}
         {frequency === "每週自訂" &&
@@ -249,10 +248,7 @@ export default function AddHabitModal({ open, onClose, onSave, onDelete, habit, 
 
       {editing && (
         <button
-          onClick={() => {
-            if (!confirm(t("addHabit.confirmDelete", { title: habit.title }))) return;
-            onDelete(habit);
-          }}
+          onClick={() => onDelete(habit)}
           className="mt-2.5 w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa-deep"
         >
           {t("addHabit.deleteHabit")}

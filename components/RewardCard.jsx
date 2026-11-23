@@ -1,6 +1,8 @@
 "use client";
 
 import { useLocale } from "@/components/LocaleProvider";
+import Icon from "./Icon";
+import { iconFor } from "@/lib/icons";
 
 const IMG_BG = {
   小確幸: "bg-dusty",
@@ -32,7 +34,7 @@ export default function RewardCard({ reward, points, onClick, onEdit }) {
             e.stopPropagation();
             onEdit(reward);
           }}
-          className="absolute left-2 top-2 z-[1] flex h-6 w-6 items-center justify-center rounded-full bg-cream-paper text-milktea transition hover:bg-beige hover:text-cocoa"
+          className="absolute left-2 top-2 z-[1] flex h-6 w-6 items-center justify-center rounded-full bg-cream-paper text-muted transition hover:bg-beige hover:text-accent"
           aria-label={t("common.edit")}
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
@@ -51,7 +53,7 @@ export default function RewardCard({ reward, points, onClick, onEdit }) {
         <div
           className={`absolute right-2 top-2 z-[1] rounded-full px-1.5 py-0.5 text-[9px] font-bold ${
             soldOut
-              ? "bg-milktea-soft text-milktea"
+              ? "bg-milktea-soft text-muted"
               : "bg-cocoa text-cream-card"
           }`}
         >
@@ -60,20 +62,20 @@ export default function RewardCard({ reward, points, onClick, onEdit }) {
       )}
 
       <div
-        className={`mb-2.5 flex aspect-square items-center justify-center rounded-[14px] text-[38px] ${bgClass} ${
-          affordable ? "" : "opacity-50 grayscale-[0.4]"
+        className={`mb-2.5 flex aspect-square items-center justify-center rounded-[14px] text-cocoa-deep ${bgClass} ${
+          affordable ? "" : "opacity-50"
         }`}
       >
-        {reward.emoji}
+        <Icon name={iconFor(reward.emoji)} size={40} strokeWidth={1.5} />
       </div>
       <div
         className={`mb-1 text-[13px] font-semibold ${
-          affordable ? "text-cocoa-deep" : "text-milktea"
+          affordable ? "text-cocoa-deep" : "text-muted"
         }`}
       >
         {reward.title}
       </div>
-      <div className="text-xs font-bold text-cocoa">{reward.point_cost} pt</div>
+      <div className="text-xs font-bold text-accent">{reward.point_cost} pt</div>
 
       {!affordable && !soldOut && (
         <div className="mt-2 h-1 overflow-hidden rounded-full bg-beige">
@@ -88,7 +90,7 @@ export default function RewardCard({ reward, points, onClick, onEdit }) {
         </div>
       )}
       {reward.redeemed_count > 0 && (
-        <div className="mt-1.5 text-[10px] text-milktea">
+        <div className="mt-1.5 text-xs text-muted">
           {t("rewards.redeemedCount", { n: reward.redeemed_count })}
         </div>
       )}

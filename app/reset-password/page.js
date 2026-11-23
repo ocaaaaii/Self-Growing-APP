@@ -69,10 +69,10 @@ export default function ResetPasswordPage() {
         </div>
 
         {checking ? (
-          <p className="py-8 text-center text-sm text-milktea">確認中…</p>
+          <p className="py-8 text-center text-sm text-muted">確認中…</p>
         ) : !hasSession ? (
           <div className="text-center">
-            <p className="text-[13px] leading-relaxed text-cocoa">
+            <p className="text-[13px] leading-relaxed text-accent">
               這個連結無效或已經過期了。
               <br />
               回到登入頁，重新申請一次重設信吧。
@@ -86,12 +86,12 @@ export default function ResetPasswordPage() {
           </div>
         ) : done ? (
           <p className="py-8 text-center text-sm font-medium text-cocoa-deep">
-            密碼更新好了！正在帶你進去… 🌱
+            密碼更新好了！正在帶你進去…
           </p>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
             <div>
-              <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+              <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
                 新密碼
               </label>
               <input
@@ -106,7 +106,7 @@ export default function ResetPasswordPage() {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+              <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
                 再輸入一次
               </label>
               <input
@@ -131,7 +131,7 @@ export default function ResetPasswordPage() {
               disabled={loading}
               className="btn-cocoa mt-1 w-full rounded-2xl py-3.5 text-[15px] font-semibold shadow-soft transition hover:-translate-y-px disabled:opacity-60"
             >
-              {loading ? "更新中…" : "更新密碼 ✨"}
+              {loading ? "更新中…" : "更新密碼"}
             </button>
           </form>
         )}

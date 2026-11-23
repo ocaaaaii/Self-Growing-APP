@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { THEMES } from "@/lib/constants";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
 import { useLocale } from "@/components/LocaleProvider";
@@ -38,7 +38,7 @@ function ThemeCard({ t, selected, onClick }) {
       />
       {/* label */}
       <span
-        className="mt-1 text-[10px] font-semibold"
+        className="mt-1 text-xs font-semibold"
         style={{ color: t.accent }}
       >
         {t.label}
@@ -123,12 +123,7 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
   return (
     <Modal open={open} onClose={onClose}>
       <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-      <button
-        onClick={onClose}
-        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-      >
-        ✕
-      </button>
+      <CloseButton onClick={onClose} />
 
       <div className="mb-4 flex flex-col items-center text-center">
         <Mochi mood="loving" size={80} />
@@ -139,7 +134,7 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
 
       {/* nickname */}
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("profile.nickname")}
         </label>
         <input
@@ -149,7 +144,7 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
           placeholder={t("profile.nicknamePlaceholder")}
           className="w-full rounded-[14px] border border-line bg-cream-card px-3.5 py-3 text-sm text-cocoa-deep outline-none focus:border-cocoa-soft focus:bg-white"
         />
-        <p className="mt-1.5 text-[11px] text-milktea">
+        <p className="mt-1.5 text-xs text-muted">
           {t("profile.nicknameHint")}
         </p>
       </div>
@@ -164,8 +159,8 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
 
       {/* theme picker */}
       <div className="mb-3.5 mt-5">
-        <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
-          {t("profile.theme")}{themeSaving && <span className="text-milktea"> · {t("profile.themeSaving")}</span>}
+        <label className="mb-2 block text-xs font-semibold tracking-wide text-accent">
+          {t("profile.theme")}{themeSaving && <span className="text-muted"> · {t("profile.themeSaving")}</span>}
         </label>
         <div className="grid grid-cols-4 gap-2">
           {THEMES.map((thm) => (
@@ -177,14 +172,14 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
             />
           ))}
         </div>
-        <p className="mt-2 text-[11px] text-milktea">
+        <p className="mt-2 text-xs text-muted">
           {t("profile.themeHint")}
         </p>
       </div>
 
       {/* language picker */}
       <div className="mb-3.5 mt-5">
-        <label className="mb-2 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-2 block text-xs font-semibold tracking-wide text-accent">
           {t("profile.language")}
         </label>
         <select
@@ -194,7 +189,7 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
         >
           {locales.map((loc) => (
             <option key={loc.code} value={loc.code}>
-              {loc.flag} {loc.label}
+              {loc.label}
             </option>
           ))}
         </select>
@@ -203,15 +198,15 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
       {/* guide link */}
       <button
         onClick={() => { onClose(); router.push("/welcome"); }}
-        className="mt-2.5 w-full rounded-2xl bg-beige/60 py-3 text-sm font-medium text-milktea transition hover:text-cocoa"
+        className="mt-2.5 w-full rounded-2xl bg-beige/60 py-3 text-sm font-medium text-muted transition hover:text-accent"
       >
-        ✨ {t("profile.viewGuide") || "查看功能導覽"}
+        {t("profile.viewGuide") || "查看功能導覽"}
       </button>
 
       <form action="/auth/signout" method="post" className="mt-2.5">
         <button
           type="submit"
-          className="w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-cocoa"
+          className="w-full rounded-2xl bg-beige py-3 text-sm font-semibold text-accent"
         >
           {t("profile.signOut")}
         </button>

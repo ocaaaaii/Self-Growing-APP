@@ -8,11 +8,13 @@ import Bow from "./Bow";
 import IfThenCard from "./IfThenCard";
 import IfThenModal from "./IfThenModal";
 import { useLocale } from "@/components/LocaleProvider";
+import { useConfirm } from "./ConfirmDialog";
 
 const FILTERS = ["全部", ...IFTHEN_CATEGORIES];
 
 export default function IfThenClient({ rules: initialRules }) {
   const supabase = createClient();
+  const [askConfirm, confirmDialog] = useConfirm();
   const { t } = useLocale();
 
   const [rules, setRules] = useState(initialRules);
@@ -75,7 +77,12 @@ export default function IfThenClient({ rules: initialRules }) {
   }
 
   async function handleDelete(rule) {
-    if (!confirm("確定要刪除這個規則嗎？")) return;
+    const ok = await askConfirm({
+      title: "刪除這條規則？",
+      body: `「${rule.trigger_condition}」這條規則會被刪掉，刪了就找不回來。只想先停用的話，可以把它切成暫停。`,
+      confirmLabel: "刪除規則",
+    });
+    if (!ok) return;
     setSaving(true);
     try {
       const { error } = await supabase
@@ -115,11 +122,11 @@ export default function IfThenClient({ rules: initialRules }) {
     <div className="relative">
       <div className="animate-fadeIn px-[22px] pb-[100px] pt-2">
         <div className="mb-[18px] mt-1.5">
-          <div className="font-hand text-lg text-milktea">{t("ifthen.handwriting")}</div>
+          <div className="font-hand text-lg text-muted">{t("ifthen.handwriting")}</div>
           <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
             {t("ifthen.title")}
           </h1>
-          <p className="mt-1 text-[13px] text-milktea">{t("ifthen.subtitle")}</p>
+          <p className="mt-1 text-[13px] text-muted">{t("ifthen.subtitle")}</p>
         </div>
 
         {/* filter */}
@@ -131,7 +138,7 @@ export default function IfThenClient({ rules: initialRules }) {
               className={`flex-shrink-0 rounded-2xl border px-3.5 py-[7px] text-xs font-medium transition ${
                 filter === f
                   ? "border-cocoa bg-cocoa text-cream-card"
-                  : "border-line bg-cream-card text-cocoa"
+                  : "border-line bg-cream-card text-accent"
               }`}
             >
               {f === "全部" ? t("ifthen.filterAll") : (t(`ifthenCategories.${f}`) || f)}
@@ -145,7 +152,7 @@ export default function IfThenClient({ rules: initialRules }) {
             <p className="mt-3 text-sm font-medium text-cocoa-deep">
               {t("ifthen.noRules")}
             </p>
-            <p className="mt-1 text-xs leading-relaxed text-milktea">
+            <p className="mt-1 text-xs leading-relaxed text-muted">
               {t("ifthen.noRulesHint")}
             </p>
             <button
@@ -157,7 +164,7 @@ export default function IfThenClient({ rules: initialRules }) {
             </button>
           </div>
         ) : shown.length === 0 ? (
-          <div className="rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center text-sm text-milktea shadow-soft">
+          <div className="rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center text-sm text-muted shadow-soft">
             {t("ifthen.noFiltered")}
           </div>
         ) : (
@@ -174,7 +181,7 @@ export default function IfThenClient({ rules: initialRules }) {
           </div>
         )}
 
-        <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-milktea">
+        <div className="mt-5 flex items-center justify-center gap-2 text-xs text-muted">
           <Bow size={14} /> {t("ifthen.buildSystem")}
         </div>
       </div>
@@ -191,6 +198,7 @@ export default function IfThenClient({ rules: initialRules }) {
         saving={saving}
         defaultCategory={!editing && filter !== "全部" ? filter : undefined}
       />
+      {confirmDialog}
     </div>
   );
 }

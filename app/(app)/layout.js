@@ -38,24 +38,26 @@ export default async function AppLayout({ children }) {
         <ThemeApplier theme={theme} />
         <div className="paper relative flex h-full w-full flex-col overflow-hidden sm:h-[820px] sm:max-w-[390px] sm:rounded-[36px] sm:shadow-[0_8px_32px_rgba(40,30,22,0.22)]">
           {/* status bar — desktop (phone frame) only */}
-          <div className="hidden flex-shrink-0 items-center justify-between px-6 pb-1.5 pt-3.5 text-[13px] font-semibold text-cocoa sm:flex">
+          <div className="hidden flex-shrink-0 items-center justify-between px-6 pb-1.5 pt-3.5 text-[13px] font-semibold text-accent sm:flex">
             <Clock />
             <div className="flex items-center gap-1">
               <span className="h-1 w-1 rounded-full bg-cocoa" />
               <span className="h-1 w-1 rounded-full bg-cocoa" />
-              <span className="ml-1 text-[11px]">📶</span>
+              <span className="h-1 w-1 rounded-full bg-cocoa" />
             </div>
           </div>
 
-          {/* GuideButton renders outside the hidden status bar so it always mounts.
-              It handles desktop + mobile positioning internally. */}
-          <GuideButton />
+          {/* desktop: the guide button sits in the phone-frame status bar */}
+          <GuideButton placement="desktop" />
 
           {/* page content — scrolls independently; top padding handles iOS notch on real phones */}
           <div
-            className="no-scrollbar flex-1 overflow-y-auto sm:pt-0"
+            className="no-scrollbar relative flex-1 overflow-y-auto sm:pt-0"
             style={{ paddingTop: "env(safe-area-inset-top)" }}
           >
+            {/* mobile: the guide button scrolls away with the page header
+                instead of floating over the cards */}
+            <GuideButton placement="mobile" />
             {children}
           </div>
 
@@ -67,7 +69,7 @@ export default async function AppLayout({ children }) {
         </div>
 
         {/* footer — desktop only, below the phone frame */}
-        <p className="hidden sm:block text-center text-[10px] text-milktea/60 leading-relaxed">
+        <p className="hidden sm:block text-center text-xs text-muted leading-relaxed">
           Developed by CA<br />© 2026 Mochi Self Growing · All rights reserved.
         </p>
       </main>

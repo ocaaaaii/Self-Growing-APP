@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import GrowthClient from "@/components/GrowthClient";
 
+export const metadata = { title: "成長紀錄" };
+
 export default async function GrowthPage() {
   const supabase = createClient();
   const {
@@ -93,10 +95,21 @@ export default async function GrowthPage() {
   });
 
   const habits       = habitsRes.data || [];
-  const longestStreak = habits.reduce((m, h) => Math.max(m, h.streak || 0), 0);
-  const growthDays   = new Set(
-    (allLogsRes.data || []).map((l) => l.completed_on)
-  ).size;
+  const logDays      = new Set((allLogsRes.data || []).map((l) => l.completed_on));
+  const growthDays   = logDays.size;
+
+  // Current streak: consecutive days with at least one check-off, counting back
+  // from today (or from yesterday, if today has nothing yet). The per-habit
+  // `streak` column is only updated on check-off, so it goes stale after a
+  // break and must not be shown as "current".
+  const dayKey = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  const cursor = new Date(now);
+  if (!logDays.has(dayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
+  let currentStreak = 0;
+  while (logDays.has(dayKey(cursor))) {
+    currentStreak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
 
   // ── 折線圖：建立過去 14 天每日點數 ──
   const dailyMap = {};
@@ -135,7 +148,7 @@ export default async function GrowthPage() {
       todayDate={now.getDate()}
       dayCounts={dayCounts}
       totalPoints={profileRes.data?.total_points ?? 0}
-      longestStreak={longestStreak}
+      longestStreak={currentStreak}
       growthDays={growthDays}
       habitCount={habits.length}
       gratitudeCount={gratCountRes.count ?? 0}

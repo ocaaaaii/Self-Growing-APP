@@ -1,6 +1,7 @@
 "use client";
 
-// Mochi — the app mascot 🐻
+import Icon from "./Icon";
+// Mochi — the app mascot
 // mood: "happy" | "loving" | "cheer" | "sleepy" | "sad" | "calm"
 // size: width in px (height auto-scales to the image ratio)
 export default function Mochi({ mood = "happy", size = 72, className = "" }) {
@@ -38,17 +39,17 @@ export default function Mochi({ mood = "happy", size = 72, className = "" }) {
       />
 
       {/* expression overlays — CSS shows the right one based on data-mood */}
-      <div className="overlay sparkle" style={{ fontSize: size * 0.22 }}>
-        ✨
+      <div className="overlay sparkle text-butter" aria-hidden="true">
+        <Icon name="sparkle" size={Math.max(10, size * 0.26)} strokeWidth={2} />
       </div>
-      <div className="overlay heart" style={{ fontSize: size * 0.24 }}>
-        💕
+      <div className="overlay heart text-cheek" aria-hidden="true">
+        <Icon name="heart" size={Math.max(10, size * 0.26)} strokeWidth={2.2} />
       </div>
       <div className="overlay zzz" style={{ fontSize: size * 0.26 }}>
         zz
       </div>
-      <div className="overlay tear" style={{ fontSize: size * 0.16 }}>
-        💧
+      <div className="overlay tear text-sky" aria-hidden="true">
+        <Icon name="droplet" size={Math.max(8, size * 0.16)} strokeWidth={2.2} />
       </div>
     </div>
   );

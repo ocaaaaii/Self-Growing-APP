@@ -11,8 +11,11 @@ import RewardCard from "./RewardCard";
 import AddRewardModal from "./AddRewardModal";
 import RewardConfirmModal from "./RewardConfirmModal";
 import JoyRecordModal from "./JoyRecordModal";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import { useLocale } from "@/components/LocaleProvider";
+import { useConfirm } from "./ConfirmDialog";
+import Icon from "./Icon";
+import { iconFor, stripEmoji } from "@/lib/icons";
 
 // Locale code → BCP-47 tag for Intl.DateTimeFormat
 const LOCALE_TO_BCP47 = {
@@ -26,6 +29,7 @@ const FILTERS = ["全部", ...REWARD_CATEGORIES];
 export default function RewardsClient({ initialPoints, rewards: initialRewards, history }) {
   const router = useRouter();
   const supabase = createClient();
+  const [askConfirm, confirmDialog] = useConfirm();
   const frameRef = useRef(null);
   const { t, locale } = useLocale();
   const bcp47 = LOCALE_TO_BCP47[locale] || "zh-TW";
@@ -66,11 +70,14 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
   function confetti() {
     if (!frameRef.current) return;
     const f = frameRef.current;
-    ["🎀", "✨", "🌟", "💕", "🎊", "⭐"].forEach((e, i) => {
+    const SPARK =
+      '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.7 5.3 2.4 7.4 8 8.2-5.6.8-7.3 2.9-8 8.2-.7-5.3-2.4-7.4-8-8.2 5.6-.8 7.3-2.9 8-8.2z"/></svg>';
+    ["butter", "cheek", "sage", "butter", "dusty", "cheek"].forEach((tone, i) => {
       setTimeout(() => {
         const c = document.createElement("div");
         c.className = "sparkle-burst";
-        c.textContent = e;
+        c.style.color = `rgb(var(--c-${tone}))`;
+        c.innerHTML = SPARK;
         c.style.left = 40 + Math.random() * 280 + "px";
         c.style.top = "38%";
         f.appendChild(c);
@@ -116,8 +123,12 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
   }
 
   async function handleDeleteReward(reward) {
-    // 注意：用 window.confirm，因為這個元件裡有 state 叫 `confirm`，會遮蔽全域的 confirm()
-    if (!window.confirm(`確定要刪除「${reward.title}」嗎？`)) return;
+    const ok = await askConfirm({
+      title: `刪除「${reward.title}」？`,
+      body: "這個獎勵和它的兌換紀錄都會一起刪掉，刪了就找不回來。已經花掉的點數不會退回。",
+      confirmLabel: "刪除獎勵",
+    });
+    if (!ok) return;
     setSaving(true);
     try {
       const { error } = await supabase
@@ -187,11 +198,11 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
       <div className="animate-fadeIn px-[22px] pb-[100px] pt-2">
         {/* header */}
         <div className="mb-[18px] mt-1.5">
-          <div className="font-hand text-lg text-milktea">my rewards</div>
+          <div className="font-hand text-lg text-muted">my rewards</div>
           <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
             {t("rewards.title")}
           </h1>
-          <p className="mt-1 text-[13px] text-milktea">
+          <p className="mt-1 text-[13px] text-muted">
             {t("rewards.subtitle")}
           </p>
         </div>
@@ -204,15 +215,15 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
           className="mt-3 flex w-full items-center justify-between rounded-xl2 border border-line/50 bg-cream-card px-4 py-3 shadow-soft transition hover:-translate-y-px hover:shadow-lift"
         >
           <span className="flex items-center gap-2 text-[13px] font-semibold text-cocoa-deep">
-            <span className="text-base">🎀</span>
+            <Icon name="gift" size={16} className="text-accent" />
             {t("rewardHistory.title")}
             {history.length > 0 && (
-              <span className="rounded-full bg-beige px-2 py-0.5 text-[10px] font-bold text-cocoa">
+              <span className="rounded-full bg-beige px-2 py-0.5 text-xs font-bold text-accent">
                 {history.length}
               </span>
             )}
           </span>
-          <span className="text-xs text-milktea">{t("rewardHistory.viewMemories")}</span>
+          <span className="text-xs text-muted">{t("rewardHistory.viewMemories")}</span>
         </button>
 
         {/* category filter */}
@@ -224,7 +235,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
               className={`flex-shrink-0 rounded-2xl border px-3.5 py-[7px] text-xs font-medium transition ${
                 filter === f
                   ? "border-cocoa bg-cocoa text-cream-card"
-                  : "border-line bg-cream-card text-cocoa"
+                  : "border-line bg-cream-card text-accent"
               }`}
             >
               {f === "全部" ? t("rewards.filterAll") : (t(`rewardCategories.${f}`) || f)}
@@ -239,7 +250,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
             <p className="mt-3 text-sm font-medium text-cocoa-deep">
               {t("rewards.noRewards")}
             </p>
-            <p className="mt-1 text-xs text-milktea">
+            <p className="mt-1 text-xs text-muted">
               {t("rewards.noRewardsHint")}
             </p>
             <button
@@ -251,7 +262,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
             </button>
           </div>
         ) : shown.length === 0 ? (
-          <div className="rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center text-sm text-milktea shadow-soft">
+          <div className="rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center text-sm text-muted shadow-soft">
             {t("rewards.noFiltered")}
           </div>
         ) : (
@@ -276,7 +287,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
           </div>
         )}
 
-        <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-milktea">
+        <div className="mt-5 flex items-center justify-center gap-2 text-xs text-muted">
           <Bow size={14} /> {t("rewards.buildSystem")}
         </div>
       </div>
@@ -300,6 +311,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
         affordable={confirm?.affordable}
         soldOut={confirm?.soldOut}
         busy={busy}
+        points={points}
         onConfirm={handleConfirmRedeem}
       />
       <JoyRecordModal
@@ -316,20 +328,15 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
       {/* history modal */}
       <Modal open={showHistory} onClose={() => setShowHistory(false)}>
         <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-        <button
-          onClick={() => setShowHistory(false)}
-          className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-        >
-          ✕
-        </button>
+        <CloseButton onClick={() => setShowHistory(false)} />
         <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
           <Bow size={20} /> {t("rewardHistory.title")}
         </h2>
-        <p className="mb-[18px] text-xs text-milktea">
+        <p className="mb-[18px] text-xs text-muted">
           {t("rewardHistory.subtitle")}
         </p>
         {history.length === 0 ? (
-          <p className="py-6 text-center text-sm text-milktea">
+          <p className="py-6 text-center text-sm text-muted">
             {t("rewardHistory.empty")}
           </p>
         ) : (
@@ -340,12 +347,12 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                 className="rounded-[14px] border border-line/40 bg-cream-card px-3.5 py-3"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">{h.rewards?.emoji || "🎁"}</span>
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-beige text-cocoa-deep"><Icon name={iconFor(h.rewards?.emoji)} size={20} /></span>
                   <div className="flex-1">
                     <div className="text-[13px] font-semibold text-cocoa-deep">
                       {h.rewards?.title || t("rewardHistory.rewardFallback")}
                     </div>
-                    <div className="text-[11px] text-milktea">
+                    <div className="text-xs text-muted">
                       {new Date(h.redeemed_at).toLocaleString(bcp47, {
                         year: "numeric",
                         month: "long",
@@ -356,7 +363,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                       })}
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-cocoa">
+                  <span className="text-xs font-bold text-accent">
                     - {h.points_spent} pt
                   </span>
                 </div>
@@ -370,13 +377,13 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
                   />
                 )}
                 {h.note && (
-                  <p className="mt-2 rounded-xl bg-cream-paper px-3 py-2 text-[12px] italic leading-relaxed text-cocoa">
+                  <p className="mt-2 rounded-xl bg-cream-paper px-3 py-2 text-[12px] italic leading-relaxed text-accent">
                     「{h.note}」
                   </p>
                 )}
                 {h.ai_comment && (
                   <p className="mt-2 rounded-xl bg-beige/60 px-3 py-2 text-[12px] leading-relaxed text-cocoa-deep">
-                    🐻💬 {h.ai_comment}
+                    {stripEmoji(h.ai_comment)}
                   </p>
                 )}
               </div>
@@ -384,6 +391,7 @@ export default function RewardsClient({ initialPoints, rewards: initialRewards, 
           </div>
         )}
       </Modal>
+      {confirmDialog}
     </div>
   );
 }

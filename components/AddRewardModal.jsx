@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import Bow from "./Bow";
 import { REWARD_CATEGORIES, REWARD_EMOJI_CHOICES } from "@/lib/constants";
 import { useLocale } from "@/components/LocaleProvider";
+import Icon from "./Icon";
+import { iconFor, uniqueIconChoices } from "@/lib/icons";
 
 function Pill({ active, children, onClick }) {
   return (
@@ -14,7 +16,7 @@ function Pill({ active, children, onClick }) {
       className={`rounded-xl border px-3 py-[7px] text-xs font-medium transition ${
         active
           ? "border-cocoa bg-cocoa text-cream-card"
-          : "border-line bg-cream-card text-cocoa"
+          : "border-line bg-cream-card text-accent"
       }`}
     >
       {children}
@@ -83,20 +85,15 @@ export default function AddRewardModal({
   return (
     <Modal open={open} onClose={onClose}>
       <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-      <button
-        onClick={onClose}
-        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-      >
-        ✕
-      </button>
+      <CloseButton onClick={onClose} />
 
       <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
         <Bow size={20} /> {editing ? t("addReward.titleEdit") : t("addReward.titleAdd")}
       </h2>
-      <p className="mb-[18px] text-xs text-milktea">{t("addReward.subtitle")}</p>
+      <p className="mb-[18px] text-xs text-muted">{t("addReward.subtitle")}</p>
 
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addReward.name")}
         </label>
         <input
@@ -108,27 +105,29 @@ export default function AddRewardModal({
       </div>
 
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addReward.emoji")}
         </label>
         <div className="flex flex-wrap gap-1.5">
-          {REWARD_EMOJI_CHOICES.map((e) => (
+          {uniqueIconChoices(REWARD_EMOJI_CHOICES).map((e) => (
             <button
               key={e}
               type="button"
               onClick={() => setEmoji(e)}
-              className={`flex h-[42px] w-[42px] items-center justify-center rounded-xl border text-lg transition ${
-                emoji === e ? "border-cocoa bg-cocoa" : "border-line bg-cream-card"
+              aria-pressed={iconFor(emoji) === iconFor(e)}
+              aria-label={iconFor(e)}
+              className={`flex h-[42px] w-[42px] items-center justify-center rounded-xl border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50 ${
+                iconFor(emoji) === iconFor(e) ? "border-cocoa bg-cocoa text-cream-card" : "border-line bg-cream-card text-cocoa-deep"
               }`}
             >
-              {e}
+              <Icon name={iconFor(e)} size={20} />
             </button>
           ))}
         </div>
       </div>
 
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addReward.category")}
         </label>
         <div className="flex flex-wrap gap-1.5">
@@ -141,7 +140,7 @@ export default function AddRewardModal({
       </div>
 
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addReward.cost")}
         </label>
         <div className="mb-2 flex flex-wrap gap-1.5">
@@ -161,7 +160,7 @@ export default function AddRewardModal({
       </div>
 
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addReward.stock")}
         </label>
         <div className="flex flex-wrap gap-1.5">
@@ -175,13 +174,13 @@ export default function AddRewardModal({
             </Pill>
           ))}
         </div>
-        <p className="mt-1.5 text-[11px] text-milktea">
+        <p className="mt-1.5 text-xs text-muted">
           {t("addReward.stockHint")}
         </p>
       </div>
 
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] font-semibold tracking-wide text-cocoa">
+        <label className="mb-1.5 block text-xs font-semibold tracking-wide text-accent">
           {t("addReward.desc")}
         </label>
         <textarea

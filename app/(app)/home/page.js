@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { todayStr } from "@/lib/constants";
 import HomeClient from "@/components/HomeClient";
 
+export const metadata = { title: "今天" };
+
 function shouldShowOn(habit, dayOfWeek) {
   switch (habit.frequency) {
     case "每日": return true;

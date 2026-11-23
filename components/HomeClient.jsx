@@ -10,7 +10,10 @@ import Bow from "./Bow";
 import PointsCard from "./PointsCard";
 import HabitCard from "./HabitCard";
 import GratitudeCard from "./GratitudeCard";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
+import Icon from "./Icon";
+import { categoryIcon, stripEmoji } from "@/lib/icons";
+import { useConfirm } from "./ConfirmDialog";
 import InstallBanner from "./InstallBanner";
 import { useLocale } from "@/components/LocaleProvider";
 
@@ -64,6 +67,7 @@ export default function HomeClient({
   const supabase = createClient();
   const { t } = useLocale();
   const frameRef = useRef(null);
+  const [askConfirm, confirmDialog] = useConfirm();
 
   const [points, setPoints] = useState(initialPoints);
   const [habits, setHabits] = useState(initialHabits);
@@ -75,6 +79,7 @@ export default function HomeClient({
   );
   const [mood, setMood] = useState("happy");
   const [busyId, setBusyId] = useState(null);
+  const [showDone, setShowDone] = useState(false);
   const [effects, setEffects] = useState([]);
 
   const [celebrate, setCelebrate] = useState(null); // {title,message,badge,mood}
@@ -254,7 +259,7 @@ export default function HomeClient({
           setTimeout(
             () =>
               setCelebrate({
-                title: `${habit.title} ✓`,
+                title: habit.title,
                 message: msg,
                 badge: `+${earned} pt`,
                 mood: "loving",
@@ -349,7 +354,12 @@ export default function HomeClient({
   }
 
   async function handleDeleteHabit(habit) {
-    if (!confirm(t("home.confirmDelete", { title: habit.title }))) return;
+    const ok = await askConfirm({
+      title: `刪除「${habit.title}」？`,
+      body: "這個習慣和它的打卡紀錄都會一起刪掉，刪了就找不回來。",
+      confirmLabel: "刪除習慣",
+    });
+    if (!ok) return;
     setSavingHabit(true);
     try {
       const { error } = await supabase
@@ -526,218 +536,288 @@ export default function HomeClient({
   const showYesterdayBanner =
     yesterdayNeedsReflection && !yesterdayReflectionDone;
 
+  // ── today's list: open items grouped by category, finished ones tucked away ──
+  const GROUP_ORDER = ["健康", "學習", "工作", "生活", "心靈", "不要做"];
+  const groupRank = (k) => (GROUP_ORDER.includes(k) ? GROUP_ORDER.indexOf(k) : 99);
+  const openHabits = habits.filter((h) => !doneSet.has(h.id));
+  const doneHabits = habits.filter((h) => doneSet.has(h.id));
+  const groups = [];
+  for (const h of openHabits) {
+    const key = GROUP_ORDER.includes(h.category) ? h.category : "其他";
+    let g = groups.find((x) => x.key === key);
+    if (!g) groups.push((g = { key, items: [] }));
+    g.items.push(h);
+  }
+  groups.sort((a, b) => groupRank(a.key) - groupRank(b.key));
+  const progress = totalCount > 0 ? doneCount / totalCount : 0;
+
+  // Mochi follows today's progress instead of always smiling.
+  const greetingMood =
+    totalCount === 0 || isRestDay
+      ? "happy"
+      : doneCount === 0
+      ? "sleepy"
+      : doneCount >= totalCount
+      ? "loving"
+      : "happy";
+
+  const renderCard = (h) => (
+    <HabitCard
+      key={h.id}
+      habit={h}
+      done={doneSet.has(h.id)}
+      busy={busyId === h.id}
+      onToggle={(habit, ev) => toggleHabit(habit, ev)}
+      onEdit={openEditHabit}
+    />
+  );
+
+  const nudge = ({ icon, title, body, onClick }) => (
+    <button
+      key={title}
+      type="button"
+      onClick={onClick}
+      className="mt-2.5 flex w-full items-center gap-3 rounded-[16px] border border-line/50 bg-cream-card/80 px-3.5 py-3 text-left transition hover:bg-cream-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50"
+    >
+      <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-beige text-accent">
+        <Icon name={icon} size={18} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-semibold text-cocoa-deep">{title}</span>
+        <span className="mt-0.5 block text-xs text-muted">{body}</span>
+      </span>
+      <Icon name="chevronRight" size={18} className="text-muted" />
+    </button>
+  );
+
+  const linkBtn =
+    "-mr-2 flex min-h-[40px] items-center gap-1.5 rounded-full px-2.5 text-xs font-medium text-muted transition hover:bg-beige hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50";
+
   return (
     <div ref={frameRef} className="relative">
-      <div className="animate-fadeIn px-[22px] pb-[100px] pt-2">
+      <div className="px-5 pb-[132px] pt-2">
         {/* greeting */}
-        <div className="mb-[18px] mt-1.5">
-          <div className="font-hand text-lg text-milktea">
-            {new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-            })}
+        <header className="mb-4 mt-1.5 flex items-end justify-between gap-3 pr-10">
+          <div className="min-w-0">
+            <div className="font-hand text-lg text-muted" suppressHydrationWarning>
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+              })}
+            </div>
+            <h1
+              className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep"
+              suppressHydrationWarning
+            >
+              {(() => {
+                const h = new Date().getHours();
+                if (h < 5 || h >= 18) return t("home.greeting_evening");
+                if (h < 11) return t("home.greeting_morning");
+                return t("home.greeting_noon");
+              })()}{" "}
+              {username}
+              <br />
+              {t("home.tagline")}
+            </h1>
           </div>
-          <h1 className="mt-0.5 text-[22px] font-medium leading-snug text-cocoa-deep">
-            {(() => {
-              const h = new Date().getHours();
-              if (h < 5 || h >= 18) return t("home.greeting_evening");
-              if (h < 11) return t("home.greeting_morning");
-              return t("home.greeting_noon");
-            })()} {username}
-            <span className="ml-1.5 inline-block animate-peek align-middle">
-              <Mochi mood="happy" size={30} />
-            </span>
-            <br />
-            {t("home.tagline")}
-          </h1>
-        </div>
+          <div className="flex-shrink-0 pb-1">
+            <Mochi mood={greetingMood} size={52} />
+          </div>
+        </header>
 
         {/* points */}
-        <PointsCard points={points} todayDelta={todayDelta} />
-
-        {/* 本週回顧提示條（週日才顯示）*/}
-        {isSunday && !weeklyReviewDoneState && (
-          <button
-            onClick={() => setShowWeeklyReview(true)}
-            className="mt-4 w-full rounded-[14px] border border-sage/40 bg-sage/10 px-4 py-3 text-left shadow-soft transition hover:-translate-y-px"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[13px] font-semibold text-cocoa-deep">
-                  🌸 {t("home.weeklyReview")}
-                </p>
-                <p className="mt-0.5 text-[11px] text-milktea">
-                  {t("home.weeklyReviewHint")}
-                </p>
-              </div>
-              <span className="text-cocoa-soft">→</span>
-            </div>
-          </button>
-        )}
-
-        {/* 昨天補復盤提示條 */}
-        {showYesterdayBanner && (
-          <button
-            onClick={() => setShowYesterdayReflection(true)}
-            className="mt-4 w-full rounded-[14px] border border-milktea/30 bg-beige/80 px-4 py-3 text-left shadow-soft transition hover:-translate-y-px"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[13px] font-semibold text-cocoa-deep">
-                  🌙 {t("home.yesterdayBannerTitle")}
-                </p>
-                <p className="mt-0.5 text-[11px] text-milktea">
-                  {t("home.yesterdayBannerBody", { n: yesterdayIncompleteHabits?.length })}
-                </p>
-              </div>
-              <span className="text-cocoa-soft">→</span>
-            </div>
-          </button>
-        )}
+        <PointsCard points={points} todayDelta={todayDelta} compact />
 
         {/* today's habits */}
-        <div className="mb-3 mt-[22px] flex items-baseline justify-between">
-          <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
-            <Bow size={18} /> {t("home.todayHabits")}
-            <span className="font-hand text-lg text-cocoa-soft">today</span>
-          </h2>
-          <div className="flex items-center gap-2">
-            {/* 休息日按鈕 */}
+        <section aria-labelledby="today-heading" className="mt-6">
+          <div className="flex items-center justify-between gap-2">
+            <h2
+              id="today-heading"
+              className="flex items-center gap-1.5 text-base font-semibold text-cocoa-deep"
+            >
+              <Bow size={18} /> {t("home.todayHabits")}
+            </h2>
             {isRestDay ? (
-              <span className="text-xs text-milktea">{t("home.restDay")}</span>
+              <span className="text-xs font-medium text-muted">{t("home.restDay")}</span>
             ) : (
-              <button
-                onClick={() => setShowRestDay(true)}
-                className="text-xs text-milktea underline-offset-2 hover:underline"
-              >
+              <button type="button" onClick={() => setShowRestDay(true)} className={linkBtn}>
+                <Icon name="sofa" size={15} />
                 {t("home.restDayBtn")}
               </button>
             )}
-            <span className="text-xs text-milktea">
-              {t("home.counter", { done: doneCount, total: totalCount })}
-            </span>
           </div>
+
+          {totalCount > 0 && (
+            <div className="mt-1.5 flex items-center gap-3">
+              <div
+                className="h-1.5 flex-1 overflow-hidden rounded-full bg-milktea-soft/70"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={totalCount}
+                aria-valuenow={doneCount}
+                aria-label={t("home.todayHabits")}
+              >
+                <div
+                  className="h-full rounded-full bg-cocoa transition-[width] duration-500 ease-out"
+                  style={{ width: `${Math.round(progress * 100)}%` }}
+                />
+              </div>
+              <span className="text-xs font-semibold tabular-nums text-accent">
+                {t("home.counter", { done: doneCount, total: totalCount })}
+              </span>
+            </div>
+          )}
+
+          {totalCount === 0 ? (
+            <div className="mt-3 flex flex-col items-center rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center shadow-soft">
+              <Mochi mood="happy" size={84} />
+              <p className="mt-3 text-sm font-medium text-cocoa-deep">{t("home.noHabits")}</p>
+              <p className="mt-1 text-xs text-muted">{t("home.noHabitsRestHint")}</p>
+              <button
+                type="button"
+                onClick={() => setShowAdd(true)}
+                className="btn-cocoa mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold shadow-soft"
+              >
+                {t("home.addHabitBtn")}
+              </button>
+            </div>
+          ) : (
+            <div className="mt-3 flex flex-col gap-4">
+              {groups.map((g) => (
+                <div key={g.key}>
+                  <h3 className="mb-1.5 flex items-center gap-1.5 pl-1 text-xs font-semibold text-muted">
+                    <Icon name={categoryIcon(g.key)} size={14} />
+                    {t(`categories.${g.key}`).startsWith("categories.") ? g.key : t(`categories.${g.key}`)}
+                    <span className="font-normal">· {g.items.length}</span>
+                  </h3>
+                  <div className="flex flex-col gap-2">{g.items.map(renderCard)}</div>
+                </div>
+              ))}
+
+              {openHabits.length === 0 && (
+                <p className="rounded-[16px] bg-cream-card/70 px-4 py-3 text-center text-sm font-medium text-cocoa-deep">
+                  {t("home.mochiAllDone")}
+                </p>
+              )}
+
+              {doneHabits.length > 0 && (
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setShowDone((v) => !v)}
+                    aria-expanded={showDone}
+                    className="flex min-h-[40px] w-full items-center gap-1.5 rounded-xl pl-1 text-left text-xs font-semibold text-muted transition hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50"
+                  >
+                    <Icon name="check" size={14} />
+                    {t("home.doneGroup", { n: doneHabits.length })}
+                    <Icon
+                      name="chevronDown"
+                      size={14}
+                      className={`transition-transform ${showDone ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  {showDone && (
+                    <div className="mt-1 flex flex-col gap-2">{doneHabits.map(renderCard)}</div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </section>
+
+        {/* gentle nudges — after today's list, so the day opens on what's ahead */}
+        <div className="mt-4">
+          {showReflectionBanner &&
+            nudge({
+              icon: "moon",
+              title: t("home.reflectionBannerTitle"),
+              body: t("home.reflectionBannerBody", { n: incompleteHabits.length }),
+              onClick: () => setShowReflection(true),
+            })}
+          {showYesterdayBanner &&
+            nudge({
+              icon: "moon",
+              title: t("home.yesterdayBannerTitle"),
+              body: t("home.yesterdayBannerBody", { n: yesterdayIncompleteHabits?.length }),
+              onClick: () => setShowYesterdayReflection(true),
+            })}
+          {isSunday &&
+            !weeklyReviewDoneState &&
+            nudge({
+              icon: "flower",
+              title: t("home.weeklyReview"),
+              body: t("home.weeklyReviewHint"),
+              onClick: () => setShowWeeklyReview(true),
+            })}
         </div>
 
-        {totalCount === 0 ? (
-          <div className="flex flex-col items-center rounded-xl2 border border-line/50 bg-cream-card/70 px-5 py-8 text-center shadow-soft">
-            <Mochi mood="happy" size={84} />
-            <p className="mt-3 text-sm font-medium text-cocoa-deep">
-              {t("home.noHabits")}
-            </p>
-            <p className="mt-1 text-xs text-milktea">
-              {t("home.noHabitsRestHint")}
-            </p>
-            <button
-              onClick={() => setShowAdd(true)}
-              className="mt-4 rounded-2xl px-5 py-2.5 text-sm font-semibold text-cream-card shadow-soft"
-              style={{ background: "linear-gradient(135deg, rgb(var(--grad-btn-from)), rgb(var(--grad-btn-to)))" }}
+        {/* reflection */}
+        <section aria-labelledby="reflection-heading" className="mt-7">
+          <div className="mb-2 flex items-center justify-between">
+            <h2
+              id="reflection-heading"
+              className="flex items-center gap-1.5 text-base font-semibold text-cocoa-deep"
             >
-              {t("home.addHabitBtn")}
+              <Bow size={18} /> {t("home.reflectionSection")}
+            </h2>
+            <button type="button" onClick={() => setShowReflectionList(true)} className={linkBtn}>
+              {t("home.viewReflection")}
             </button>
           </div>
-        ) : (
-          <div className="flex flex-col gap-2.5">
-            {habits.map((h) => (
-              <HabitCard
-                key={h.id}
-                habit={h}
-                done={doneSet.has(h.id)}
-                busy={busyId === h.id}
-                onToggle={(habit, ev) => toggleHabit(habit, ev)}
-                onEdit={openEditHabit}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* 晚間復盤提示條 */}
-        {showReflectionBanner && (
-          <button
-            onClick={() => setShowReflection(true)}
-            className="mt-3 w-full rounded-[14px] border border-line/60 bg-cream-card/80 px-4 py-3 text-left shadow-soft transition hover:-translate-y-px"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[13px] font-semibold text-cocoa-deep">
-                  🌙 {t("home.reflectionBannerTitle")}
-                </p>
-                <p className="mt-0.5 text-[11px] text-milktea">
-                  {t("home.reflectionBannerBody", { n: incompleteHabits.length })}
-                </p>
-              </div>
-              <span className="text-cocoa-soft">→</span>
-            </div>
-          </button>
-        )}
-
-        {/* 復盤日誌入口（小小的，常駐在感恩上方）*/}
-        <div className="mb-3 mt-[22px] flex items-baseline justify-between">
-          <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
-            <Bow size={18} /> {t("home.reflectionSection")}
-            <span className="font-hand text-lg text-cocoa-soft">reflection</span>
-          </h2>
-          <button
-            onClick={() => setShowReflectionList(true)}
-            className="text-xs text-milktea"
-          >
-            {t("home.viewReflection")}
-          </button>
-        </div>
-
-        {/* 已完成今日復盤 / 提示條 */}
-        {reflectionDone ? (
-          <div className="mb-[22px] flex items-center gap-2 rounded-[12px] border border-line/40 bg-cream-card/60 px-3.5 py-2.5 text-[12px] text-cocoa-soft">
-            <span>🌙</span> {t("home.reflectionDone")}
-          </div>
-        ) : totalCount > 0 && !isRestDay ? (
-          <div className="mb-[22px] flex items-center gap-2 rounded-[12px] bg-beige/50 px-3.5 py-2.5 text-[12px] text-milktea">
-            <span>🌙</span> {t("home.reflectionReminder")}
-          </div>
-        ) : null}
+          {reflectionDone ? (
+            <p className="flex items-center gap-2 rounded-[14px] border border-line/40 bg-cream-card/60 px-3.5 py-2.5 text-xs text-muted">
+              <Icon name="check" size={15} className="text-accent" /> {t("home.reflectionDone")}
+            </p>
+          ) : totalCount > 0 && !isRestDay ? (
+            <p className="flex items-center gap-2 rounded-[14px] bg-beige/50 px-3.5 py-2.5 text-xs text-muted">
+              <Icon name="moon" size={15} /> {t("home.reflectionReminder")}
+            </p>
+          ) : null}
+        </section>
 
         {/* daily gratitude */}
-        <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="flex items-center gap-1.5 text-[15px] font-semibold text-cocoa-deep">
-            <Bow size={18} /> {t("home.gratitudeSection")}
-            <span className="font-hand text-lg text-cocoa-soft">gratitude</span>
-          </h2>
-          {gratitudeHistory.length > 0 && (
-            <button
-              onClick={() => setShowGratHistory(true)}
-              className="text-xs text-milktea"
+        <section aria-labelledby="gratitude-heading" className="mt-7">
+          <div className="mb-2 flex items-center justify-between">
+            <h2
+              id="gratitude-heading"
+              className="flex items-center gap-1.5 text-base font-semibold text-cocoa-deep"
             >
-              {t("home.gratitudeViewHistory")}
-            </button>
-          )}
-        </div>
-        <GratitudeCard
-          quote={quote}
-          todayEntry={gratitude}
-          onSave={handleSaveGratitude}
-          saving={savingGratitude}
-        />
+              <Bow size={18} /> {t("home.gratitudeSection")}
+            </h2>
+            {gratitudeHistory.length > 0 && (
+              <button type="button" onClick={() => setShowGratHistory(true)} className={linkBtn}>
+                {t("home.gratitudeViewHistory")}
+              </button>
+            )}
+          </div>
+          <GratitudeCard
+            quote={quote}
+            todayEntry={gratitude}
+            onSave={handleSaveGratitude}
+            saving={savingGratitude}
+          />
+        </section>
 
-        {/* mascot card */}
+        {/* Mochi's note — the page ends on Mochi */}
         <div
-          className="relative mt-3.5 flex items-center gap-3.5 overflow-hidden rounded-xl2 p-4 shadow-soft"
+          className="relative mt-5 flex items-center gap-3.5 overflow-hidden rounded-xl2 p-4"
           style={{ background: "linear-gradient(135deg, rgb(var(--grad-mascot-from)) 0%, rgb(var(--grad-mascot-to)) 100%)" }}
         >
-          <div className="animate-floaty">
-            <Mochi mood={mood} size={64} />
-          </div>
+          <Mochi mood={mood === "happy" ? greetingMood : mood} size={60} />
           <div>
-            <div className="font-hand text-sm text-cocoa">{t("home.mochiSays")}</div>
-            <div className="mt-0.5 text-[13px] font-medium leading-relaxed text-cocoa-deep">
+            <div className="font-hand text-base text-accent">{t("home.mochiSays")}</div>
+            <p className="mt-0.5 text-sm font-medium leading-relaxed text-cocoa-deep">
               {aiMessage
-                ? `「${aiMessage}」`
+                ? `「${stripEmoji(aiMessage)}」`
                 : totalCount === 0
                 ? `「${t("home.mochiEmpty")}」`
                 : doneCount >= totalCount
                 ? `「${t("home.mochiAllDone")}」`
-                : `「${t("home.mochiRemaining", { n: totalCount - doneCount })}」`}
-            </div>
+                : doneCount === 0
+                ? `「${t("home.mochiStart")}」`
+                : `「${t("home.mochiRemaining", { n: totalCount - doneCount, done: doneCount })}」`}
+            </p>
           </div>
         </div>
       </div>
@@ -811,27 +891,22 @@ export default function HomeClient({
       />
 
       {/* gratitude history */}
-      <Modal open={showGratHistory} onClose={() => setShowGratHistory(false)}>
+      <Modal open={showGratHistory} onClose={() => setShowGratHistory(false)} label={t("home.gratitudeHistoryTitle")}>
         <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-        <button
-          onClick={() => setShowGratHistory(false)}
-          className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-        >
-          ✕
-        </button>
+        <CloseButton onClick={() => setShowGratHistory(false)} />
         <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-cocoa-deep">
-          <span className="text-lg">🌿</span> {t("home.gratitudeHistoryTitle")}
+          <Icon name="leaf" size={18} className="text-accent" /> {t("home.gratitudeHistoryTitle")}
         </h2>
-        <p className="mb-[18px] text-xs text-milktea">
+        <p className="mb-[18px] text-xs text-muted">
           {t("home.gratitudeHistorySubtitle")}
         </p>
         <div className="flex flex-col gap-2.5">
           {gratitudeHistory.map((g) => (
             <div
               key={g.id}
-              className="rounded-[14px] border-l-[3px] border-sage bg-cream-card px-3.5 py-3"
+              className="rounded-[14px] bg-cream-card px-3.5 py-3"
             >
-              <div className="mb-1.5 font-hand text-base text-cocoa-soft">
+              <div className="mb-1.5 font-hand text-base text-muted">
                 {new Date(g.entry_date).toLocaleDateString("zh-TW", {
                   month: "long",
                   day: "numeric",
@@ -849,6 +924,8 @@ export default function HomeClient({
           ))}
         </div>
       </Modal>
+
+      {confirmDialog}
 
       {/* PWA install banner — shows once after first home visit */}
       <InstallBanner />

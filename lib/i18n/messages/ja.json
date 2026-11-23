@@ -68,7 +68,9 @@
     "mochiSays": "mochi からひとこと ✨",
     "mochiEmpty": "今日は自由な日。ゆっくり休もう 🛁",
     "mochiAllDone": "今日のこと全部できた！すごいね 🎀",
-    "mochiRemaining": "あと {n} 件で今日の目標達成！君ならできる！"
+    "mochiRemaining": "{done}個できたね。あと{n}個、ゆっくりでいいよ。",
+    "mochiStart": "今日はひとつの小さなことから始めよう。そばにいるよ。",
+    "doneGroup": "完了 {n}件"
   },
   "habits": {
     "title": "すべての小さな習慣 ✨",
@@ -160,7 +162,11 @@
     "notAffordable_body": "{cost} pt 必要だよ。\nmochi はあなたを信じてる、あと少しでOK 🌱",
     "needs": "必要なのは",
     "notAffordable_msg": "mochi はあなたを信じてる、もう少しで届くよ 🌱",
-    "notAffordable_btn": "わかった、もっと頑張る"
+    "notAffordable_btn": "わかった、もっと頑張る",
+    "balanceLabel": "交換後のポイント",
+    "spend": "{n} pt を使います",
+    "notAffordable_far": "あと {n} pt",
+    "youHave": "今は {n} pt あります。"
   },
   "ifthen": {
     "title": "いい習慣を自動化しよう 💫",
@@ -192,8 +198,8 @@
     "title": "成長の記録",
     "subtitle": "毎日があなたのもの",
     "handwriting": "growth log",
-    "totalPoints": "累計ポイント",
-    "longestStreak": "最長連続日数",
+    "totalPoints": "今のポイント",
+    "longestStreak": "連続日数",
     "growthDays": "成長した日数",
     "days": "日",
     "achievements": "実績バッジ",

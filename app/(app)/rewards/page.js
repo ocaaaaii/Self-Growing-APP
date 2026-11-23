@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import RewardsClient from "@/components/RewardsClient";
 
+export const metadata = { title: "獎勵" };
+
 export default async function RewardsPage() {
   const supabase = createClient();
   const {

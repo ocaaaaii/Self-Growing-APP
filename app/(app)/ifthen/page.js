@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import IfThenClient from "@/components/IfThenClient";
 
+export const metadata = { title: "規則" };
+
 export default async function IfThenPage() {
   const supabase = createClient();
   const {

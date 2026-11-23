@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { todayStr } from "@/lib/constants";
-import Modal from "./Modal";
+import Modal, { CloseButton } from "./Modal";
 import { useLocale } from "@/components/LocaleProvider";
+import Icon from "./Icon";
+import { iconFor } from "@/lib/icons";
 
 function buildCalendarDays() {
   // 找到「今天 - 34 天」所在週的週日，確保 grid 對齊
@@ -75,21 +77,16 @@ export default function HabitCalendarModal({ open, onClose, habit }) {
   return (
     <Modal open={open} onClose={onClose}>
       <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-milktea-soft" />
-      <button
-        onClick={onClose}
-        className="absolute right-[22px] top-[18px] flex h-7 w-7 items-center justify-center rounded-full bg-beige text-cocoa"
-      >
-        ✕
-      </button>
+      <CloseButton onClick={onClose} />
 
       {/* header */}
       <div className="mb-4 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-beige text-2xl">
-          {habit.emoji}
+        <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-beige text-cocoa-deep">
+          <Icon name={iconFor(habit.emoji, habit.category)} size={24} />
         </div>
         <div>
           <h2 className="text-base font-semibold text-cocoa-deep">{habit.title}</h2>
-          <p className="text-xs text-milktea">{t("calendar.title")}</p>
+          <p className="text-xs text-muted">{t("calendar.title")}</p>
         </div>
       </div>
 
@@ -97,20 +94,20 @@ export default function HabitCalendarModal({ open, onClose, habit }) {
       <div className="mb-4 flex gap-2">
         <div className="flex-1 rounded-[14px] border border-line/40 bg-cream-card px-3 py-2.5 text-center">
           <div className="text-[18px] font-bold text-cocoa-deep">{doneIn35}</div>
-          <div className="text-[10px] text-milktea">{t("calendar.completions")}</div>
+          <div className="text-xs text-muted">{t("calendar.completions")}</div>
         </div>
         <div className="flex-1 rounded-[14px] border border-line/40 bg-cream-card px-3 py-2.5 text-center">
           <div className="text-[18px] font-bold text-cocoa-deep">{rate}%</div>
-          <div className="text-[10px] text-milktea">{t("calendar.rate")}</div>
+          <div className="text-xs text-muted">{t("calendar.rate")}</div>
         </div>
         <div className="flex-1 rounded-[14px] border border-line/40 bg-cream-card px-3 py-2.5 text-center">
-          <div className="text-[18px] font-bold text-cocoa-deep">🔥 {habit.streak}</div>
-          <div className="text-[10px] text-milktea">{t("calendar.streak")}</div>
+          <div className="text-[18px] font-bold tabular-nums text-cocoa-deep">{habit.streak}</div>
+          <div className="text-xs text-muted">{t("calendar.streak")}</div>
         </div>
       </div>
 
       {loading ? (
-        <div className="flex h-32 items-center justify-center text-sm text-milktea">
+        <div className="flex h-32 items-center justify-center text-sm text-muted">
           {t("common.loading")}
         </div>
       ) : (
@@ -118,7 +115,7 @@ export default function HabitCalendarModal({ open, onClose, habit }) {
           {/* day-of-week labels */}
           <div className="mb-1.5 grid grid-cols-7">
             {DOW_LABELS.map((l) => (
-              <div key={l} className="text-center text-[9px] font-semibold text-milktea">
+              <div key={l} className="text-center text-[9px] font-semibold text-muted">
                 {l}
               </div>
             ))}
@@ -135,12 +132,12 @@ export default function HabitCalendarModal({ open, onClose, habit }) {
               return (
                 <div
                   key={idx}
-                  className={`flex aspect-square items-center justify-center rounded-full text-[10px] font-medium transition ${
+                  className={`flex aspect-square items-center justify-center rounded-full text-xs font-medium transition ${
                     isFuture
                       ? "opacity-0 pointer-events-none"
                       : done
                       ? "bg-sage text-cream-card"
-                      : "bg-milktea-soft/50 text-cocoa"
+                      : "bg-milktea-soft/50 text-accent"
                   } ${isToday ? "ring-2 ring-cocoa-deep" : ""}`}
                 >
                   {isFuture ? "" : d.getDate()}
@@ -150,7 +147,7 @@ export default function HabitCalendarModal({ open, onClose, habit }) {
           </div>
 
           {/* legend */}
-          <div className="mt-3 flex items-center justify-center gap-4 text-[10px] text-milktea">
+          <div className="mt-3 flex items-center justify-center gap-4 text-xs text-muted">
             <span className="flex items-center gap-1">
               <span className="h-2.5 w-2.5 rounded-full bg-sage" /> {t("calendar.legend_done")}
             </span>

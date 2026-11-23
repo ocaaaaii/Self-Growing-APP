@@ -58,9 +58,9 @@ function HintBubble({ btnRef, onDismiss, t }) {
           </p>
           <button
             onClick={onDismiss}
-            className="mt-2 flex w-full items-center justify-end gap-1 text-[11px] font-semibold text-cream-card/70 transition hover:text-cream-card"
+            className="mt-2 flex w-full items-center justify-end gap-1 text-xs font-semibold text-cream-card/70 transition hover:text-cream-card"
           >
-            {t("guideHint.dismiss")} ✓
+            {t("guideHint.dismiss")}
           </button>
         </div>
       </div>
@@ -68,7 +68,9 @@ function HintBubble({ btnRef, onDismiss, t }) {
   );
 }
 
-export default function GuideButton() {
+export default function GuideButton({ placement = "both" }) {
+  const showDesktop = placement !== "mobile";
+  const showMobile = placement !== "desktop";
   const router = useRouter();
   const pathname = usePathname();
   const { t } = useLocale();
@@ -83,6 +85,8 @@ export default function GuideButton() {
   // Show hint once on first visit (after 800 ms delay)
   useEffect(() => {
     try {
+      const isDesktop = window.innerWidth >= 640;
+      if ((isDesktop && !showDesktop) || (!isDesktop && !showMobile)) return;
       if (!localStorage.getItem(HINT_KEY)) {
         const show = setTimeout(() => setShowHint(true), 800);
         return () => clearTimeout(show);
@@ -119,6 +123,7 @@ export default function GuideButton() {
   return (
     <>
       {/* ── Desktop (sm+): absolute, overlaid on the status bar area ── */}
+      {showDesktop && (
       <div
         className="absolute right-[60px] z-30 hidden sm:block"
         style={{ top: "14px" }}
@@ -127,27 +132,29 @@ export default function GuideButton() {
           ref={desktopRef}
           onClick={open}
           aria-label="功能導覽"
-          className="flex h-6 w-6 items-center justify-center rounded-full bg-milktea-soft/60 text-cocoa transition hover:bg-beige hover:scale-110"
+          className="flex h-6 w-6 items-center justify-center rounded-full bg-milktea-soft/60 text-accent transition hover:bg-beige hover:scale-110"
         >
           <BookIcon />
         </button>
       </div>
+      )}
 
       {/* ── Mobile: absolute top-right, safe-area aware ──
            Hidden on /habits (profile button already occupies that spot) */}
+      {showMobile && (
       <div
-        className={`absolute right-4 z-30 sm:hidden ${hideMobile ? "hidden" : ""}`}
-        style={{ top: "calc(10px + env(safe-area-inset-top))" }}
+        className={`absolute right-4 top-2.5 z-10 sm:hidden ${hideMobile ? "hidden" : ""}`}
       >
         <button
           ref={mobileRef}
           onClick={open}
           aria-label="功能導覽"
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-cream-card/85 text-cocoa shadow-soft backdrop-blur-sm transition hover:scale-110"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-cream-card/85 text-accent shadow-soft transition hover:bg-cream-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50"
         >
           <BookIcon />
         </button>
       </div>
+      )}
 
       {/* Hint bubble — rendered once, anchored to the visible button */}
       {showHint && (

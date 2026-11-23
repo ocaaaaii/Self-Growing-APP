@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Mochi from "@/components/Mochi";
 import Bow from "@/components/Bow";
+import Icon from "@/components/Icon";
+import { iconFor, stripEmoji } from "@/lib/icons";
 import { loadMessages, getMessage, DEFAULT_LOCALE } from "@/lib/i18n";
 
 const LOCALES = [
@@ -64,20 +66,27 @@ function useWelcomeLocale() {
 // ─────────────────────────────────────────────
 // UI helpers
 // ─────────────────────────────────────────────
+// difficulty dots on the habits slide; everything else is a line icon
+const DOTS = { "🟢": "bg-sage", "🟡": "bg-butter", "🔴": "bg-cheek" };
+
 function Feature({ emoji, text }) {
   if (!text) return null;
   return (
-    <div className="flex items-start gap-2 text-left text-[12px] leading-snug text-cocoa">
-      <span className="mt-px text-base leading-none">{emoji}</span>
-      <span>{text}</span>
+    <div className="flex items-start gap-2.5 text-left text-sm leading-snug text-cocoa-deep">
+      {DOTS[emoji] ? (
+        <span className={`mt-1 h-3 w-3 flex-shrink-0 rounded-full ${DOTS[emoji]}`} aria-hidden="true" />
+      ) : (
+        <Icon name={iconFor(emoji)} size={17} className="mt-px text-accent" />
+      )}
+      <span>{stripEmoji(text)}</span>
     </div>
   );
 }
 
 function Chip({ children }) {
   return (
-    <span className="rounded-full bg-beige/70 px-2.5 py-0.5 text-[10px] font-semibold text-cocoa">
-      {children}
+    <span className="rounded-full bg-beige/70 px-2.5 py-0.5 text-xs font-semibold text-accent">
+      {typeof children === "string" ? stripEmoji(children) : children}
     </span>
   );
 }
@@ -135,20 +144,20 @@ function buildSlides(t) {
       body: t("welcome.s3_body"),
       extra: (
         <div className="mt-3 rounded-2xl bg-cream-card/70 p-3.5">
-          <div className="mb-2 text-[11px] font-semibold text-cocoa-soft">
+          <div className="mb-2 text-xs font-semibold text-muted">
             {t("welcome.s3_label")}
           </div>
           <div className="flex flex-col gap-2">
             <div className="rounded-xl bg-beige/60 px-3 py-2 text-[12px] leading-snug text-cocoa-deep">
-              <span className="font-bold text-cocoa-soft">{t("welcome.s3_if")} </span>
+              <span className="font-bold text-muted">{t("welcome.s3_if")} </span>
               {t("welcome.s3_ex1_if")}<br />
-              <span className="font-bold text-cocoa-soft">{t("welcome.s3_then")} </span>
+              <span className="font-bold text-muted">{t("welcome.s3_then")} </span>
               {t("welcome.s3_ex1_then")}
             </div>
             <div className="rounded-xl bg-beige/60 px-3 py-2 text-[12px] leading-snug text-cocoa-deep">
-              <span className="font-bold text-cocoa-soft">{t("welcome.s3_if")} </span>
+              <span className="font-bold text-muted">{t("welcome.s3_if")} </span>
               {t("welcome.s3_ex2_if")}<br />
-              <span className="font-bold text-cocoa-soft">{t("welcome.s3_then")} </span>
+              <span className="font-bold text-muted">{t("welcome.s3_then")} </span>
               {t("welcome.s3_ex2_then")}
             </div>
           </div>
@@ -217,7 +226,7 @@ function buildSlides(t) {
           <Chip>🌲 森林</Chip>
           <Chip>🌑 夜貓</Chip>
           <Chip>⬛ 碳黑</Chip>
-          <div className="mt-1 w-full text-[11px] text-milktea">
+          <div className="mt-1 w-full text-xs text-muted">
             {t("welcome.s7_lang")}
           </div>
         </div>
@@ -271,7 +280,7 @@ export default function WelcomePage() {
   if (!ready) {
     return (
       <main className="flex h-[100dvh] w-full items-center justify-center">
-        <div className="text-2xl animate-floaty">🌱</div>
+        <Icon name="sprout" size={28} className="animate-floaty text-accent" label="載入中" />
       </main>
     );
   }
@@ -291,11 +300,11 @@ export default function WelcomePage() {
           <select
             value={locale}
             onChange={(e) => changeLocale(e.target.value)}
-            className="rounded-xl border border-line bg-cream-card/80 px-2 py-1 text-[11px] font-semibold text-cocoa backdrop-blur-sm outline-none focus:border-cocoa-soft"
+            className="rounded-xl border border-line bg-cream-card/80 px-2 py-1 text-xs font-semibold text-accent backdrop-blur-sm outline-none focus:border-cocoa-soft"
           >
             {LOCALES.map((l) => (
               <option key={l.code} value={l.code}>
-                {l.flag} {l.label}
+                {l.label}
               </option>
             ))}
           </select>
@@ -303,7 +312,7 @@ export default function WelcomePage() {
           {/* skip */}
           <button
             onClick={handleStart}
-            className="text-xs font-medium text-milktea"
+            className="text-xs font-medium text-muted"
           >
             {t("welcome.skip")}
           </button>
@@ -315,7 +324,7 @@ export default function WelcomePage() {
             <Mochi mood={slide.mood} size={120} />
           </div>
 
-          <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-beige/70 px-3 py-1 text-[11px] font-semibold text-cocoa">
+          <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-beige/70 px-3 py-1 text-xs font-semibold text-accent">
             <Bow size={13} /> {slide.tag}
           </div>
 
@@ -323,10 +332,10 @@ export default function WelcomePage() {
             {slide.title}
           </h1>
           {slide.subtitle && (
-            <div className="font-hand text-lg text-milktea">{slide.subtitle}</div>
+            <div className="font-hand text-lg text-muted">{slide.subtitle}</div>
           )}
 
-          <p className="mt-2.5 max-w-[300px] text-[13px] leading-relaxed text-cocoa">
+          <p className="mt-2.5 max-w-[300px] text-[13px] leading-relaxed text-accent">
             {slide.body}
           </p>
 
@@ -352,7 +361,7 @@ export default function WelcomePage() {
             {step > 0 && (
               <button
                 onClick={() => goTo(step - 1)}
-                className="rounded-2xl bg-beige px-5 py-3.5 text-sm font-semibold text-cocoa"
+                className="rounded-2xl bg-beige px-5 py-3.5 text-sm font-semibold text-accent"
               >
                 {t("welcome.prev")}
               </button>
@@ -367,11 +376,11 @@ export default function WelcomePage() {
           </div>
 
           {step === 0 && (
-            <p className="mt-3.5 text-center text-[12px] text-milktea">
+            <p className="mt-3.5 text-center text-[12px] text-muted">
               {t("welcome.loginPrompt")}{" "}
               <button
                 onClick={() => router.push("/login")}
-                className="font-semibold text-cocoa underline underline-offset-2"
+                className="font-semibold text-accent underline underline-offset-2"
               >
                 {t("welcome.loginLink")}
               </button>

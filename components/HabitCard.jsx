@@ -1,14 +1,22 @@
 "use client";
 
-// One habit row with a check-off box.
-// Presentational — parent passes `done` and handles `onToggle`.
+import Icon from "./Icon";
+import { iconFor } from "@/lib/icons";
+
+// One habit row.
+// Only the checkbox logs the habit (no more accidental check-offs from a
+// stray tap on the card). Tapping the rest of the row opens the habit.
 const ICON_BG = {
-  健康: "bg-sage",
-  學習: "bg-dusty",
+  健康: "bg-sage/45",
+  學習: "bg-dusty/45",
+  工作: "bg-sky/50",
   生活: "bg-beige",
-  心靈: "bg-cheek",
-  不要做: "bg-sky",
+  心靈: "bg-cheek/40",
+  不要做: "bg-milktea-soft",
 };
+
+// Streaks are only worth pointing out once they mean something.
+const STREAK_MIN = 3;
 
 export default function HabitCard({
   habit,
@@ -16,103 +24,87 @@ export default function HabitCard({
   busy,
   onToggle,
   onEdit,
-  onCalendar,   // 有傳才顯示日曆按鈕
+  onCalendar, // 有傳才顯示日曆按鈕
   showMeta = true,
 }) {
   const bgClass = ICON_BG[habit.category] || "bg-beige";
+  const icon = iconFor(habit.emoji, habit.category);
 
   return (
     <div
-      onClick={(e) => !busy && onToggle(habit, e)}
-      className={`flex cursor-pointer items-center gap-3.5 rounded-[18px] border border-line/40 p-3.5 shadow-soft transition active:scale-[0.99] ${
-        done
-          ? "opacity-75"
-          : "bg-cream-card hover:-translate-y-px hover:shadow-lift"
+      className={`flex items-center gap-2 rounded-[18px] border border-line/40 py-2 pl-2 pr-1 shadow-soft transition ${
+        done ? "bg-cream-card/55" : "bg-cream-card"
       }`}
-      style={done ? { background: "linear-gradient(135deg, rgb(var(--c-beige)), rgb(var(--c-milktea-soft)))" } : undefined}
     >
-      <div
-        className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[14px] text-[22px] ${bgClass}`}
+      <button
+        type="button"
+        onClick={() => onEdit?.(habit)}
+        disabled={!onEdit}
+        className="flex min-w-0 flex-1 items-center gap-3 rounded-[14px] p-1.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50 disabled:cursor-default"
+        aria-label={onEdit ? `編輯「${habit.title}」` : undefined}
       >
-        {habit.emoji}
-      </div>
-
-      <div className="min-w-0 flex-1">
-        <div
-          className={`mb-0.5 text-sm font-semibold ${
-            done ? "text-milktea line-through" : "text-cocoa-deep"
+        <span
+          className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[12px] text-cocoa-deep ${bgClass} ${
+            done ? "opacity-60" : ""
           }`}
         >
-          {habit.title}
-        </div>
-        {showMeta && (
-          <div className="flex items-center gap-2 text-[11px] text-milktea">
-            <span className="rounded-lg bg-cream-bg px-2 py-0.5 font-semibold text-cocoa">
-              +{habit.point_value} pt
+          <Icon name={icon} size={20} />
+        </span>
+
+        <span className="min-w-0 flex-1">
+          <span
+            className={`block text-[15px] font-semibold leading-snug ${
+              done ? "text-muted line-through decoration-1" : "text-cocoa-deep"
+            }`}
+          >
+            {habit.title}
+          </span>
+          {showMeta && (
+            <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-muted">
+              <span className="font-semibold text-accent">+{habit.point_value} pt</span>
+              <span aria-hidden="true">·</span>
+              <span>{habit.frequency}</span>
+              {habit.streak >= STREAK_MIN && (
+                <span className="flex items-center gap-0.5 font-semibold text-accent">
+                  <Icon name="flame" size={13} />
+                  連續 {habit.streak} 天
+                </span>
+              )}
             </span>
-            <span>{habit.frequency}</span>
-            {habit.streak > 0 && (
-              <span className="font-semibold text-cocoa-soft">🔥 {habit.streak}</span>
-            )}
-          </div>
-        )}
-      </div>
+          )}
+        </span>
+      </button>
 
       {onCalendar && (
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onCalendar(habit);
-          }}
-          className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-milktea transition hover:bg-beige hover:text-cocoa"
-          aria-label="打卡日曆"
+          type="button"
+          onClick={() => onCalendar(habit)}
+          className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full text-muted transition hover:bg-beige hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50"
+          aria-label={`「${habit.title}」的打卡日曆`}
         >
-          {/* calendar icon */}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="4" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.8"/>
-            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-          </svg>
-        </button>
-      )}
-      {onEdit && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onEdit(habit);
-          }}
-          className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-milktea transition hover:bg-beige hover:text-cocoa"
-          aria-label="編輯"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M4 20h4L18.5 9.5a2.12 2.12 0 00-3-3L5 17v3z"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <Icon name="calendar" size={18} />
         </button>
       )}
 
-      <div
-        className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[10px] border-2 transition ${
-          done
-            ? "border-cocoa bg-cocoa"
-            : "border-milktea-soft bg-cream-paper hover:border-cocoa-soft"
-        }`}
+      <button
+        type="button"
+        role="checkbox"
+        aria-checked={done}
+        aria-label={habit.title}
+        aria-busy={busy || undefined}
+        onClick={(e) => !busy && onToggle(habit, e)}
+        className="group flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa/50"
       >
-        {done && (
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path
-              d="M2 7l3 3 7-7"
-              stroke="white"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
-      </div>
+        <span
+          className={`flex h-7 w-7 items-center justify-center rounded-[9px] border-2 transition ${
+            done
+              ? "border-cocoa bg-cocoa text-cream-card"
+              : "border-muted/60 bg-cream-paper group-hover:border-accent"
+          } ${busy ? "animate-pulseSoft" : ""}`}
+        >
+          {done && <Icon name="check" size={16} strokeWidth={2.6} />}
+        </span>
+      </button>
     </div>
   );
 }

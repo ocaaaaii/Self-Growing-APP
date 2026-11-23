@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import Modal from "./Modal";
 import Mochi from "./Mochi";
 import { useLocale } from "@/components/LocaleProvider";
+import Icon from "./Icon";
+import { stripEmoji } from "@/lib/icons";
 
 // After redeeming a reward — let the user snap a photo + leave a note.
 // If a photo is uploaded, we ask Claude vision (via /api/reward-comment)
@@ -130,7 +132,7 @@ export default function JoyRecordModal({
             <Mochi mood="loving" size={96} />
           </div>
           <h2 className="text-xl font-semibold text-cocoa-deep">{t("joyRecord.success_title")}</h2>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-cocoa">
+          <p className="mt-1.5 text-[13px] leading-relaxed text-accent">
             {t("joyRecord.enjoy", { title: rewardTitle })}
             <br />
             {t("joyRecord.enjoy_sub")}
@@ -153,8 +155,8 @@ export default function JoyRecordModal({
                 className="mx-auto h-40 w-full rounded-2xl object-cover"
               />
             ) : (
-              <div className="flex h-32 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line bg-cream-card text-milktea">
-                <span className="text-3xl">📸</span>
+              <div className="flex h-32 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line bg-cream-card text-muted">
+                <Icon name="camera" size={30} className="text-accent" />
                 <span className="mt-1 text-xs">{t("joyRecord.photoHint")}</span>
               </div>
             )}
@@ -171,7 +173,7 @@ export default function JoyRecordModal({
           <div className="mt-3 grid grid-cols-2 gap-2.5">
             <button
               onClick={skip}
-              className="rounded-2xl bg-beige py-3.5 text-sm font-semibold text-cocoa"
+              className="rounded-2xl bg-beige py-3.5 text-sm font-semibold text-accent"
             >
               {t("joyRecord.skip")}
             </button>
@@ -193,7 +195,7 @@ export default function JoyRecordModal({
           <p className="mt-4 animate-pulseSoft text-[14px] font-medium text-cocoa-deep">
             {t("joyRecord.thinking")}
           </p>
-          <p className="mt-1 text-[11px] text-milktea">{t("joyRecord.thinking_sub")}</p>
+          <p className="mt-1 text-xs text-muted">{t("joyRecord.thinking_sub")}</p>
         </div>
       )}
 
@@ -211,7 +213,7 @@ export default function JoyRecordModal({
             />
           )}
           <div className="rounded-2xl bg-cream-card px-4 py-3 text-[14px] font-medium leading-relaxed text-cocoa-deep">
-            🐻💬 「{aiComment}」
+            「{stripEmoji(aiComment)}」
           </div>
           <button
             onClick={onClose}
