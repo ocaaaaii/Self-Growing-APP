@@ -561,6 +561,8 @@
     "deleteReward": "Delete reward",
     "ifthenErrorTitle": "The rules page didn't load",
     "ifthenErrorBody": "Your rules are safe. Reloading usually fixes this; if it keeps happening, your connection may be unstable.",
+    "pageErrorTitle": "This page didn't load",
+    "pageErrorBody": "Your data is safe. Reloading usually fixes this; if it keeps happening, let us know through the feedback form.",
     "reload": "Reload",
     "titleHome": "Today",
     "titleHabits": "My habits",

@@ -561,6 +561,8 @@
     "deleteReward": "보상 삭제",
     "ifthenErrorTitle": "규칙 페이지를 열 수 없어요",
     "ifthenErrorBody": "규칙은 그대로 있어요. 보통 새로고침하면 해결돼요. 계속되면 네트워크가 불안정할 수 있어요.",
+    "pageErrorTitle": "이 페이지를 열 수 없어요",
+    "pageErrorBody": "데이터는 그대로 있어요. 보통 새로고침하면 해결돼요. 계속되면 의견 보내기로 알려 주세요.",
     "reload": "새로고침",
     "titleHome": "오늘",
     "titleHabits": "내 습관",

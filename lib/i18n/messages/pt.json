@@ -561,6 +561,8 @@
     "deleteReward": "Excluir recompensa",
     "ifthenErrorTitle": "A página de regras não abriu",
     "ifthenErrorBody": "Suas regras continuam aí. Recarregar costuma resolver; se continuar, a conexão pode estar instável.",
+    "pageErrorTitle": "Esta página não carregou",
+    "pageErrorBody": "Seus dados estão seguros. Recarregar costuma resolver; se continuar, avise pelo formulário de feedback.",
     "reload": "Recarregar",
     "titleHome": "Hoje",
     "titleHabits": "Meus hábitos",

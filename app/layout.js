@@ -1,4 +1,5 @@
 import "./globals.css";
+import ErrorReporter from "@/components/ErrorReporter";
 
 export const metadata = {
   title: { default: "Mochi", template: "%s · Mochi" },
@@ -27,7 +28,10 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="zh-Hant">
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <ErrorReporter />
+        {children}
+      </body>
     </html>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Mochi from "@/components/Mochi";
 import { useT } from "@/components/LocaleProvider";
+import { reportError } from "@/lib/reportError";
 
 // Catches client-side exceptions in the /ifthen route segment.
 // The technical details go to the console; the person gets a way back.
@@ -10,6 +11,7 @@ export default function IfThenError({ error, reset }) {
   const t = useT();
   useEffect(() => {
     console.error("[IfThen error]", error);
+    reportError(error, { source: "boundary" });
   }, [error]);
 
   return (

@@ -561,6 +561,8 @@
     "deleteReward": "刪除獎勵",
     "ifthenErrorTitle": "規則頁暫時打不開",
     "ifthenErrorBody": "你的規則都還在，沒有不見。通常重新載入一次就好；如果一直這樣，可能是網路不太穩。",
+    "pageErrorTitle": "這一頁暫時打不開",
+    "pageErrorBody": "你的資料都還在，沒有不見。通常重新載入一次就好；如果一直這樣，可以透過意見回饋告訴我們。",
     "reload": "重新載入",
     "titleHome": "今天",
     "titleHabits": "我的習慣",

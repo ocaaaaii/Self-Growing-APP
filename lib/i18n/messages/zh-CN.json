@@ -561,6 +561,8 @@
     "deleteReward": "删除奖励",
     "ifthenErrorTitle": "规则页暂时打不开",
     "ifthenErrorBody": "你的规则都还在，没有不见。通常重新加载一次就好；如果一直这样，可能是网络不太稳。",
+    "pageErrorTitle": "这一页暂时打不开",
+    "pageErrorBody": "你的数据都还在，没有丢失。通常重新加载一次就好；如果一直这样，可以通过意见反馈告诉我们。",
     "reload": "重新加载",
     "titleHome": "今天",
     "titleHabits": "我的习惯",

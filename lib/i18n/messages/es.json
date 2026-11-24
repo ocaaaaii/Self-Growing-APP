@@ -561,6 +561,8 @@
     "deleteReward": "Eliminar recompensa",
     "ifthenErrorTitle": "No se pudo abrir la página de reglas",
     "ifthenErrorBody": "Tus reglas siguen ahí. Recargar suele solucionarlo; si sigue pasando, puede que la conexión sea inestable.",
+    "pageErrorTitle": "Esta página no se pudo cargar",
+    "pageErrorBody": "Tus datos están a salvo. Recargar suele solucionarlo; si sigue pasando, avísanos desde el formulario de comentarios.",
     "reload": "Recargar",
     "titleHome": "Hoy",
     "titleHabits": "Mis hábitos",

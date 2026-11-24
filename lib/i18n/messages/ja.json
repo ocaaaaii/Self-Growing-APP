@@ -561,6 +561,8 @@
     "deleteReward": "ごほうびを削除",
     "ifthenErrorTitle": "ルールのページを開けませんでした",
     "ifthenErrorBody": "ルールは消えていません。再読み込みすれば直ることがほとんどです。続く場合は通信が不安定かもしれません。",
+    "pageErrorTitle": "このページを開けませんでした",
+    "pageErrorBody": "データは消えていません。再読み込みすれば直ることがほとんどです。続く場合はご意見フォームからお知らせください。",
     "reload": "再読み込み",
     "titleHome": "今日",
     "titleHabits": "わたしの習慣",
