@@ -567,5 +567,16 @@
     "titleIfthen": "规则",
     "titleRewards": "奖励",
     "titleGrowth": "成长记录"
+  },
+  "account": {
+    "deleteButton": "删除账号",
+    "title": "删除你的账号？",
+    "body": "会永久删除你的账号，以及习惯与打卡记录、规则、奖励与兑换记录（含照片）、复盘、感恩、请假和成长记录。删除后无法恢复。",
+    "feedbackNote": "你提交的意见反馈会保留，但不会再关联到你的账号。",
+    "typeLabel": "请输入「{word}」确认",
+    "confirmWord": "删除账号",
+    "confirm": "永久删除账号",
+    "deleting": "删除中…",
+    "error": "没能删除账号，请稍后再试，或通过意见反馈告诉我们。"
   }
 }

@@ -29,7 +29,7 @@ export default function TermsPage() {
       </Section>
 
       <Section title="服務的變更與終止">
-        <p>我們可能調整功能，或在事先公告後停止服務。你也可以隨時停止使用，並透過<Link href="/feedback" className="font-semibold text-accent underline underline-offset-4">意見回饋表單</Link>要求刪除帳號。</p>
+        <p>我們可能調整功能，或在事先公告後停止服務。你也可以隨時停止使用，並在「個人設定 › 刪除帳號」刪除帳號與所有資料。</p>
       </Section>
 
       <Section title="責任限制">

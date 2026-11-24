@@ -49,7 +49,7 @@ export default function PrivacyPage() {
 
       <Section title="保存與刪除">
         <p>
-          資料會保存到你刪除為止。在 App 裡刪除習慣或獎勵時，相關的打卡與兌換紀錄會一起刪除。想刪除整個帳號與所有資料，請透過<Link href="/feedback" className="font-semibold text-accent underline underline-offset-4">意見回饋表單</Link>，類型選「帳號與隱私」，我們收到後會處理。
+          資料會保存到你刪除為止。在 App 裡刪除習慣或獎勵時，相關的打卡與兌換紀錄會一起刪除。想刪除整個帳號與所有資料，可以在 App 的「個人設定 › 刪除帳號」自己刪除，刪除後無法復原。你送出的意見回饋會保留，但不再連到你的帳號。
         </p>
       </Section>
 

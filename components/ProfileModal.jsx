@@ -7,6 +7,7 @@ import { THEMES } from "@/lib/constants";
 import Modal, { CloseButton } from "./Modal";
 import Mochi from "./Mochi";
 import Bow from "./Bow";
+import DeleteAccountModal from "./DeleteAccountModal";
 import { useLocale } from "@/components/LocaleProvider";
 
 // 主題預覽按鈕：主題背景色 + 對應 PNG 圖示
@@ -56,6 +57,7 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
 
   const [nickname, setNickname] = useState(currentNickname || "");
   const [saving, setSaving] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [saved, setSaved] = useState(false);
   const [theme, setTheme] = useState("oat");
   const [themeSaving, setThemeSaving] = useState(false);
@@ -219,6 +221,16 @@ export default function ProfileModal({ open, onClose, currentNickname }) {
           {t("profile.signOut")}
         </button>
       </form>
+
+      {/* delete account: quiet, at the very bottom */}
+      <button
+        type="button"
+        onClick={() => setDeleteOpen(true)}
+        className="mt-4 w-full py-2 text-xs font-medium text-muted underline underline-offset-4 transition hover:text-accent"
+      >
+        {t("account.deleteButton")}
+      </button>
+      <DeleteAccountModal open={deleteOpen} onClose={() => setDeleteOpen(false)} />
     </Modal>
   );
 }

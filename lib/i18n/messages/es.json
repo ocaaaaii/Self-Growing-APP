@@ -567,5 +567,16 @@
     "titleIfthen": "Reglas",
     "titleRewards": "Recompensas",
     "titleGrowth": "Progreso"
+  },
+  "account": {
+    "deleteButton": "Eliminar cuenta",
+    "title": "¿Eliminar tu cuenta?",
+    "body": "Se eliminarán para siempre tu cuenta y tus hábitos, registros, reglas, recompensas e historial de canjes (incluidas las fotos), reflexiones, agradecimientos, días de descanso e historial de progreso. No se puede deshacer.",
+    "feedbackNote": "Los comentarios que enviaste se conservan, pero ya no estarán vinculados a tu cuenta.",
+    "typeLabel": "Escribe «{word}» para confirmar",
+    "confirmWord": "ELIMINAR",
+    "confirm": "Eliminar cuenta para siempre",
+    "deleting": "Eliminando…",
+    "error": "No se pudo eliminar tu cuenta. Inténtalo más tarde o avísanos desde el formulario de comentarios."
   }
 }

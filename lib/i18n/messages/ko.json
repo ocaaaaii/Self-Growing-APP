@@ -567,5 +567,16 @@
     "titleIfthen": "규칙",
     "titleRewards": "보상",
     "titleGrowth": "성장 기록"
+  },
+  "account": {
+    "deleteButton": "계정 삭제",
+    "title": "계정을 삭제할까요?",
+    "body": "계정과 함께 습관과 체크 기록, 규칙, 보상과 교환 기록(사진 포함), 회고, 감사, 휴식일, 성장 기록이 영구 삭제돼요. 되돌릴 수 없어요.",
+    "feedbackNote": "보낸 의견은 남지만 더 이상 계정과 연결되지 않아요.",
+    "typeLabel": "확인을 위해 '{word}'를 입력해 주세요",
+    "confirmWord": "삭제",
+    "confirm": "계정 영구 삭제",
+    "deleting": "삭제 중…",
+    "error": "계정을 삭제하지 못했어요. 잠시 후 다시 시도하거나 의견 보내기로 알려 주세요."
   }
 }

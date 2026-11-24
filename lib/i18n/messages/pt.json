@@ -567,5 +567,16 @@
     "titleIfthen": "Regras",
     "titleRewards": "Recompensas",
     "titleGrowth": "Progresso"
+  },
+  "account": {
+    "deleteButton": "Excluir conta",
+    "title": "Excluir sua conta?",
+    "body": "Sua conta e seus hábitos, registros, regras, recompensas e histórico de resgates (incluindo fotos), reflexões, gratidões, dias de descanso e histórico de progresso serão excluídos para sempre. Não dá para desfazer.",
+    "feedbackNote": "O feedback que você enviou é mantido, mas não fica mais ligado à sua conta.",
+    "typeLabel": "Digite \"{word}\" para confirmar",
+    "confirmWord": "EXCLUIR",
+    "confirm": "Excluir conta para sempre",
+    "deleting": "Excluindo…",
+    "error": "Não foi possível excluir sua conta. Tente mais tarde ou avise pelo formulário de feedback."
   }
 }

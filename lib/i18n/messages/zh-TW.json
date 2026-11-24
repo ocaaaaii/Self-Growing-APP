@@ -567,5 +567,16 @@
     "titleIfthen": "規則",
     "titleRewards": "獎勵",
     "titleGrowth": "成長紀錄"
+  },
+  "account": {
+    "deleteButton": "刪除帳號",
+    "title": "刪除你的帳號？",
+    "body": "會永久刪除你的帳號，以及習慣與打卡紀錄、規則、獎勵與兌換紀錄（含照片）、復盤、感恩、請假和成長紀錄。刪除後無法復原。",
+    "feedbackNote": "你送出的意見回饋會保留，但不會再連到你的帳號。",
+    "typeLabel": "請輸入「{word}」確認",
+    "confirmWord": "刪除帳號",
+    "confirm": "永久刪除帳號",
+    "deleting": "刪除中…",
+    "error": "沒能刪除帳號，請稍後再試，或透過意見回饋告訴我們。"
   }
 }

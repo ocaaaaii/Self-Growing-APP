@@ -567,5 +567,16 @@
     "titleIfthen": "Rules",
     "titleRewards": "Rewards",
     "titleGrowth": "Growth"
+  },
+  "account": {
+    "deleteButton": "Delete account",
+    "title": "Delete your account?",
+    "body": "This permanently deletes your account and your habits, check-ins, rules, rewards and redemption history (including photos), reflections, gratitude entries, rest days and growth history. This can't be undone.",
+    "feedbackNote": "Feedback you've sent is kept, but no longer linked to your account.",
+    "typeLabel": "Type \"{word}\" to confirm",
+    "confirmWord": "DELETE",
+    "confirm": "Delete account permanently",
+    "deleting": "Deleting…",
+    "error": "Couldn't delete your account. Please try again later, or tell us through the feedback form."
   }
 }
