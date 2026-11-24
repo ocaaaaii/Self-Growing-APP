@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { takeAiQuota } from "@/lib/aiQuota";
+import { REWARD_PHOTO_BUCKET, isOwnRewardPhoto } from "@/lib/rewardPhotos";
 
 // POST /api/reward-comment
-// Body: { photoUrl, rewardTitle, note }
+// Body: { photoPath, rewardTitle, note } — photoPath is the object path in the
+// private reward-photos bucket; it must be inside the caller's own folder.
 // Uses Claude vision to look at the redemption photo and write a short,
 // warm comment from Mochi based on the reward + photo content.
 // Falls back to a generic line if no ANTHROPIC_API_KEY is configured.
@@ -23,7 +25,17 @@ export async function POST(request) {
   } catch {
     body = {};
   }
-  const { photoUrl, rewardTitle = "獎勵", note = "" } = body;
+  const { photoPath, rewardTitle = "獎勵", note = "" } = body;
+
+  // Give Claude a short-lived signed URL, and only for the caller's own photo
+  // (never a URL taken from the request).
+  let photoUrl = null;
+  if (isOwnRewardPhoto(photoPath, user.id)) {
+    const { data: signed } = await supabase.storage
+      .from(REWARD_PHOTO_BUCKET)
+      .createSignedUrl(photoPath, 120);
+    photoUrl = signed?.signedUrl || null;
+  }
 
   // No key, no photo, or over today's limit → a sweet generic line so the UX still works
   if (!apiKey || !photoUrl || !(await takeAiQuota(supabase, "reward_comment"))) {

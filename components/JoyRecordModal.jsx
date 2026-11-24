@@ -62,7 +62,7 @@ export default function JoyRecordModal({
       } = await supabase.auth.getUser();
 
       // 1. upload photo (if any)
-      let photoUrl = null;
+      let photoPath = null;
       if (file) {
         const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
         const path = `${user.id}/${historyId}-${Date.now()}.${ext}`;
@@ -70,17 +70,15 @@ export default function JoyRecordModal({
           .from("reward-photos")
           .upload(path, file, { upsert: true });
         if (upErr) throw upErr;
-        const { data: pub } = supabase.storage
-          .from("reward-photos")
-          .getPublicUrl(path);
-        photoUrl = pub.publicUrl;
+        // the bucket is private: store the path, never a public URL
+        photoPath = path;
       }
 
       // 2. write photo_url + note to reward_history
       const { error: updErr } = await supabase
         .from("reward_history")
         .update({
-          photo_url: photoUrl,
+          photo_url: photoPath,
           note: note.trim() || null,
         })
         .eq("id", historyId);
@@ -93,7 +91,7 @@ export default function JoyRecordModal({
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
-            photoUrl,
+            photoPath,
             rewardTitle,
             note: note.trim(),
           }),

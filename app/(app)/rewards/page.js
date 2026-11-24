@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import DocTitle from "@/components/DocTitle";
+import { REWARD_PHOTO_BUCKET, rewardPhotoPath } from "@/lib/rewardPhotos";
 import RewardsClient from "@/components/RewardsClient";
 
 export const metadata = { title: "獎勵" };
@@ -31,13 +32,31 @@ export default async function RewardsPage() {
       .limit(20),
   ]);
 
+  // Photos are private: swap each stored path for a signed URL that expires
+  // in an hour. Rows whose photo can't be signed simply show no photo.
+  const historyRows = historyRes.data || [];
+  const paths = [...new Set(historyRows.map((h) => rewardPhotoPath(h.photo_url)).filter(Boolean))];
+  const signedByPath = {};
+  if (paths.length) {
+    const { data: signed } = await supabase.storage
+      .from(REWARD_PHOTO_BUCKET)
+      .createSignedUrls(paths, 3600);
+    (signed || []).forEach((s) => {
+      if (s?.path && s?.signedUrl) signedByPath[s.path] = s.signedUrl;
+    });
+  }
+  const history = historyRows.map((h) => {
+    const path = rewardPhotoPath(h.photo_url);
+    return { ...h, photo_url: path ? signedByPath[path] || null : null };
+  });
+
   return (
     <>
       <DocTitle k="ui.titleRewards" />
       <RewardsClient
       initialPoints={profileRes.data?.total_points ?? 0}
       rewards={rewardsRes.data || []}
-      history={historyRes.data || []}
+      history={history}
     />
     </>
   );
