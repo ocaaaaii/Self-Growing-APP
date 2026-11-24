@@ -526,6 +526,7 @@
     "errPasswordTooShort": "密码至少要 6 个字哦",
     "errGeneric": "发生了一点问题，再试一次看看",
     "noticeResetSent": "重置密码的邮件已寄到你的邮箱～点开邮件里的链接就能设定新密码 💌",
+    "spamHint": "没收到的话，请看一下垃圾邮件，并把它标记为「不是垃圾邮件」。",
     "noticeSignupSent": "确认邮件已寄到你的邮箱～点开邮件里的链接就完成注册啦 💌",
     "or": "或",
     "continueWithGoogle": "使用 Google 账号继续",

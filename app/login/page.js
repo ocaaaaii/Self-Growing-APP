@@ -331,8 +331,9 @@ export default function LoginPage() {
             </div>
           )}
           {notice && (
-            <div className="rounded-xl bg-sage/25 px-3 py-2 text-xs text-accent">
+            <div role="status" className="rounded-xl bg-sage/25 px-3 py-2 text-xs text-accent">
               {notice}
+              <p className="mt-1 text-muted">{t("login.spamHint")}</p>
             </div>
           )}
 

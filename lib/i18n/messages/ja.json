@@ -526,6 +526,7 @@
     "errPasswordTooShort": "パスワードは6文字以上必要です",
     "errGeneric": "問題が発生しました。もう一度お試しください",
     "noticeResetSent": "リセットメールを送信しました！メール内のリンクをクリックしてください 💌",
+    "spamHint": "届かない場合は迷惑メールフォルダを確認し、「迷惑メールではない」に設定してください。",
     "noticeSignupSent": "確認メールを送信しました！リンクをクリックして登録を完了してください 💌",
     "or": "または",
     "continueWithGoogle": "Google で続ける",

@@ -526,6 +526,7 @@
     "errPasswordTooShort": "Password needs to be at least 6 characters",
     "errGeneric": "Something went wrong, please try again",
     "noticeResetSent": "Reset email sent! Click the link in the email to set a new password 💌",
+    "spamHint": "Can't find it? Check your spam folder and mark it as \"Not spam\".",
     "noticeSignupSent": "Confirmation email sent! Click the link to complete your sign up 💌",
     "or": "or",
     "continueWithGoogle": "Continue with Google",
