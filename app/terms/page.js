@@ -5,7 +5,7 @@ export const metadata = { title: "服務條款" };
 
 export default function TermsPage() {
   return (
-    <LegalPage title="服務條款" updated="2026 年 11 月 23 日">
+    <LegalPage title="服務條款" updated="2026 年 11 月 24 日">
       <p>使用「Mochi 慢慢變好」（以下稱本服務），代表你同意以下條款。</p>
 
       <Section title="服務內容">
@@ -25,7 +25,7 @@ export default function TermsPage() {
       </Section>
 
       <Section title="Mochi 的話不是專業建議">
-        <p>App 裡的鼓勵話與留言由 AI 產生，目的是陪伴與打氣，不是醫療、心理或其他專業建議。身體或心情需要協助時，請找專業人士。</p>
+        <p>App 裡 Mochi 的鼓勵話與留言是為了陪伴與打氣，不是醫療、心理或其他專業建議。身體或心情需要協助時，請找專業人士。</p>
       </Section>
 
       <Section title="服務的變更與終止">

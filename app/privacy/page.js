@@ -5,7 +5,7 @@ export const metadata = { title: "隱私權政策" };
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="隱私權政策" updated="2026 年 11 月 23 日">
+    <LegalPage title="隱私權政策" updated="2026 年 11 月 24 日">
       <p>
         「Mochi 慢慢變好」（以下稱本服務）是一個幫你養成習慣的網頁 App。這份說明告訴你本服務會收集哪些資料、怎麼使用，以及你可以怎麼刪除。
       </p>
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
           <li>Vercel：託管網站。</li>
           <li>Google：只在你選擇用 Google 登入時，用來確認你的身分。</li>
           <li>
-            Anthropic（Claude）：產生 Mochi 的鼓勵話與兌換留言。產生鼓勵話時會送出暱稱、目前點數、今天完成的件數與連續天數；兌換留言會送出你上傳的照片、獎勵名稱與備註。
+            Anthropic（Claude）：目前沒有使用。Mochi 的鼓勵話與兌換留言都是 App 內建的句子，你的資料不會送到 AI 服務。如果之後啟用 AI 產生回覆，會先更新這份政策，並寫明會送出哪些資料。
           </li>
         </ul>
       </Section>
